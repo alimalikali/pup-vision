@@ -1,0 +1,22 @@
+---
+description: Pup Marriage SaaS – Global Engineering Rules
+globs:
+  - "**/*"
+alwaysApply: true
+rules:
+  - Authentication Integrity:
+      - All authentication must use JWT stored in HttpOnly cookies (never in localStorage).
+      - Every protected route must verify roles (USER/ADMIN) before granting access.
+
+  - Schema-Driven Development:
+      - All backend APIs and frontend forms must strictly follow the Prisma schema + Zod validation.
+      - No field can exist in UI/API unless it is defined in schema.
+
+  - Matching Engine Consistency:
+      - All compatibility scoring logic must be centralized in a single service layer.
+      - No duplicate logic allowed in routes, components, or client-side code.
+
+  - Admin & User Separation:
+      - Admin endpoints (/api/admin/*) must never be exposed in client code.
+      - Strict RBAC must enforce that only ADMIN can query analytics or manage users.
+---

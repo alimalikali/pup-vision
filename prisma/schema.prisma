@@ -1,0 +1,327 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------- ENUMS ----------------
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum Religion {
+  ISLAM
+  CHRISTIANITY
+  HINDUISM
+  BUDDHISM
+  JUDAISM
+  ATHEISM
+  OTHER
+}
+
+enum Education {
+  NONE
+  PRIMARY
+  SECONDARY
+  HIGH_SCHOOL
+  BACHELORS
+  MASTERS
+  PHD
+  SELF_TAUGHT
+  OTHER
+}
+
+enum Profession {
+  STUDENT
+  ENGINEERING
+  SOFTWARE_DEVELOPMENT
+  DATA_SCIENCE
+  ARTIFICIAL_INTELLIGENCE
+  MEDICINE
+  DENTISTRY
+  NURSING
+  EDUCATION
+  BUSINESS
+  ENTREPRENEUR
+  FINANCE
+  MARKETING
+  SALES
+  LAW
+  GOVERNMENT
+  PUBLIC_SERVICE
+  DESIGN
+  WRITING
+  JOURNALISM
+  ARTS
+  FILM
+  MUSIC
+  SPORTS
+  AGRICULTURE
+  ARCHITECTURE
+  PSYCHOLOGY
+  SOCIAL_WORK
+  FREELANCER
+  UNEMPLOYED
+  HOMEMAKER
+  OTHER
+}
+
+enum PurposeDomain {
+  SOCIAL
+  ENVIRONMENTAL
+  TECHNOLOGICAL
+  EDUCATIONAL
+  RELIGIOUS
+  PERSONAL
+}
+
+enum PurposeArchetype {
+  LEADER
+  CREATOR
+  HEALER
+  EXPLORER
+  ADVOCATE
+  VISIONARY
+}
+
+enum PurposeModality {
+  INDIVIDUAL
+  COMMUNITY
+  GLOBAL
+}
+
+enum Interest {
+  SPORTS
+  MUSIC
+  TRAVEL
+  READING
+  COOKING
+  ART
+  TECHNOLOGY
+  OTHER
+}
+
+enum Personality {
+  INTROVERT
+  EXTROVERT
+  AMBIVERT
+}
+
+enum MaritalStatus {
+  SINGLE
+  MARRIED
+  DIVORCED
+  WIDOWED
+}
+
+enum LookingFor {
+  SINGLE
+  MARRIED
+  DIVORCED
+  WIDOWED
+}
+
+enum Language {
+  ENGLISH
+  URDU
+  ARABIC
+  HINDI
+  FRENCH
+  GERMAN
+  PUNJABI
+  TURKISH
+  PERSIAN
+  OTHER
+}
+
+enum Smoke {
+  YES
+  NO
+  OCCASIONALLY
+}
+
+enum Alcohol {
+  YES
+  NO
+  OCCASIONALLY
+}
+
+enum Drugs {
+  YES
+  NO
+  OCCASIONALLY
+}
+
+enum Politics {
+  LEFT
+  RIGHT
+  CENTER
+  LIBERTARIAN
+  FUNDAMENTALIST
+  CONSERVATIVE
+  OTHER
+}
+
+enum PhotoStatus {
+  ACTIVE
+  PENDING
+  DELETED
+}
+
+enum MatchStatus {
+  PENDING
+  INTERESTED
+  MATCHED
+  REJECTED
+  BLOCKED
+}
+
+enum Plan {
+  FREE
+  BASIC
+  PREMIUM
+  ENTERPRISE
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  EXPIRED
+  CANCELED
+  PAUSED
+}
+
+enum PaymentMethod {
+  CARD
+  PAYPAL
+  STRIPE
+  BANK_TRANSFER
+}
+
+enum TransactionStatus {
+  SUCCESS
+  FAILED
+  REFUNDED
+}
+
+// ---------------- MODELS ----------------
+model User {
+  id          String        @id @default(uuid())
+  email       String        @unique
+  passwordHash String
+  role        Role          @default(USER)
+  isVerified  Boolean       @default(false)
+  isActive    Boolean       @default(true)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  profile     Profile?
+  matchesA    Match[]       @relation("UserAMatches")
+  matchesB    Match[]       @relation("UserBMatches")
+  matchesInit Match[]       @relation("UserInitiatedMatches")
+  subscriptions Subscription[]
+}
+
+model Profile {
+  id              String        @id @default(uuid())
+  userId          String        @unique
+  name            String
+  avatar          String?
+  dob             DateTime?
+  gender          Gender
+  income          Int?
+  phone           Int?
+  religion        Religion
+  education       Education
+  profession      Profession
+
+  // Location
+  lat             Float?
+  lang            Float?
+  city            String?
+  state           String?
+  country         String?
+
+  // Purpose
+  purposeDomain    PurposeDomain
+  purposeArchetype PurposeArchetype
+  purposeModality  PurposeModality
+  purposeNarrative String?
+
+  // Other details
+  interests       Interest[]
+  personality     Personality
+  maritalStatus   MaritalStatus
+  lookingFor      LookingFor
+  language        Language
+  height          Float?
+  weight          Float?
+  smoke           Smoke
+  alcohol         Alcohol
+  drugs           Drugs
+  politics        Politics[]
+
+  // System flags
+  isNew           Boolean      @default(true)
+  isDeleted       Boolean      @default(false)
+  isActive        Boolean      @default(true)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  admiredBy       String[]     @default([])  // Array of user IDs who admired this profile
+  admiredUsers    String[]     @default([])  // Array of user IDs this profile has admired
+
+  user            User         @relation(fields: [userId], references: [id])
+}
+
+
+model Match {
+  id                 String       @id @default(uuid())
+  userAId            String
+  userBId            String
+  compatibilityScore Float
+  status             MatchStatus  @default(PENDING)
+  initiatedById      String
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+
+  userA              User         @relation("UserAMatches", fields: [userAId], references: [id])
+  userB              User         @relation("UserBMatches", fields: [userBId], references: [id])
+  initiatedBy        User         @relation("UserInitiatedMatches", fields: [initiatedById], references: [id])
+}
+
+model Subscription {
+  id        String              @id @default(uuid())
+  userId    String
+  plan      Plan
+  status    SubscriptionStatus  @default(ACTIVE)
+  startDate DateTime
+  endDate   DateTime?
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+
+  user        User          @relation(fields: [userId], references: [id])
+  transactions Transaction[]
+}
+
+model Transaction {
+  id             String            @id @default(uuid())
+  subscriptionId String
+  amount         Float
+  currency       String
+  paymentMethod  PaymentMethod
+  status         TransactionStatus
+  transactionId  String
+  createdAt      DateTime          @default(now())
+
+  subscription   Subscription      @relation(fields: [subscriptionId], references: [id])
+}
