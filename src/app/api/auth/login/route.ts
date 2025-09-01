@@ -68,6 +68,8 @@ export async function POST(request: NextRequest) {
       id: userWithoutSensitiveData.id,
       email: userWithoutSensitiveData.email,
       role: userWithoutSensitiveData.role as Role,
+      name: userWithoutSensitiveData.profile?.name,
+      avatar: userWithoutSensitiveData.profile?.avatar,
       isVerified: userWithoutSensitiveData.isVerified,
       isActive: userWithoutSensitiveData.isActive,
       isNew: userWithoutSensitiveData.profile?.isNew ?? true,

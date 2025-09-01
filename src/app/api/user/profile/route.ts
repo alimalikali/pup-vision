@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from "next/server"
 import { validateProfile } from "@/validation/validation"
 import { PrismaClient } from '@prisma/client'
 import { jwtUtils } from '@/lib/jwt'
+import { calculateProfileCompletion } from '@/lib/utils'
 
 const prisma = new PrismaClient()
 
@@ -9,7 +10,7 @@ export async function GET(request: NextRequest) {
   try {
     // Get current user ID from auth token
     const authHeader = request.headers.get('authorization')
-    const token = authHeader?.replace('Bearer ', '') || request.cookies.get('auth-token')?.value
+    const token = authHeader?.replace('Bearer ', '') || request.cookies.get('access-token')?.value
     
     if (!token) {
       return NextResponse.json({ success: false, message: "No authentication token" }, { status: 401 })
@@ -52,19 +53,7 @@ export async function GET(request: NextRequest) {
         modality: profile.purposeModality,
         narrative: profile.purposeNarrative
       },
-      photos: profile.avatar ? [profile.avatar] : [],
-      stats: {
-        profileViews: 47, // Mock data for now
-        likes: 12,
-        matches: 8,
-        completion: calculateProfileCompletion(profile)
-      },
-      preferences: {
-        ageRange: { min: 25, max: 40 }, // Default values
-        location: "Within 50 miles",
-        education: "Bachelor's or higher",
-        lookingFor: profile.lookingFor
-      },
+      photos: profile.avatar,
       createdAt: profile.createdAt.toISOString(),
       updatedAt: profile.updatedAt.toISOString()
     }
@@ -85,7 +74,7 @@ export async function PUT(request: NextRequest) {
   try {
     // Get current user ID from auth token
     const authHeader = request.headers.get('authorization')
-    const token = authHeader?.replace('Bearer ', '') || request.cookies.get('auth-token')?.value
+    const token = authHeader?.replace('Bearer ', '') || request.cookies.get('access-token')?.value
     
     if (!token) {
       return NextResponse.json({ success: false, message: "No authentication token" }, { status: 401 })
@@ -270,39 +259,4 @@ export async function PUT(request: NextRequest) {
     await prisma.$disconnect()
     return NextResponse.json({ success: false, message: "Internal server error" }, { status: 500 })
   }
-}
-
-function calculateProfileCompletion(profile: any): number {
-  let score = 0
-  const maxScore = 100
-
-  // Basic info (30 points)
-  if (profile.name) score += 5
-  if (profile.dob) score += 5
-  if (profile.profession) score += 5
-  if (profile.education) score += 5
-  if (profile.purposeNarrative && profile.purposeNarrative.length > 50) score += 10
-
-  // Location (15 points)
-  if (profile.city) score += 5
-  if (profile.state) score += 5
-  if (profile.country) score += 5
-
-  // Purpose (20 points)
-  if (profile.purposeDomain) score += 5
-  if (profile.purposeArchetype) score += 5
-  if (profile.purposeModality) score += 5
-  if (profile.purposeNarrative && profile.purposeNarrative.length > 100) score += 5
-
-  // Interests (15 points)
-  if (profile.interests && profile.interests.length >= 3) score += 10
-  if (profile.interests && profile.interests.length >= 6) score += 5
-
-  // Lifestyle (20 points)
-  if (profile.smoke) score += 5
-  if (profile.alcohol) score += 5
-  if (profile.drugs) score += 5
-  if (profile.personality) score += 5
-
-  return Math.min(score, maxScore)
 }

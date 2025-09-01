@@ -7,7 +7,7 @@ const prisma = new PrismaClient()
 
 export async function POST(request: NextRequest) {
   try {
-    const { name, email, password ,avatar } = await request.json()
+    const { name, email, password  } = await request.json()
 
     // Validate required fields
     if (!name || !email || !password) {
@@ -43,7 +43,6 @@ export async function POST(request: NextRequest) {
         profile: {
           create: {
             name,
-            avatar,
             gender: 'OTHER', // Default value, will be updated during onboarding
             religion: 'OTHER', // Default value
             education: 'OTHER', // Default value

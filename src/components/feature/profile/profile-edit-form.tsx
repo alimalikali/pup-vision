@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
-import { Save, X } from "lucide-react"
+import { Save, X, Upload } from "lucide-react"
 import { useProfileStore } from "@/store"
 import { formatEnumLabel } from "@/lib/utils"
 import { 
@@ -32,15 +32,18 @@ import {
   PurposeModality
 } from "@/types/enums"
 import { Profile } from "@/types/types"
+import Image from "next/image"
 
 interface ProfileEditFormProps {
   profile: Profile
   onSave: (profileData: Partial<Profile>) => Promise<boolean>
+  onCancel?: () => void
 }
 
-export function ProfileEditForm({ profile, onSave }: ProfileEditFormProps) {
+export function ProfileEditForm({ profile, onSave, onCancel }: ProfileEditFormProps) {
   const [formData, setFormData] = useState<Partial<Profile>>({
     name: profile.name || "",
+    avatar: profile.avatar || "",
     dob: profile.dob || null,
     profession: profile.profession || Profession.OTHER,
     education: profile.education || Education.OTHER,
@@ -75,6 +78,7 @@ export function ProfileEditForm({ profile, onSave }: ProfileEditFormProps) {
   useEffect(() => {
     setFormData({
       name: profile.name || "",
+      avatar: profile.avatar || "",
       dob: profile.dob || null,
       profession: profile.profession || Profession.OTHER,
       education: profile.education || Education.OTHER,
@@ -126,8 +130,12 @@ export function ProfileEditForm({ profile, onSave }: ProfileEditFormProps) {
     }
   }
 
-  const handleInputChange = (field: keyof Profile, value: any) => {
+  const handleInputChange = (field: keyof Profile, value: string | number | Date | null) => {
     setFormData({ ...formData, [field]: value })
+  }
+
+  const handleAvatarChange = (avatarUrl: string) => {
+    setFormData({ ...formData, avatar: avatarUrl })
   }
 
   const handleInterestToggle = (interest: Interest) => {
@@ -146,7 +154,7 @@ export function ProfileEditForm({ profile, onSave }: ProfileEditFormProps) {
     )
   }
 
-  const getEnumValues = (enumObj: any) => {
+  const getEnumValues = (enumObj: typeof Gender | typeof Religion | typeof Profession | typeof Education | typeof Interest | typeof Politics | typeof PurposeDomain | typeof PurposeArchetype | typeof PurposeModality | typeof Personality | typeof MaritalStatus | typeof LookingFor | typeof Language | typeof Smoke | typeof Alcohol | typeof Drugs) => {
     return Object.values(enumObj) as string[]
   }
 
@@ -160,6 +168,49 @@ export function ProfileEditForm({ profile, onSave }: ProfileEditFormProps) {
           <CardTitle>Basic Information</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
+          {/* Avatar Upload */}
+          <div className="flex justify-center">
+            <div className="text-center space-y-4">
+              <div className="relative inline-block">
+                <Image
+                  src={formData.avatar || profile.avatar || "/placeholder.svg"}
+                  alt="Profile Avatar"
+                  className="w-24 h-24 rounded-full object-cover border-2 border-border"
+                  width={96}
+                  height={96}
+                />
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full p-0"
+                  onClick={() => {
+                    const input = document.createElement('input')
+                    input.type = 'file'
+                    input.accept = 'image/*'
+                    input.onchange = (e) => {
+                      const file = (e.target as HTMLInputElement).files?.[0]
+                      if (file) {
+                        const reader = new FileReader()
+                        reader.onload = (e) => {
+                          const result = e.target?.result as string
+                          if (result) {
+                            handleAvatarChange(result)
+                          }
+                        }
+                        reader.readAsDataURL(file)
+                      }
+                    }
+                    input.click()
+                  }}
+                >
+                  <Upload
+                   className="h-4 w-4" />
+                </Button>
+              </div>
+              <p className="text-sm text-muted-foreground">Click the button to change your photo</p>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="name">Full Name</Label>
@@ -249,7 +300,7 @@ export function ProfileEditForm({ profile, onSave }: ProfileEditFormProps) {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="income">Income (optional)</Label>
+              <Label htmlFor="income">Income (per month)</Label>
               <Input
                 id="income"
                 type="number"
@@ -600,7 +651,7 @@ export function ProfileEditForm({ profile, onSave }: ProfileEditFormProps) {
 
       {/* Form Actions */}
       <div className="flex items-center justify-end space-x-4">
-        <Button type="button" variant="outline" disabled={isSubmitting}>
+        <Button type="button" variant="outline" disabled={isSubmitting} onClick={onCancel}>
           Cancel
         </Button>
         <Button type="submit" disabled={isSubmitting}>

@@ -35,8 +35,8 @@ class ProfileService {
   
       const data = await response.json();
   
-      if (data.success !== false) {
-        return data;
+      if (data.success && data.profile) {
+        return data.profile;
       } else {
         throw new Error(data.message || 'Failed to fetch profile');
       }

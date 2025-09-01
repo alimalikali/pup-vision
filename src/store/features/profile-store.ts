@@ -6,7 +6,7 @@ import { Profile } from "@/types/types"
 interface ProfileActions {
   fetchProfile: () => Promise<void>
   updateProfile: (profileData: Partial<Profile>) => Promise<boolean>
-  uploadPhoto: (photoData: any) => Promise<string | null>
+  uploadPhoto: (photoData: string) => Promise<string | null>
   removePhoto: (photoIndex: number) => Promise<boolean>
   setMainPhoto: (photoIndex: number) => Promise<boolean>
   clearError: () => void
@@ -45,7 +45,7 @@ export const useProfileStore = create<ProfileState & ProfileActions>()((set, get
     }
   },
 
-  uploadPhoto: async (photoData: any) => {
+  uploadPhoto: async (photoData: string) => {
     try {
       const photoUrl = await profileService.uploadPhoto(photoData)
       return photoUrl

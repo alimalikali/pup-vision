@@ -3,9 +3,11 @@
 import { Navbar } from "@/components/common/layout/navbar"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { formatEnumLabel } from "@/lib/utils"
-import { useAuthStore } from "@/store"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Progress } from "@/components/ui/progress"
+import { formatEnumLabel, calculateProfileCompletion, getProfileMissingFields } from "@/lib/utils"
+import { useAuthStore, useProfileStore } from "@/store"
+import { AuthProfile } from "@/types/auth"
 import {
   ArrowRight,
   Calendar,
@@ -15,14 +17,18 @@ import {
   Heart,
   MapPin,
   Star,
-  Users
+  Target,
+  TrendingUp,
+  Users,
+  UserCheck
 } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 
 export default function DashboardPage() {
-  const { user } = useAuthStore()
+  const { user, isLoading } = useAuthStore()
+
     const router = useRouter()
 
   useEffect(() => {
@@ -32,6 +38,7 @@ export default function DashboardPage() {
       router.push('/onboarding')
       return
     }
+    
   }, [user, router])
 
   // Show loading while checking if user should be redirected
@@ -55,6 +62,22 @@ export default function DashboardPage() {
     profileViews: 0,
     interests: 0,
   }
+
+  if (!user?.profile || isLoading) {
+    return (
+        <div className="min-h-screen bg-background">
+          <Navbar />
+          <div className="flex items-center justify-center min-h-[50vh]">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+              <p className="text-muted-foreground">Loading profile...</p>
+            </div>
+          </div>
+        </div>
+    );
+  }
+
+
 
   return (
       <div className="min-h-screen bg-background">
@@ -114,54 +137,79 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
 
-            {/* <Card>
+            <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Profile Score</CardTitle>
                 <TrendingUp className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{user?.profile?.profileCompletion || 85}%</div>
+                <div className="text-2xl font-bold">{user?.profile ? calculateProfileCompletion(user.profile) : 0}%</div>
                 <p className="text-xs text-muted-foreground">Profile completion</p>
               </CardContent>
-            </Card> */}
+            </Card>
           </div>
 
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
             {/* Main Content */}
             <div className="lg:col-span-2 space-y-8">
               {/* Profile Completion */}
-              {/* {(user?.profile?.completion || 85) < 100 && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center">
-                      <Target className="mr-2 h-5 w-5 text-primary" />
-                      Complete Your Profile
-                    </CardTitle>
-                    <CardDescription>A complete profile gets 3x more matches</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">Profile Completion</span>
-                        <span className="text-sm text-muted-foreground">{user?.profile?.completion || 85}%</span>
-                      </div>
-                      <Progress value={user?.profile?.completion || 85} className="h-2" />
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-1">
-                          <p className="text-sm font-medium">Add more photos</p>
-                          <p className="text-xs text-muted-foreground">Upload 2 more photos</p>
+              {(() => {
+                const completion = user?.profile ? calculateProfileCompletion(user.profile) : 0
+                const missingFields = user?.profile ? getProfileMissingFields(user.profile) : []
+                return completion < 100 && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center">
+                        <Target className="mr-2 h-5 w-5 text-primary" />
+                        Complete Your Profile
+                      </CardTitle>
+                      <CardDescription>A complete profile gets 3x more matches. Required fields are worth 70%, optional fields 30%.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium">Profile Completion</span>
+                          <span className="text-sm text-muted-foreground">{completion}%</span>
                         </div>
-                        <Button variant="outline" size="sm" asChild>
-                          <Link href="/profile">
-                            <Camera className="mr-2 h-4 w-4" />
-                            Add Photos
-                          </Link>
-                        </Button>
+                        <Progress value={completion} className="h-2" />
+                        
+                        {missingFields.length > 0 && (
+                          <div className="space-y-2">
+                            <p className="text-xs text-muted-foreground">Missing fields:</p>
+                            <div className="flex flex-wrap gap-1">
+                              {missingFields.map((field, index) => (
+                                <span
+                                  key={index}
+                                  className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-muted text-muted-foreground"
+                                >
+                                  {field}
+                                </span>
+                              ))}
+                              {missingFields.length >= 5 && (
+                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-muted text-muted-foreground">
+                                  +{missingFields.length - 5} more
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                        
+                        <div className="flex items-center justify-between">
+                          <div className="space-y-1">
+                            <p className="text-xs text-muted-foreground">Complete your profile to get more matches</p>
+                          </div>
+                          <Button variant="outline" size="sm" asChild>
+                            <Link href="/profile">
+                              <UserCheck className="mr-2 h-4 w-4" />
+                              Complete Profile
+                            </Link>
+                          </Button>
+                        </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              )} */}
+                    </CardContent>
+                  </Card>
+                )
+              })()}
 
               {/* Recent Matches */}
               {/* <Card>
@@ -279,6 +327,12 @@ export default function DashboardPage() {
                     <div className="flex items-center">
                       <GraduationCap className="mr-2 h-4 w-4 text-muted-foreground" />
                       <span>{formatEnumLabel(user?.profile?.education || "")}</span>
+                    </div>
+                    <div className="flex items-center">
+                      <Target className="mr-2 h-4 w-4 text-muted-foreground" />
+                      <span>
+                        Profile: {user?.profile ? calculateProfileCompletion(user.profile) : 0}% complete
+                      </span>
                     </div>
                   </div>
                   <Button className="w-full mt-4 bg-transparent" variant="outline" asChild>

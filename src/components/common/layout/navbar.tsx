@@ -42,8 +42,8 @@ export function Navbar() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
-            <Link href="/dashboard" className="flex items-center space-x-2">
-                     <Heart className="h-8 w-8 text-primary mb-4 animate-pulse" />
+            <Link href="/dashboard" className="flex items-center justify-center space-x-2">
+                     <Heart className="h-8 w-8 text-primary animate-pulse" />
 
               <span className="text-xl font-bold text-primary">Pup</span>
             </Link>
