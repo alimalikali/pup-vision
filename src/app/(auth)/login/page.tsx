@@ -2,16 +2,17 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Heart, Mail, Lock, Eye, EyeOff, Loader2, AlertCircle } from "lucide-react"
+import { Heart, Mail, Lock, Eye, EyeOff, AlertCircle } from "lucide-react"
 import { useAuthStore } from "@/store"
-import { GoogleAuthButton } from "@/components/feature/auth/google-auth-button";
+import { GoogleAuthButton } from "@/components/feature/auth/google-auth-button"
+import { LoaderWait } from "@/components/common/layout/loader-wait"
 
 
 export default function LoginPage() {
@@ -19,7 +20,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState("")
-  const router = useRouter()
+
   const searchParams = useSearchParams()
 
   const { login, isLoading } = useAuthStore()
@@ -186,7 +187,7 @@ export default function LoginPage() {
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <LoaderWait variant="spinner" size="sm" color="white" centered={false} />
                     Signing in...
                   </>
                 ) : (

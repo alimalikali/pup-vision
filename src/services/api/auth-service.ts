@@ -1,7 +1,9 @@
-import { AuthUser, AuthResponse, LoginRequest, SignupRequest } from "@/types/auth"
+import { AuthResponse, AuthUser, SignupRequest } from "@/types/auth"
 
 class AuthService {
   private baseUrl = "/api/auth"
+  private isRefreshing = false
+  private refreshPromise: Promise<AuthResponse> | null = null
 
   /**
    * Core request handler for all auth endpoints
@@ -10,8 +12,8 @@ class AuthService {
     path: string,
     options: RequestInit
   ): Promise<AuthResponse> {
-    try {
-      const response = await fetch(`${this.baseUrl}${path}`, {
+    const doFetch = async (): Promise<Response> => {
+      return fetch(`${this.baseUrl}${path}`, {
         ...options,
         credentials: "include", // always include cookies
         headers: {
@@ -19,9 +21,34 @@ class AuthService {
           ...(options.headers || {}),
         },
       })
+    }
+      try {
 
-      const data = await response.json().catch(() => ({}))
-
+        let response = await doFetch()
+        let data = await response.json().catch(() => ({}))
+  
+        // If unauthorized → try refresh
+        if (response.status === 401 && path !== "/refresh") {
+          console.warn(`[AuthService] Access token expired, refreshing...`)
+          
+          // Avoid multiple simultaneous refresh calls
+          if (!this.isRefreshing) {
+            this.isRefreshing = true
+            this.refreshPromise = this.refreshToken().finally(() => {
+              this.isRefreshing = false
+              this.refreshPromise = null
+            })
+          }
+  
+          const refreshRes = await this.refreshPromise!
+          if (!refreshRes.success) {
+            return { success: false, message: "Session expired. Please log in again." }
+          }
+  
+          // Retry original request once
+          response = await doFetch()
+          data = await response.json().catch(() => ({}))
+        }
       if (response.ok) {
         return { success: true, ...data }
       }
@@ -71,13 +98,7 @@ class AuthService {
     })
   }
 
-  // Example extensibility: GitHub / LinkedIn
-  async oauth(provider: "github" | "linkedin", token: string): Promise<AuthResponse> {
-    return this.request<AuthUser>(`/${provider}`, {
-      method: "POST",
-      body: JSON.stringify({ access_token: token }),
-    })
-  }
+
 }
 
 export const authService = new AuthService()

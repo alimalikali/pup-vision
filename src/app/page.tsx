@@ -3,11 +3,13 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Heart, Users, Target, Shield, Star, ArrowRight } from "lucide-react"
+import { Navbar } from "@/components/common/layout/navbar"
 
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
+      <Navbar />
       <section className="relative overflow-hidden bg-gradient-to-br from-background via-background to-accent/5">
         <div className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
           <div className="text-center">

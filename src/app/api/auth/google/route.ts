@@ -207,11 +207,17 @@ export async function POST(request: NextRequest) {
         existingUser = newUser
       }
 
-      // Generate JWT token
-      const token = jwtUtils.generateToken({
-        userId: existingUser.id,
-        email: existingUser.email
-      })
+
+                // Generate access and refresh tokens
+    const accessToken = jwtUtils.generateAccessToken({
+      userId: existingUser.id,
+      email: existingUser.email
+    })
+
+    const refreshToken = jwtUtils.generateRefreshToken({
+      userId: existingUser.id,
+      email: existingUser.email
+    })
 
       // Remove password hash from user object
       const { passwordHash, ...userWithoutPassword } = existingUser
@@ -224,8 +230,17 @@ export async function POST(request: NextRequest) {
         isNewUser: isNewUser,
       })
 
-      // Set HTTP-only cookie with JWT token
-      response.cookies.set("access-token", token, {
+
+
+      // Set HTTP-only cookie with access token
+      response.cookies.set("access-token", accessToken, {
+        httpOnly: false, // Allow client-side access
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 15 * 60, // 15 minutes
+      })
+
+      response.cookies.set("refresh-token", refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "lax",

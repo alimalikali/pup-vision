@@ -100,7 +100,8 @@ export const useAuthStore = create<Store>()(
       },
 
       initialize: async () => {
-        if (get().status !== "idle") return
+        const currentStatus = get().status
+        if (currentStatus !== "idle" && currentStatus !== "loading") return
         await get().checkAuth()
       },
     }),
