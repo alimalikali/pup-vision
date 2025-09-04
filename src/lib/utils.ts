@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { AuthProfile } from "@/types/auth"
+import { profileService } from "@/services/api/profile-service"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -14,7 +15,8 @@ export function formatEnumLabel(value: string | undefined | null): string {
 export function calculateProfileCompletion(profile: AuthProfile): number {
   if (!profile) return 0
 
-  const requiredFields = [
+  // All fields are treated equally - no distinction between required and optional
+  const allFields = [
     'name',
     'gender',
     'religion',
@@ -31,15 +33,10 @@ export function calculateProfileCompletion(profile: AuthProfile): number {
     'smoke',
     'alcohol',
     'drugs',
-    'politics'
-  ]
-
-  const optionalFields = [
+    'politics',
     'avatar',
     'dob',
     'income',
-    'lat',
-    'lang',
     'city',
     'state',
     'country',
@@ -48,42 +45,24 @@ export function calculateProfileCompletion(profile: AuthProfile): number {
     'weight'
   ]
 
-  let completedRequired = 0
-  let completedOptional = 0
+  let completedFields = 0
 
-  // Check required fields
-  requiredFields.forEach(field => {
+  // Check all fields equally
+  allFields.forEach(field => {
     const value = profile[field as keyof AuthProfile]
     if (value !== null && value !== undefined && value !== '') {
       if (Array.isArray(value) && value.length > 0) {
-        completedRequired++
+        completedFields++
       } else if (!Array.isArray(value)) {
-        completedRequired++
+        completedFields++
       }
     }
   })
 
-  // Check optional fields
-  optionalFields.forEach(field => {
-    const value = profile[field as keyof AuthProfile]
-    if (value !== null && value !== undefined && value !== '') {
-      if (Array.isArray(value) && value.length > 0) {
-        completedOptional++
-      } else if (!Array.isArray(value)) {
-        completedOptional++
-      }
-    }
-  })
-
-  // Calculate completion percentage
-  // Required fields are worth 70% of total completion
-  // Optional fields are worth 30% of total completion
-  const requiredScore = (completedRequired / requiredFields.length) * 70
-  const optionalScore = (completedOptional / optionalFields.length) * 30
+  // Calculate completion percentage - all fields weighted equally
+  const completionPercentage = Math.round((completedFields / allFields.length) * 100)
   
-  const totalScore = Math.round(requiredScore + optionalScore)
-  
-  return Math.min(totalScore, 100)
+  return Math.min(completionPercentage, 100)
 }
 
 /**
@@ -94,7 +73,8 @@ export function calculateProfileCompletion(profile: AuthProfile): number {
 export function getProfileMissingFields(profile: AuthProfile): string[] {
   if (!profile) return []
 
-  const requiredFields = [
+  // All fields are treated equally - no distinction between required and optional
+  const allFields = [
     { key: 'name', label: 'Name' },
     { key: 'gender', label: 'Gender' },
     { key: 'religion', label: 'Religion' },
@@ -103,7 +83,6 @@ export function getProfileMissingFields(profile: AuthProfile): string[] {
     { key: 'purposeDomain', label: 'Purpose Domain' },
     { key: 'purposeArchetype', label: 'Purpose Archetype' },
     { key: 'purposeModality', label: 'Purpose Modality' },
-    { key: 'interests', label: 'Interests' },
     { key: 'personality', label: 'Personality' },
     { key: 'maritalStatus', label: 'Marital Status' },
     { key: 'lookingFor', label: 'Looking For' },
@@ -111,15 +90,11 @@ export function getProfileMissingFields(profile: AuthProfile): string[] {
     { key: 'smoke', label: 'Smoking Preference' },
     { key: 'alcohol', label: 'Alcohol Preference' },
     { key: 'drugs', label: 'Drugs Preference' },
-    { key: 'politics', label: 'Political Views' }
-  ]
-
-  const optionalFields = [
+    { key: 'politics', label: 'Political Views' },
+    { key: 'interests', label: 'Interests' },
     { key: 'avatar', label: 'Profile Photo' },
     { key: 'dob', label: 'Date of Birth' },
     { key: 'income', label: 'Income' },
-    { key: 'lat', label: 'Location' },
-    { key: 'lang', label: 'Location' },
     { key: 'city', label: 'City' },
     { key: 'state', label: 'State' },
     { key: 'country', label: 'Country' },
@@ -130,29 +105,54 @@ export function getProfileMissingFields(profile: AuthProfile): string[] {
 
   const missingFields: string[] = []
 
-  // Check required fields
-  requiredFields.forEach(field => {
+  // Check all fields equally
+  allFields.forEach(field => {
     const value = profile[field.key as keyof AuthProfile]
-    if (value === null || value === undefined || value === '') {
-      if (Array.isArray(value) && value.length === 0) {
-        missingFields.push(field.label)
-      } else if (!Array.isArray(value)) {
+    if (Array.isArray(value)) {
+      if (value.length === 0) {
         missingFields.push(field.label)
       }
-    }
-  })
-
-  // Check optional fields
-  optionalFields.forEach(field => {
-    const value = profile[field.key as keyof AuthProfile]
-    if (value === null || value === undefined || value === '') {
-      if (Array.isArray(value) && value.length === 0) {
-        missingFields.push(field.label)
-      } else if (!Array.isArray(value)) {
+    } else {
+      if (value === null || value === undefined || value === '') {
         missingFields.push(field.label)
       }
     }
   })
 
   return missingFields.slice(0, 5) // Show only first 5 missing fields
+}
+
+/**
+ * Fetch fresh profile data from API and calculate completion
+ * @returns Promise with completion percentage and missing fields
+ */
+export async function getProfileCompletionFromAPI(): Promise<{
+  completion: number
+  missingFields: string[]
+  profile: AuthProfile | null
+}> {
+  try {
+    const profile = await profileService.getProfile()
+    if (!profile) {
+      return { completion: 0, missingFields: [], profile: null }
+    }
+
+    const completion = calculateProfileCompletion(profile)
+    const missingFields = getProfileMissingFields(profile)
+
+    return { completion, missingFields, profile }
+  } catch (error) {
+    console.error('Failed to fetch profile completion from API:', error)
+    return { completion: 0, missingFields: [], profile: null }
+  }
+}
+
+/**
+ * Trigger a profile completion refresh event
+ * This can be called by other components after profile updates
+ */
+export function triggerProfileCompletionRefresh(): void {
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('profileUpdated'))
+  }
 }

@@ -2,13 +2,13 @@
 
 import { Navbar } from "@/components/common/layout/navbar"
 import { MatchCard } from "@/components/feature/matches/match-card"
-import { MatchFilters } from "@/components/feature/matches/match-filters"
+import { AdvancedMatchFilters } from "@/components/feature/matches/advanced-match-filters"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useAuthStore, useMatchesStore } from "@/store"
+import { useAuthStore, useMatchesStore, AdvancedFilters } from "@/store"
 import { Filter, Heart, SlidersHorizontal, Target, Users } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { LoaderWait } from "@/components/common/layout/loader-wait"
 
 export default function MatchesPage() {
@@ -22,12 +22,12 @@ export default function MatchesPage() {
     isLoadingMore,
     hasMore,
     error,
-    filters,
+    advancedFilters,
     fetchProfiles,
     loadMoreProfiles,
     admireUser,
     passUser,
-    updateFilters,
+    updateAdvancedFilters,
     clearError
   } = useMatchesStore()
 
@@ -52,26 +52,13 @@ export default function MatchesPage() {
     }
   }
 
-  const handleSuperLike = async (profileId: string) => {
-    // For now, treat super like as regular like
-    await handleLike(profileId)
-  }
 
-  const handleFiltersChange = (newFilters: Record<string, unknown>) => {
-    // Convert the filter format to match our API
-    const ageRange = newFilters.ageRange as { min?: number; max?: number } | undefined
-    const apiFilters = {
-      ageMin: ageRange?.min,
-      ageMax: ageRange?.max,
-      city: newFilters.location as string | undefined,
-      education: newFilters.education as string | undefined,
-      profession: newFilters.profession as string | undefined,
-      purposeDomain: newFilters.purpose as string | undefined,
-      interests: newFilters.interests as string[] | undefined
-    }
-    
-    updateFilters(apiFilters)
-  }
+  const handleAdvancedFiltersChange = useCallback((newFilters: AdvancedFilters) => {
+    updateAdvancedFilters(newFilters)
+    // Fetch profiles when Apply button is clicked
+    fetchProfiles(true)
+  }, [updateAdvancedFilters, fetchProfiles])
+
 
   const sortedProfiles = [...profiles].sort((a, b) => {
     switch (sortBy) {
@@ -197,28 +184,21 @@ export default function MatchesPage() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Filters Sidebar */}
           {showFilters && (
-            <div className="lg:col-span-1">
-              <MatchFilters 
-                filters={{
-                  ageRange: { min: filters.ageMin || 18, max: filters.ageMax || 100 },
-                  location: filters.city || "",
-                  education: filters.education || "",
-                  profession: filters.profession || "",
-                  purpose: filters.purposeDomain || "",
-                  interests: filters.interests || []
-                }} 
-                onFiltersChange={handleFiltersChange} 
-              />
+            <div className="lg:col-span-2">
+                              <AdvancedMatchFilters 
+                  filters={advancedFilters}
+                  onFiltersChange={handleAdvancedFiltersChange}
+                />
             </div>
           )}
 
           {/* Matches Grid */}
-          <div className={`${showFilters ? "lg:col-span-3" : "lg:col-span-4"}`}>
+          <div className={`${showFilters ? "lg:col-span-2" : "lg:col-span-4"}`}>
             {isLoading ? (
               <LoaderWait variant="target" size="lg" color="primary" text="Loading profiles..." />
             ) : sortedProfiles.length > 0 ? (
               <>
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                <div className={`grid grid-cols-1 md:grid-cols-2  gap-6 ${showFilters ? "lg:grid-cols-2" : "lg:grid-cols-3"}`}>
                   {sortedProfiles.map((profile) => (
                     <MatchCard
                       key={profile.id}
@@ -255,7 +235,6 @@ export default function MatchesPage() {
                       }}
                       onLike={() => handleLike(profile.userId)}
                       onPass={() => handlePass(profile.userId)}
-                      onSuperLike={() => handleSuperLike(profile.userId)}
                     />
                   ))}
                 </div>

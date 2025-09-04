@@ -1,24 +1,24 @@
 "use client"
 
-import { useState } from "react"
-import Link from "next/link"
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
-import { Heart, X, Star, MapPin, Briefcase, GraduationCap, Target, Eye, Sparkles } from "lucide-react"
-import type { Match } from "@/src/types/types"
+import { Interest } from "@/types/enums"
+import type { Match } from "@/types/matches"
+import { Briefcase, Eye, GraduationCap, Heart, MapPin, Sparkles, Target, X } from "lucide-react"
+import Image from "next/image"
+import Link from "next/link"
+import { useState } from "react"
 
 interface MatchCardProps {
   match: Match
   onLike: (matchId: string) => void
   onPass: (matchId: string) => void
-  onSuperLike: (matchId: string) => void
 }
 
-export function MatchCard({ match, onLike, onPass, onSuperLike }: MatchCardProps) {
+export function MatchCard({ match, onLike, onPass }: MatchCardProps) {
   const [isAnimating, setIsAnimating] = useState(false)
-  const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0)
 
   const { profile } = match
 
@@ -30,7 +30,7 @@ export function MatchCard({ match, onLike, onPass, onSuperLike }: MatchCardProps
     }, 300)
   }
 
-  const photos = profile.avatar ? [profile.avatar] : ["/placeholder.svg"]
+  const photo = profile.avatar || "/placeholder.svg"
 
   return (
     <Card
@@ -39,14 +39,15 @@ export function MatchCard({ match, onLike, onPass, onSuperLike }: MatchCardProps
       <div className="relative">
         {/* Photo */}
         <div className="relative aspect-[4/5] overflow-hidden">
-          <img
-            src={photos[currentPhotoIndex] || "/placeholder.svg"}
+          <Image
+            fill
+            src={photo|| "/placeholder.svg"}
             alt={profile.name}
             className="w-full h-full object-cover"
           />
 
           {/* Photo indicators */}
-          {photos.length > 1 && (
+          {/* {photos.length > 1 && (
             <div className="absolute top-4 left-4 right-4 flex space-x-1">
               {photos.map((_, index) => (
                 <div
@@ -55,7 +56,7 @@ export function MatchCard({ match, onLike, onPass, onSuperLike }: MatchCardProps
                 />
               ))}
             </div>
-          )}
+          )} */}
 
           {/* Compatibility Score */}
           <div className="absolute top-4 right-4">
@@ -129,7 +130,7 @@ export function MatchCard({ match, onLike, onPass, onSuperLike }: MatchCardProps
           {/* Interests */}
           <div className="mb-4">
             <div className="flex flex-wrap gap-1">
-              {profile.interests.slice(0, 3).map((interest) => (
+              {profile.interests.slice(0, 3).map((interest: Interest) => (
                 <Badge key={interest} variant="secondary" className="text-xs">
                   {interest}
                 </Badge>
@@ -154,18 +155,11 @@ export function MatchCard({ match, onLike, onPass, onSuperLike }: MatchCardProps
               Pass
             </Button>
 
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => handleAction(() => onSuperLike(match.id))}
-              className="px-3 mr-2"
-            >
-              <Star className="h-4 w-4 text-yellow-500" />
-            </Button>
+
 
             <Button size="sm" onClick={() => handleAction(() => onLike(match.id))} className="flex-1">
               <Heart className="mr-1 h-4 w-4" />
-              Like
+              Admire
             </Button>
           </div>
 

@@ -6,8 +6,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
-import { calculateProfileCompletion, formatEnumLabel, getProfileMissingFields } from "@/lib/utils"
+import { formatEnumLabel, getProfileCompletionFromAPI } from "@/lib/utils"
 import { useAuthStore, useMatchesStore } from "@/store"
+import { AuthProfile } from "@/types/auth"
 import {
   ArrowRight,
   Badge,
@@ -22,16 +23,55 @@ import {
   Target,
   TrendingUp,
   UserCheck,
+  UserRoundPen,
   Users
 } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useEffect } from "react"
+import { useEffect, useState, useCallback } from "react"
 
 export default function DashboardPage() {
   const { user, status } = useAuthStore()
   const { admireData, fetchAdmireData } = useMatchesStore()
   const router = useRouter()
+  
+  // State for API-based profile completion
+  const [profileCompletion, setProfileCompletion] = useState<{
+    completion: number
+    missingFields: string[]
+    profile: AuthProfile | null
+  }>({ completion: 0, missingFields: [], profile: null })
+  const [isLoadingCompletion, setIsLoadingCompletion] = useState(false)
+
+  // Function to fetch fresh profile completion data
+  const fetchProfileCompletion = useCallback(async () => {
+    if (status !== "authenticated" || !user) return
+    
+    setIsLoadingCompletion(true)
+    try {
+      const completionData = await getProfileCompletionFromAPI()
+      setProfileCompletion(completionData)
+    } catch (error) {
+      console.error('Failed to fetch profile completion:', error)
+    } finally {
+      setIsLoadingCompletion(false)
+    }
+  }, [status, user])
+
+  // Expose refresh function for external use (e.g., after profile updates)
+  useEffect(() => {
+    // Listen for profile updates from other components
+    const handleProfileUpdate = () => {
+      fetchProfileCompletion()
+    }
+    
+    // Add event listener for profile updates
+    window.addEventListener('profileUpdated', handleProfileUpdate)
+    
+    return () => {
+      window.removeEventListener('profileUpdated', handleProfileUpdate)
+    }
+  }, [fetchProfileCompletion])
 
   useEffect(() => {
     // Check if user is new and redirect to onboarding
@@ -41,11 +81,12 @@ export default function DashboardPage() {
       return
     }
     
-    // Fetch admire data when user is authenticated
+    // Fetch admire data and profile completion when user is authenticated
     if (status === "authenticated" && user) {
       fetchAdmireData()
+      fetchProfileCompletion()
     }
-  }, [user, router, status, fetchAdmireData])
+  }, [user, router, status, fetchAdmireData, fetchProfileCompletion])
 
   // Show loading while checking if user should be redirected
   if (user?.isNew) {
@@ -146,7 +187,9 @@ export default function DashboardPage() {
                 <TrendingUp className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{user?.profile ? calculateProfileCompletion(user.profile) : 0}%</div>
+                <div className="text-2xl font-bold">
+                  {isLoadingCompletion ? "..." : profileCompletion.completion}%
+                </div>
                 <p className="text-xs text-muted-foreground">Profile completion</p>
               </CardContent>
             </Card>
@@ -157,8 +200,8 @@ export default function DashboardPage() {
             <div className="lg:col-span-2 space-y-8">
               {/* Profile Completion */}
               {(() => {
-                const completion = user?.profile ? calculateProfileCompletion(user.profile) : 0
-                const missingFields = user?.profile ? getProfileMissingFields(user.profile) : []
+                const completion = profileCompletion.completion
+                const missingFields = profileCompletion.missingFields
                 return completion < 100 && (
                   <Card>
                     <CardHeader>
@@ -166,7 +209,7 @@ export default function DashboardPage() {
                         <Target className="mr-2 h-5 w-5 text-primary" />
                         Complete Your Profile
                       </CardTitle>
-                      <CardDescription>A complete profile gets 3x more matches. Required fields are worth 70%, optional fields 30%.</CardDescription>
+                      <CardDescription>A complete profile gets 3x more matches.</CardDescription>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
@@ -203,7 +246,7 @@ export default function DashboardPage() {
                           </div>
                           <Button variant="outline" size="sm" asChild>
                             <Link href="/profile">
-                              <UserCheck className="mr-2 h-4 w-4" />
+                              <UserRoundPen className="mr-2 h-4 w-4" />
                               Complete Profile
                             </Link>
                           </Button>
@@ -385,7 +428,7 @@ export default function DashboardPage() {
                     <div className="flex items-center">
                       <Target className="mr-2 h-4 w-4 text-muted-foreground" />
                       <span>
-                        Profile: {user?.profile ? calculateProfileCompletion(user.profile) : 0}% complete
+                        Profile: {isLoadingCompletion ? "..." : profileCompletion.completion}% complete
                       </span>
                     </div>
                   </div>

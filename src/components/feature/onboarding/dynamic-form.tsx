@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { ArrowRight } from "lucide-react"
 import React, { useState } from "react"
 import { Step1BasicInfo, Step2Location, Step3Purpose, Step4Lifestyle } from "./step-forms"
+import { Profile } from "@/types/types"
 
 // Schema-based field definitions for validation
 interface BaseField {
@@ -73,9 +74,9 @@ const SCHEMA_FIELDS: Record<string, SchemaField> = {
     label: "Date of Birth",
     required: true,
     validation: {
-      minAge: 18,
+      minAge: 9,
       maxAge: 100,
-      message: "You must be at least 18 years old"
+      message: "You must be at least 9 years old"
     }
   },
   gender: {
@@ -90,13 +91,12 @@ const SCHEMA_FIELDS: Record<string, SchemaField> = {
   },
   income: {
     type: "number",
-    label: "Annual Income",
-    placeholder: "Enter your annual income",
+    label: "Income (per month)",
+    placeholder: "Enter your income per month",
     required: false,
     validation: {
       min: 0,
-      max: 10000000,
-      message: "Income must be between 0 and 10,000,000"
+      message: "Income must be greater than 0"
     }
   },
   religion: {
@@ -388,8 +388,8 @@ interface DynamicFormProps {
   fields: string[]
   title: string
   description: string
-  onNext: (data: any) => void
-  initialData?: any
+  onNext: (data: Partial<Profile>) => void
+  initialData?: Partial<Profile>
 }
 
 export function DynamicForm({ fields, title, description, onNext, initialData = {} }: DynamicFormProps) {
@@ -397,7 +397,7 @@ export function DynamicForm({ fields, title, description, onNext, initialData = 
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const validateField = (fieldName: string, value: any): string | null => {
+  const validateField = (fieldName: string, value: string | number | string[] | undefined): string | null => {
     const field = SCHEMA_FIELDS[fieldName as keyof typeof SCHEMA_FIELDS]
     if (!field) return null
 
@@ -410,28 +410,28 @@ export function DynamicForm({ fields, title, description, onNext, initialData = 
 
     const { validation } = field
 
-    // Type guard for validation object
-    if ('minLength' in validation && validation.minLength && value && value.length < validation.minLength) {
+    // Type guard for validation object - only validate string values for length
+    if ('minLength' in validation && validation.minLength && typeof value === 'string' && value.length < validation.minLength) {
       return validation.message || `${field.label} must be at least ${validation.minLength} characters`
     }
 
-    if ('maxLength' in validation && validation.maxLength && value && value.length > validation.maxLength) {
+    if ('maxLength' in validation && validation.maxLength && typeof value === 'string' && value.length > validation.maxLength) {
       return validation.message || `${field.label} must be no more than ${validation.maxLength} characters`
     }
 
-    if ('min' in validation && validation.min && value && Number(value) < validation.min) {
+    if ('min' in validation && validation.min && typeof value === 'number' && value < validation.min) {
       return validation.message || `${field.label} must be at least ${validation.min}`
     }
 
-    if ('max' in validation && validation.max && value && Number(value) > validation.max) {
+    if ('max' in validation && validation.max && typeof value === 'number' && value > validation.max) {
       return validation.message || `${field.label} must be no more than ${validation.max}`
     }
 
-    if ('pattern' in validation && validation.pattern && value && !validation.pattern.test(value)) {
+    if ('pattern' in validation && validation.pattern && typeof value === 'string' && !validation.pattern.test(value)) {
       return validation.message || `${field.label} format is invalid`
     }
 
-    if ('minAge' in validation && validation.minAge && value) {
+    if ('minAge' in validation && validation.minAge && typeof value === 'string') {
       const birthDate = new Date(value)
       const today = new Date()
       let age = today.getFullYear() - birthDate.getFullYear()
@@ -447,7 +447,7 @@ export function DynamicForm({ fields, title, description, onNext, initialData = 
     return null
   }
 
-  const handleInputChange = (fieldName: string, value: any) => {
+  const handleInputChange = (fieldName: string, value: string | number | string[]) => {
     setFormData({ ...formData, [fieldName]: value })
     
     // Clear error when user starts typing
@@ -460,7 +460,20 @@ export function DynamicForm({ fields, title, description, onNext, initialData = 
     const newErrors: Record<string, string> = {}
     
     fields.forEach(fieldName => {
-      const error = validateField(fieldName, formData[fieldName])
+      const fieldValue = formData[fieldName as keyof Profile]
+      // Convert the value to the expected type for validation
+      let validationValue: string | number | string[] | undefined
+      
+      if (fieldValue === null || fieldValue === undefined) {
+        validationValue = undefined
+      } else if (typeof fieldValue === 'string' || typeof fieldValue === 'number' || Array.isArray(fieldValue)) {
+        validationValue = fieldValue
+      } else {
+        // For other types like Date, convert to string
+        validationValue = String(fieldValue)
+      }
+      
+      const error = validateField(fieldName, validationValue)
       if (error) {
         newErrors[fieldName] = error
       }
@@ -517,7 +530,7 @@ export function DynamicForm({ fields, title, description, onNext, initialData = 
     const field = SCHEMA_FIELDS[fieldName as keyof typeof SCHEMA_FIELDS]
     if (!field) return null
 
-    const value = formData[fieldName]
+    const value = formData[fieldName as keyof Profile]
     const error = errors[fieldName]
 
           // Simple field rendering for backward compatibility
@@ -534,7 +547,7 @@ export function DynamicForm({ fields, title, description, onNext, initialData = 
               id={fieldName}
                     type={field.type}
               placeholder={field.placeholder || ""}
-              value={value || ""}
+              value={value as string || ""}
               onChange={(e) => handleInputChange(fieldName, e.target.value)}
                     className={`w-full px-3 py-2 border rounded-md ${error ? "border-red-500" : "border-gray-300"}`}
                   />

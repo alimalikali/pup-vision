@@ -5,13 +5,15 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Profile } from "@/types/types"
+import { Interest, Politics } from "@/types/enums"
 import { AlertCircle } from "lucide-react"
 import React from "react"
 
 interface Step4LifestyleProps {
-  formData: any
+  formData: Partial<Profile>
   errors: Record<string, string>
-  onInputChange: (fieldName: string, value: any) => void
+  onInputChange: (fieldName: string, value: string | number | string[]) => void
 }
 
 export function Step4Lifestyle({ formData, errors, onInputChange }: Step4LifestyleProps) {
@@ -34,13 +36,13 @@ export function Step4Lifestyle({ formData, errors, onInputChange }: Step4Lifesty
             <div key={option.value} className="flex items-center space-x-2">
               <Checkbox
                 id={`interests-${option.value}`}
-                checked={Array.isArray(formData.interests) && formData.interests.includes(option.value)}
+                checked={Array.isArray(formData.interests) && formData.interests.includes(option.value as Interest)}
                 onCheckedChange={(checked) => {
                   const currentValues = Array.isArray(formData.interests) ? formData.interests : []
                   if (checked) {
-                    onInputChange("interests", [...currentValues, option.value])
+                    onInputChange("interests", [...currentValues, option.value as Interest])
                   } else {
-                    onInputChange("interests", currentValues.filter((v:any) => v !== option.value))
+                    onInputChange("interests", currentValues.filter((v: Interest) => v !== option.value))
                   }
                 }}
               />
@@ -247,13 +249,13 @@ export function Step4Lifestyle({ formData, errors, onInputChange }: Step4Lifesty
             <div key={option.value} className="flex items-center space-x-2">
               <Checkbox
                 id={`politics-${option.value}`}
-                checked={Array.isArray(formData.politics) && formData.politics.includes(option.value)}
+                checked={Array.isArray(formData.politics) && formData.politics.includes(option.value as Politics)}
                 onCheckedChange={(checked) => {
                   const currentValues = Array.isArray(formData.politics) ? formData.politics : []
                   if (checked) {
-                    onInputChange("politics", [...currentValues, option.value])
+                    onInputChange("politics", [...currentValues, option.value as Politics])
                   } else {
-                    onInputChange("politics", currentValues.filter((v: any) => v !== option.value))
+                    onInputChange("politics", currentValues.filter((v: Politics) => v !== option.value))
                   }
                 }}
               />

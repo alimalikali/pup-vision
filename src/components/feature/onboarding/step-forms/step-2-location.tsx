@@ -3,13 +3,14 @@
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Profile } from "@/types/types"
 import { AlertCircle } from "lucide-react"
 import React from "react"
 
 interface Step2LocationProps {
-  formData: any
+  formData: Partial<Profile>
   errors: Record<string, string>
-  onInputChange: (fieldName: string, value: any) => void
+  onInputChange: (fieldName: string, value: string | number | string[]) => void
 }
 
 export function Step2Location({ formData, errors, onInputChange }: Step2LocationProps) {
@@ -79,7 +80,7 @@ export function Step2Location({ formData, errors, onInputChange }: Step2Location
           <SelectTrigger className={errors.language ? "border-red-500" : ""}>
             <SelectValue placeholder="Select primary language" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="max-h-[200px] overflow-y-auto">
             <SelectItem value="ENGLISH">English</SelectItem>
             <SelectItem value="URDU">Urdu</SelectItem>
             <SelectItem value="ARABIC">Arabic</SelectItem>

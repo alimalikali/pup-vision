@@ -45,20 +45,26 @@ export async function GET(request: NextRequest) {
     const profileData = {
       ...profile,
       age: age,
-      // Add computed fields for frontend compatibility
-      bio: profile.purposeNarrative || "No bio available",
-      purpose: {
-        domain: profile.purposeDomain,
-        archetype: profile.purposeArchetype,
-        modality: profile.purposeModality,
-        narrative: profile.purposeNarrative
-      },
-      photos: profile.avatar,
+      domain: profile.purposeDomain,
+      archetype: profile.purposeArchetype,
+      modality: profile.purposeModality,
+      narrative: profile.purposeNarrative,
+      photo: profile.avatar,
+      interests: profile.interests,
+      personality: profile.personality,
+      maritalStatus: profile.maritalStatus,
+      lookingFor: profile.lookingFor,
+      language: profile.language,
+      smoke: profile.smoke,
+      alcohol: profile.alcohol,
+      drugs: profile.drugs,
+      politics: profile.politics,
       createdAt: profile.createdAt.toISOString(),
       updatedAt: profile.updatedAt.toISOString()
     }
 
     await prisma.$disconnect()
+    // console.log("[v0] Profile data:",  profileData)
     return NextResponse.json({
       success: true,
       profile: profileData

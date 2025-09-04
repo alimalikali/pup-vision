@@ -3,6 +3,41 @@ import { persist } from "zustand/middleware"
 import { matchesService } from "@/services/api/matches-service"
 import { MatchProfile, MatchesFilters, AdmireData } from "@/types/matches"
 
+export interface AdvancedFilters {
+  // Basic Info
+  gender?: string[]
+  ageRange?: { min: number; max: number }
+  incomeRange?: { min: number; max: number }
+  religion?: string[]
+  education?: string[]
+  profession?: string[]
+  maritalStatus?: string[]
+  lookingFor?: string[]
+  
+  // Purpose
+  purposeDomain?: string[]
+  purposeArchetype?: string[]
+  purposeModality?: string[]
+  
+  // Location
+  country?: string[]
+  state?: string[]
+  city?: string[]
+  
+  // Physical
+  heightRange?: { min: number; max: number }
+  weightRange?: { min: number; max: number }
+  
+  // Lifestyle
+  smoke?: string[]
+  alcohol?: string[]
+  drugs?: string[]
+  language?: string[]
+  politics?: string[]
+  personality?: string[]
+  interests?: string[]
+}
+
 interface MatchesState {
   // Matches data
   profiles: MatchProfile[]
@@ -17,6 +52,7 @@ interface MatchesState {
   
   // Filters
   filters: MatchesFilters
+  advancedFilters: AdvancedFilters
   
   // Loading states
   isLoading: boolean
@@ -42,7 +78,9 @@ interface MatchesActions {
   
   // Filter actions
   updateFilters: (filters: Partial<MatchesFilters>) => void
+  updateAdvancedFilters: (filters: Partial<AdvancedFilters>) => void
   clearFilters: () => void
+  clearAdvancedFilters: () => void
   
   // Utility actions
   clearError: () => void
@@ -58,6 +96,7 @@ const initialState: MatchesState = {
   cursor: null,
   hasMore: false,
   filters: {},
+  advancedFilters: {},
   isLoading: false,
   isLoadingMore: false,
   isLoadingProfile: false,
@@ -243,9 +282,56 @@ export const useMatchesStore = create<Store>()(
         get().fetchProfiles(true)
       },
 
+      updateAdvancedFilters: (newFilters: Partial<AdvancedFilters>) => {
+        const currentFilters = get().advancedFilters
+        const updatedFilters = { ...currentFilters, ...newFilters }
+        
+        set({ advancedFilters: updatedFilters })
+        
+        // Convert advanced filters to basic filters for API
+        const basicFilters: Partial<MatchesFilters> = {}
+        
+        if (updatedFilters.ageRange) {
+          basicFilters.ageMin = updatedFilters.ageRange.min
+          basicFilters.ageMax = updatedFilters.ageRange.max
+        }
+        
+        if (updatedFilters.gender && updatedFilters.gender.length > 0) {
+          basicFilters.gender = updatedFilters.gender[0] // API might only support single gender
+        }
+        
+        if (updatedFilters.city && updatedFilters.city.length > 0) {
+          basicFilters.city = updatedFilters.city[0]
+        }
+        
+        if (updatedFilters.education && updatedFilters.education.length > 0) {
+          basicFilters.education = updatedFilters.education[0]
+        }
+        
+        if (updatedFilters.profession && updatedFilters.profession.length > 0) {
+          basicFilters.profession = updatedFilters.profession[0]
+        }
+        
+        if (updatedFilters.purposeDomain && updatedFilters.purposeDomain.length > 0) {
+          basicFilters.purposeDomain = updatedFilters.purposeDomain[0]
+        }
+        
+        if (updatedFilters.interests && updatedFilters.interests.length > 0) {
+          basicFilters.interests = updatedFilters.interests
+        }
+        
+        // Update basic filters but don't auto-fetch - let the component handle it
+        set({ filters: { ...get().filters, ...basicFilters } })
+      },
+
       clearFilters: () => {
         set({ filters: {} })
         get().fetchProfiles(true)
+      },
+
+      clearAdvancedFilters: () => {
+        set({ advancedFilters: {}, filters: {} })
+        // Don't auto-fetch here either - let the component handle it
       },
 
       // --- Utility Actions ---
@@ -262,6 +348,7 @@ export const useMatchesStore = create<Store>()(
       name: "matches-storage",
       partialize: (state) => ({
         filters: state.filters,
+        advancedFilters: state.advancedFilters,
         admireData: state.admireData,
       }),
     }
