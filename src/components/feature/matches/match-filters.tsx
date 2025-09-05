@@ -18,7 +18,14 @@ interface MatchFiltersProps {
     purpose: string
     interests: string[]
   }
-  onFiltersChange: (filters: any) => void
+  onFiltersChange: (filters: {
+    ageRange: [number, number]
+    location: string
+    education: string
+    profession: string
+    purpose: string
+    interests: string[]
+  }) => void
 }
 
 export function MatchFilters({ filters, onFiltersChange }: MatchFiltersProps) {
@@ -147,8 +154,8 @@ export function MatchFilters({ filters, onFiltersChange }: MatchFiltersProps) {
             <SelectContent>
               <SelectItem value="any-education">Any education</SelectItem>
               <SelectItem value="high-school">High School</SelectItem>
-              <SelectItem value="bachelors">Bachelor's Degree</SelectItem>
-              <SelectItem value="masters">Master's Degree</SelectItem>
+              <SelectItem value="bachelors">Bachelor&apos;s Degree</SelectItem>
+              <SelectItem value="masters">Master&apos;s Degree</SelectItem>
               <SelectItem value="phd">PhD</SelectItem>
             </SelectContent>
           </Select>

@@ -22,7 +22,6 @@ import {
   Star,
   Target,
   TrendingUp,
-  UserCheck,
   UserRoundPen,
   Users
 } from "lucide-react"

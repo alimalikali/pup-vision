@@ -1,11 +1,12 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { PrismaClient } from '@prisma/client'
 import { jwtUtils } from '@/lib/jwt'
+import { Profile } from '@/types/types'
 
 const prisma = new PrismaClient()
 
 // Helper function to calculate compatibility score (same as in matches API)
-function calculateCompatibilityScore(userProfile: any, targetProfile: any): number {
+function calculateCompatibilityScore(userProfile: Profile, targetProfile: Profile): number {
   let score = 0
   let factors = 0
 

@@ -1,12 +1,12 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { PrismaClient } from '@prisma/client'
 import { jwtUtils } from '@/lib/jwt'
-import { AuthUser } from '@/types/auth'
+import { Profile } from '@/types/types'
 
 const prisma = new PrismaClient()
 
 // Helper function to calculate compatibility score
-function calculateCompatibilityScore(userProfile: any, targetProfile: any): number {
+function calculateCompatibilityScore(userProfile: Profile, targetProfile: Profile): number {
   let score = 0
   let factors = 0
 
@@ -121,7 +121,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Build where clause for filtering
-    const whereClause: any = {
+    const whereClause: Record<string, unknown> = {
       userId: { not: decoded.userId }, // Exclude current user
       isActive: true,
       // Age filter

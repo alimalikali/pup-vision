@@ -5,12 +5,12 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
-import { ArrowRight, Upload, X, Camera } from "lucide-react"
+import { ArrowRight, X, Camera } from "lucide-react"
 import Image from "next/image"
 
 interface PhotoUploadProps {
-  onNext: (data: any) => void
-  initialData?: any
+  onNext: (data: { photos: string[] }) => void
+  initialData?: { photos?: string[] }
 }
 
 export function PhotoUpload({ onNext, initialData = {} }: PhotoUploadProps) {
@@ -26,7 +26,7 @@ export function PhotoUpload({ onNext, initialData = {} }: PhotoUploadProps) {
     try {
       // In a real app, you would upload to a storage service
       // For now, we'll create mock URLs
-      const newPhotos = Array.from(files).map((file, index) => {
+      const newPhotos = Array.from(files).map(() => {
         // Create a mock URL for demonstration
         return `/placeholder-${Math.random() > 0.5 ? "user" : "professional"}.jpg`
       })

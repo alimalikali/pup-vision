@@ -1,7 +1,7 @@
 // app/not-found.tsx
 import Link from "next/link";
 import { Heart } from "lucide-react";
-import { Navbar } from "@/components/common/layout/navbar";
+;
 
 export default function NotFound() {
   return (
