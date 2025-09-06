@@ -1,94 +1,100 @@
-"use client"
+'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Slider } from "@/components/ui/slider"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Filter, X } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Slider } from '@/components/ui/slider';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Filter, X } from 'lucide-react';
 
 interface MatchFiltersProps {
   filters: {
-    ageRange: { min: number; max: number }
-    location: string
-    education: string
-    profession: string
-    purpose: string
-    interests: string[]
-  }
+    ageRange: { min: number; max: number };
+    location: string;
+    education: string;
+    profession: string;
+    purpose: string;
+    interests: string[];
+  };
   onFiltersChange: (filters: {
-    ageRange: [number, number]
-    location: string
-    education: string
-    profession: string
-    purpose: string
-    interests: string[]
-  }) => void
+    ageRange: [number, number];
+    location: string;
+    education: string;
+    profession: string;
+    purpose: string;
+    interests: string[];
+  }) => void;
 }
 
 export function MatchFilters({ filters, onFiltersChange }: MatchFiltersProps) {
   const interests = [
-    "Technology",
-    "Travel",
-    "Cooking",
-    "Reading",
-    "Music",
-    "Art",
-    "Sports",
-    "Fitness",
-    "Photography",
-    "Dancing",
-    "Movies",
-    "Gaming",
-    "Hiking",
-    "Yoga",
-    "Meditation",
-    "Volunteering",
-  ]
+    'Technology',
+    'Travel',
+    'Cooking',
+    'Reading',
+    'Music',
+    'Art',
+    'Sports',
+    'Fitness',
+    'Photography',
+    'Dancing',
+    'Movies',
+    'Gaming',
+    'Hiking',
+    'Yoga',
+    'Meditation',
+    'Volunteering',
+  ];
 
   const purposeDomains = [
-    "Technology & Innovation",
-    "Healthcare & Wellness",
-    "Education & Learning",
-    "Arts & Creativity",
-    "Business & Entrepreneurship",
-    "Social Impact & Advocacy",
-    "Science & Research",
-    "Finance & Investment",
-    "Environment & Sustainability",
-    "Sports & Fitness",
-  ]
+    'Technology & Innovation',
+    'Healthcare & Wellness',
+    'Education & Learning',
+    'Arts & Creativity',
+    'Business & Entrepreneurship',
+    'Social Impact & Advocacy',
+    'Science & Research',
+    'Finance & Investment',
+    'Environment & Sustainability',
+    'Sports & Fitness',
+  ];
 
   const handleAgeRangeChange = (values: number[]) => {
     onFiltersChange({
       ...filters,
       ageRange: { min: values[0], max: values[1] },
-    })
-  }
+    });
+  };
 
   const handleInterestToggle = (interest: string) => {
     const updatedInterests = filters.interests.includes(interest)
-      ? filters.interests.filter((i) => i !== interest)
-      : [...filters.interests, interest]
+      ? filters.interests.filter(i => i !== interest)
+      : [...filters.interests, interest];
 
     onFiltersChange({
       ...filters,
       interests: updatedInterests,
-    })
-  }
+    });
+  };
 
   const clearFilters = () => {
     onFiltersChange({
       ageRange: { min: 25, max: 40 },
-      location: "",
-      education: "",
-      profession: "",
-      purpose: "",
+      location: '',
+      education: '',
+      profession: '',
+      purpose: '',
       interests: [],
-    })
-  }
+    });
+  };
 
   return (
     <Card>
@@ -126,7 +132,12 @@ export function MatchFilters({ filters, onFiltersChange }: MatchFiltersProps) {
         {/* Location */}
         <div className="space-y-2">
           <Label>Location</Label>
-          <Select value={filters.location} onValueChange={(value) => onFiltersChange({ ...filters, location: value })}>
+          <Select
+            value={filters.location}
+            onValueChange={value =>
+              onFiltersChange({ ...filters, location: value })
+            }
+          >
             <SelectTrigger>
               <SelectValue placeholder="Any location" />
             </SelectTrigger>
@@ -146,7 +157,9 @@ export function MatchFilters({ filters, onFiltersChange }: MatchFiltersProps) {
           <Label>Education</Label>
           <Select
             value={filters.education}
-            onValueChange={(value) => onFiltersChange({ ...filters, education: value })}
+            onValueChange={value =>
+              onFiltersChange({ ...filters, education: value })
+            }
           >
             <SelectTrigger>
               <SelectValue placeholder="Any education" />
@@ -164,13 +177,18 @@ export function MatchFilters({ filters, onFiltersChange }: MatchFiltersProps) {
         {/* Purpose Domain */}
         <div className="space-y-2">
           <Label>Purpose Domain</Label>
-          <Select value={filters.purpose} onValueChange={(value) => onFiltersChange({ ...filters, purpose: value })}>
+          <Select
+            value={filters.purpose}
+            onValueChange={value =>
+              onFiltersChange({ ...filters, purpose: value })
+            }
+          >
             <SelectTrigger>
               <SelectValue placeholder="Any purpose" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="any-purpose">Any purpose</SelectItem>
-              {purposeDomains.map((domain) => (
+              {purposeDomains.map(domain => (
                 <SelectItem key={domain} value={domain}>
                   {domain}
                 </SelectItem>
@@ -183,7 +201,7 @@ export function MatchFilters({ filters, onFiltersChange }: MatchFiltersProps) {
         <div className="space-y-3">
           <Label>Interests</Label>
           <div className="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto">
-            {interests.map((interest) => (
+            {interests.map(interest => (
               <div key={interest} className="flex items-center space-x-2">
                 <Checkbox
                   id={interest}
@@ -202,7 +220,7 @@ export function MatchFilters({ filters, onFiltersChange }: MatchFiltersProps) {
             <div className="space-y-2">
               <Label className="text-xs">Selected:</Label>
               <div className="flex flex-wrap gap-1">
-                {filters.interests.map((interest) => (
+                {filters.interests.map(interest => (
                   <Badge
                     key={interest}
                     variant="secondary"
@@ -219,5 +237,5 @@ export function MatchFilters({ filters, onFiltersChange }: MatchFiltersProps) {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

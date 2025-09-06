@@ -1,23 +1,27 @@
-"use client"
+'use client';
 
-import { useRef } from "react"
-import { motion, useInView, useScroll, useTransform } from "framer-motion"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
-import { ArrowRight } from "lucide-react"
+import { useRef } from 'react';
+import { motion, useInView, useScroll, useTransform } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
 
 export function GlassmorphicCTA() {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: false, amount: 0.3 })
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: false, amount: 0.3 });
 
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ["start end", "end start"],
-  })
+    offset: ['start end', 'end start'],
+  });
 
-  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0])
-  const y = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [100, 0, 0, 100])
-  const scale = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0.8, 1, 1, 0.8])
+  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
+  const y = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [100, 0, 0, 100]);
+  const scale = useTransform(
+    scrollYProgress,
+    [0, 0.2, 0.8, 1],
+    [0.8, 1, 1, 0.8]
+  );
 
   return (
     <section className="py-24 relative overflow-hidden" ref={ref}>
@@ -34,7 +38,7 @@ export function GlassmorphicCTA() {
         transition={{
           repeat: Number.POSITIVE_INFINITY,
           duration: 8,
-          ease: "easeInOut",
+          ease: 'easeInOut',
         }}
       />
 
@@ -47,25 +51,38 @@ export function GlassmorphicCTA() {
         transition={{
           repeat: Number.POSITIVE_INFINITY,
           duration: 10,
-          ease: "easeInOut",
+          ease: 'easeInOut',
         }}
       />
 
-      <motion.div className="container mx-auto px-4" style={{ opacity, y, scale }}>
+      <motion.div
+        className="container mx-auto px-4"
+        style={{ opacity, y, scale }}
+      >
         <motion.div
           className="max-w-4xl mx-auto backdrop-blur-sm bg-white/10 dark:bg-black/10 border border-white/20 dark:border-white/10 rounded-2xl p-8 md:p-12 shadow-xl"
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.5 }}
-          whileHover={{ y: -5, boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)" }}
+          whileHover={{
+            y: -5,
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+          }}
         >
           <div className="text-center">
-            <h2 className="text-3xl md:text-5xl font-bold mb-6">Ready to Find Your Purpose Partner?</h2>
+            <h2 className="text-3xl md:text-5xl font-bold mb-6">
+              Ready to Find Your Purpose Partner?
+            </h2>
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Join thousands of purpose-driven individuals who have found meaningful connections through Pup.
+              Join thousands of purpose-driven individuals who have found
+              meaningful connections through Pup.
             </p>
 
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="inline-block">
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="inline-block"
+            >
               <Button
                 asChild
                 size="lg"
@@ -78,10 +95,12 @@ export function GlassmorphicCTA() {
               </Button>
             </motion.div>
 
-            <p className="mt-6 text-sm text-muted-foreground">No credit card required. Start with our free plan.</p>
+            <p className="mt-6 text-sm text-muted-foreground">
+              No credit card required. Start with our free plan.
+            </p>
           </div>
         </motion.div>
       </motion.div>
     </section>
-  )
+  );
 }

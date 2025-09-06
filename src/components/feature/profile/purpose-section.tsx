@@ -1,26 +1,40 @@
-"use client"
+'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
-import { Target, Lightbulb, Users, Zap } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Target, Lightbulb, Users, Zap } from 'lucide-react';
 
 interface PurposeSectionProps {
   purpose: {
-    domain: string
-    archetype: string
-    modality: string
-    narrative: string
-  }
+    domain: string;
+    archetype: string;
+    modality: string;
+    narrative: string;
+  };
 }
 
 export function PurposeSection({ purpose }: PurposeSectionProps) {
-  const purposeInsights = [
-    { label: "Domain Alignment", value: 92, description: "Strong match with tech professionals" },
-    { label: "Archetype Compatibility", value: 88, description: "Great fit with other creators" },
-    { label: "Modality Synergy", value: 85, description: "Collaborative approach resonates well" },
-    { label: "Narrative Strength", value: 90, description: "Clear and compelling purpose story" },
-  ]
+  // const purposeInsights = [
+  //   {
+  //     label: 'Domain Alignment',
+  //     value: 92,
+  //     description: 'Strong match with tech professionals',
+  //   },
+  //   {
+  //     label: 'Archetype Compatibility',
+  //     value: 88,
+  //     description: 'Great fit with other creators',
+  //   },
+  //   {
+  //     label: 'Modality Synergy',
+  //     value: 85,
+  //     description: 'Collaborative approach resonates well',
+  //   },
+  //   {
+  //     label: 'Narrative Strength',
+  //     value: 90,
+  //     description: 'Clear and compelling purpose story',
+  //   },
+  // ];
 
   return (
     <div className="space-y-6">
@@ -37,23 +51,31 @@ export function PurposeSection({ purpose }: PurposeSectionProps) {
             <div className="text-center p-4 bg-accent/50 rounded-lg">
               <Lightbulb className="h-8 w-8 text-primary mx-auto mb-2" />
               <h3 className="font-semibold">Domain</h3>
-              <p className="text-sm text-muted-foreground mt-1">{purpose.domain}</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                {purpose.domain}
+              </p>
             </div>
             <div className="text-center p-4 bg-accent/50 rounded-lg">
               <Users className="h-8 w-8 text-primary mx-auto mb-2" />
               <h3 className="font-semibold">Archetype</h3>
-              <p className="text-sm text-muted-foreground mt-1">{purpose.archetype}</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                {purpose.archetype}
+              </p>
             </div>
             <div className="text-center p-4 bg-accent/50 rounded-lg">
               <Zap className="h-8 w-8 text-primary mx-auto mb-2" />
               <h3 className="font-semibold">Modality</h3>
-              <p className="text-sm text-muted-foreground mt-1">{purpose.modality}</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                {purpose.modality}
+              </p>
             </div>
           </div>
 
           <div>
             <h3 className="font-semibold mb-2">Your Purpose Narrative</h3>
-            <p className="text-foreground leading-relaxed bg-accent/30 p-4 rounded-lg">{purpose.narrative}</p>
+            <p className="text-foreground leading-relaxed bg-accent/30 p-4 rounded-lg">
+              {purpose.narrative}
+            </p>
           </div>
         </CardContent>
       </Card>
@@ -109,5 +131,5 @@ export function PurposeSection({ purpose }: PurposeSectionProps) {
         </CardContent>
       </Card> */}
     </div>
-  )
+  );
 }

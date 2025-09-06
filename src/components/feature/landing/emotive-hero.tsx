@@ -1,37 +1,37 @@
-"use client"
+'use client';
 
-import { useEffect, useRef, useState } from "react"
-import { motion, useScroll, useTransform } from "framer-motion"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
-import { ArrowRight, Heart } from "lucide-react"
+import { useEffect, useRef, useState } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { ArrowRight, Heart } from 'lucide-react';
 
 export function EmotiveHero() {
-  const containerRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start start", "end start"],
-  })
+    offset: ['start start', 'end start'],
+  });
 
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
-  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.9])
-  const textY = useTransform(scrollYProgress, [0, 0.5], [0, -50])
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.9]);
+  const textY = useTransform(scrollYProgress, [0, 0.5], [0, -50]);
 
   // Gradient animation
-  const [gradientPosition, setGradientPosition] = useState({ x: 0, y: 0 })
+  const [gradientPosition, setGradientPosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      if (!containerRef.current) return
-      const rect = containerRef.current.getBoundingClientRect()
-      const x = ((e.clientX - rect.left) / rect.width) * 100
-      const y = ((e.clientY - rect.top) / rect.height) * 100
-      setGradientPosition({ x, y })
-    }
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      setGradientPosition({ x, y });
+    };
 
-    window.addEventListener("mousemove", handleMouseMove)
-    return () => window.removeEventListener("mousemove", handleMouseMove)
-  }, [])
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
 
   const wordVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -44,12 +44,13 @@ export function EmotiveHero() {
         ease: [0.22, 1, 0.36, 1],
       },
     }),
-  }
+  };
 
-  const headlineWords = "Find someone who shares your purpose".split(" ")
-  const subcopyWords = "Pup connects you with partners who align with your life mission, values, and purpose.".split(
-    " ",
-  )
+  const headlineWords = 'Find someone who shares your purpose'.split(' ');
+  const subcopyWords =
+    'Pup connects you with partners who align with your life mission, values, and purpose.'.split(
+      ' '
+    );
 
   return (
     <motion.section
@@ -63,7 +64,7 @@ export function EmotiveHero() {
           className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10"
           style={{
             backgroundPosition: `${gradientPosition.x}% ${gradientPosition.y}%`,
-            transition: "background-position 0.5s ease-out",
+            transition: 'background-position 0.5s ease-out',
           }}
         />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(var(--primary-rgb),0.1)_0,transparent_70%)]" />
@@ -79,7 +80,7 @@ export function EmotiveHero() {
         transition={{
           repeat: Number.POSITIVE_INFINITY,
           duration: 8,
-          ease: "easeInOut",
+          ease: 'easeInOut',
         }}
       />
 
@@ -92,12 +93,17 @@ export function EmotiveHero() {
         transition={{
           repeat: Number.POSITIVE_INFINITY,
           duration: 10,
-          ease: "easeInOut",
+          ease: 'easeInOut',
         }}
       />
 
       <div className="container mx-auto px-4 relative z-10">
-        <motion.div className="max-w-4xl mx-auto text-center" style={{ y: textY }} initial="hidden" animate="visible">
+        <motion.div
+          className="max-w-4xl mx-auto text-center"
+          style={{ y: textY }}
+          initial="hidden"
+          animate="visible"
+        >
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -141,13 +147,22 @@ export function EmotiveHero() {
             transition={{ delay: 1.2, duration: 0.8 }}
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
-            <Button asChild size="lg" className="text-lg px-8 rounded-full h-14">
+            <Button
+              asChild
+              size="lg"
+              className="text-lg px-8 rounded-full h-14"
+            >
               <Link href="/dashboard">
                 Start with Purpose
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="text-lg px-8 rounded-full h-14">
+            <Button
+              asChild
+              variant="outline"
+              size="lg"
+              className="text-lg px-8 rounded-full h-14"
+            >
               <Link href="#manifesto">Our Manifesto</Link>
             </Button>
           </motion.div>
@@ -170,5 +185,5 @@ export function EmotiveHero() {
         </motion.div>
       </motion.div>
     </motion.section>
-  )
+  );
 }

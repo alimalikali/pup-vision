@@ -1,21 +1,28 @@
-"use client"
+'use client';
 
-import { Navbar } from "@/components/common/layout/navbar"
-import { MatchCard } from "@/components/feature/matches/match-card"
-import { AdvancedMatchFilters } from "@/components/feature/matches/advanced-match-filters"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useAuthStore, useMatchesStore, AdvancedFilters } from "@/store"
-import { Filter, Heart, SlidersHorizontal, Target, Users } from "lucide-react"
-import { useEffect, useState, useCallback } from "react"
-import { LoaderWait } from "@/components/common/layout/loader-wait"
+import { Navbar } from '@/components/common/layout/navbar';
+import { MatchCard } from '@/components/feature/matches/match-card';
+import { AdvancedMatchFilters } from '@/components/feature/matches/advanced-match-filters';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { useAuthStore, useMatchesStore } from '@/store';
+import { AdvancedFilters } from '@types';
+import { Filter, Heart, SlidersHorizontal, Target, Users } from 'lucide-react';
+import { useEffect, useState, useCallback } from 'react';
+import { LoaderWait } from '@/components/common/layout/loader-wait';
 
 export default function MatchesPage() {
-  const [showFilters, setShowFilters] = useState(false)
-  const [sortBy, setSortBy] = useState("compatibility")
-  
-  const { user, status } = useAuthStore()
+  const [showFilters, setShowFilters] = useState(false);
+  const [sortBy, setSortBy] = useState('compatibility');
+
+  const { user, status } = useAuthStore();
   const {
     profiles,
     isLoading,
@@ -28,71 +35,81 @@ export default function MatchesPage() {
     admireUser,
     passUser,
     updateAdvancedFilters,
-    clearError
-  } = useMatchesStore()
+    clearError,
+  } = useMatchesStore();
 
   // Initialize data on component mount
   useEffect(() => {
-    if (status === "authenticated" && user && profiles.length === 0) {
-      fetchProfiles(true)
+    if (status === 'authenticated' && user && profiles.length === 0) {
+      fetchProfiles(true);
     }
-  }, [status, user, fetchProfiles, profiles.length])
+  }, [status, user, fetchProfiles, profiles.length]);
 
   const handleLike = async (profileId: string) => {
-    const success = await admireUser(profileId)
+    const success = await admireUser(profileId);
     if (success) {
-      console.log("User admired successfully")
+      console.log('User admired successfully');
     }
-  }
+  };
 
   const handlePass = async (profileId: string) => {
-    const success = await passUser(profileId)
+    const success = await passUser(profileId);
     if (success) {
-      console.log("User passed successfully")
+      console.log('User passed successfully');
     }
-  }
+  };
 
-
-  const handleAdvancedFiltersChange = useCallback((newFilters: AdvancedFilters) => {
-    updateAdvancedFilters(newFilters)
-    // Fetch profiles when Apply button is clicked
-    fetchProfiles(true)
-  }, [updateAdvancedFilters, fetchProfiles])
-
+  const handleAdvancedFiltersChange = useCallback(
+    (newFilters: AdvancedFilters) => {
+      updateAdvancedFilters(newFilters);
+      // Fetch profiles when Apply button is clicked
+      fetchProfiles(true);
+    },
+    [updateAdvancedFilters, fetchProfiles]
+  );
 
   const sortedProfiles = [...profiles].sort((a, b) => {
     switch (sortBy) {
-      case "compatibility":
-        return (b.compatibilityScore || 0) - (a.compatibilityScore || 0)
-      case "recent":
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      case 'compatibility':
+        return (b.compatibilityScore || 0) - (a.compatibilityScore || 0);
+      case 'recent':
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
       default:
-        return 0
+        return 0;
     }
-  })
+  });
 
   // Show loading state during auth initialization
-  if (status === "loading" || status === "idle") {
+  if (status === 'loading' || status === 'idle') {
     return (
       <div className="min-h-screen bg-background">
         <Navbar />
-        <LoaderWait variant="spinner" size="lg" color="primary" text="Loading..." />
+        <LoaderWait
+          variant="spinner"
+          size="lg"
+          color="primary"
+          text="Loading..."
+        />
       </div>
-    )
+    );
   }
 
   // Redirect if not authenticated
-  if (status === "unauthenticated") {
+  if (status === 'unauthenticated') {
     return (
       <div className="min-h-screen bg-background">
         <Navbar />
         <div className="flex items-center justify-center min-h-[50vh]">
           <div className="text-center">
-            <p className="text-muted-foreground">Please log in to view matches.</p>
+            <p className="text-muted-foreground">
+              Please log in to view matches.
+            </p>
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -104,13 +121,19 @@ export default function MatchesPage() {
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold tracking-tight text-foreground">Your Matches</h1>
+              <h1 className="text-3xl font-bold tracking-tight text-foreground">
+                Your Matches
+              </h1>
               <p className="mt-2 text-muted-foreground">
-                Discover meaningful connections based on shared purpose and values
+                Discover meaningful connections based on shared purpose and
+                values
               </p>
             </div>
             <div className="flex items-center space-x-4">
-              <Button variant="outline" onClick={() => setShowFilters(!showFilters)}>
+              <Button
+                variant="outline"
+                onClick={() => setShowFilters(!showFilters)}
+              >
                 <SlidersHorizontal className="mr-2 h-4 w-4" />
                 Filters
               </Button>
@@ -132,7 +155,12 @@ export default function MatchesPage() {
         {error && (
           <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
             <p className="text-destructive text-sm">{error}</p>
-            <Button variant="outline" size="sm" onClick={clearError} className="mt-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={clearError}
+              className="mt-2"
+            >
               Dismiss
             </Button>
           </div>
@@ -142,7 +170,9 @@ export default function MatchesPage() {
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-3 mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Available Profiles</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Available Profiles
+              </CardTitle>
               <Heart className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -153,17 +183,23 @@ export default function MatchesPage() {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Avg. Compatibility</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Avg. Compatibility
+              </CardTitle>
               <Target className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {profiles.length > 0 
+                {profiles.length > 0
                   ? Math.round(
-                      profiles.reduce((acc, profile) => acc + (profile.compatibilityScore || 0), 0) / profiles.length
+                      profiles.reduce(
+                        (acc, profile) =>
+                          acc + (profile.compatibilityScore || 0),
+                        0
+                      ) / profiles.length
                     )
-                  : 0
-                }%
+                  : 0}
+                %
               </div>
               <p className="text-xs text-muted-foreground">Purpose alignment</p>
             </CardContent>
@@ -171,12 +207,16 @@ export default function MatchesPage() {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">More Available</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                More Available
+              </CardTitle>
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{hasMore ? "Yes" : "No"}</div>
-              <p className="text-xs text-muted-foreground">Load more profiles</p>
+              <div className="text-2xl font-bold">{hasMore ? 'Yes' : 'No'}</div>
+              <p className="text-xs text-muted-foreground">
+                Load more profiles
+              </p>
             </CardContent>
           </Card>
         </div>
@@ -185,21 +225,28 @@ export default function MatchesPage() {
           {/* Filters Sidebar */}
           {showFilters && (
             <div className="lg:col-span-2">
-                              <AdvancedMatchFilters 
-                  filters={advancedFilters}
-                  onFiltersChange={handleAdvancedFiltersChange}
-                />
+              <AdvancedMatchFilters
+                filters={advancedFilters}
+                onFiltersChange={handleAdvancedFiltersChange}
+              />
             </div>
           )}
 
           {/* Matches Grid */}
-          <div className={`${showFilters ? "lg:col-span-2" : "lg:col-span-4"}`}>
+          <div className={`${showFilters ? 'lg:col-span-2' : 'lg:col-span-4'}`}>
             {isLoading ? (
-              <LoaderWait variant="target" size="lg" color="primary" text="Loading profiles..." />
+              <LoaderWait
+                variant="target"
+                size="lg"
+                color="primary"
+                text="Loading profiles..."
+              />
             ) : sortedProfiles.length > 0 ? (
               <>
-                <div className={`grid grid-cols-1 md:grid-cols-2  gap-6 ${showFilters ? "lg:grid-cols-2" : "lg:grid-cols-3"}`}>
-                  {sortedProfiles.map((profile) => (
+                <div
+                  className={`grid grid-cols-1 md:grid-cols-2  gap-6 ${showFilters ? 'lg:grid-cols-2' : 'lg:grid-cols-3'}`}
+                >
+                  {sortedProfiles.map(profile => (
                     <MatchCard
                       key={profile.id}
                       match={{
@@ -207,22 +254,24 @@ export default function MatchesPage() {
                         compatibilityScore: profile.compatibilityScore || 0,
                         purposeAlignment: profile.compatibilityScore || 0,
                         matchedAt: profile.createdAt,
-                        status: "pending",
+                        status: 'pending',
                         narrative: `Great compatibility based on shared interests and values.`,
                         profile: {
                           id: profile.id,
                           name: profile.name,
                           age: profile.age || 25,
                           avatar: profile.avatar,
-                          city: profile.city || "Unknown",
-                          state: profile.state || "Unknown",
+                          city: profile.city || 'Unknown',
+                          state: profile.state || 'Unknown',
                           profession: profile.profession,
                           education: profile.education,
                           purpose: {
                             domain: profile.purposeDomain,
                             archetype: profile.purposeArchetype,
                             modality: profile.purposeModality,
-                            narrative: profile.purposeNarrative || "No narrative provided"
+                            narrative:
+                              profile.purposeNarrative ||
+                              'No narrative provided',
                           },
                           interests: profile.interests,
                           maritalStatus: profile.maritalStatus,
@@ -230,30 +279,35 @@ export default function MatchesPage() {
                           religion: profile.religion,
                           language: profile.language,
                           smoke: profile.smoke,
-                          alcohol: profile.alcohol
-                        }
+                          alcohol: profile.alcohol,
+                        },
                       }}
                       onLike={() => handleLike(profile.userId)}
                       onPass={() => handlePass(profile.userId)}
                     />
                   ))}
                 </div>
-                
+
                 {/* Load More Button */}
                 {hasMore && (
                   <div className="mt-8 text-center">
-                    <Button 
-                      onClick={loadMoreProfiles} 
+                    <Button
+                      onClick={loadMoreProfiles}
                       disabled={isLoadingMore}
                       variant="outline"
                     >
                       {isLoadingMore ? (
                         <>
-                          <LoaderWait variant="spinner" size="sm" color="white" centered={false} />
+                          <LoaderWait
+                            variant="spinner"
+                            size="sm"
+                            color="white"
+                            centered={false}
+                          />
                           Loading...
                         </>
                       ) : (
-                        "Load More Profiles"
+                        'Load More Profiles'
                       )}
                     </Button>
                   </div>
@@ -263,9 +317,12 @@ export default function MatchesPage() {
               <Card className="text-center py-12">
                 <CardContent>
                   <Heart className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">No profiles found</h3>
+                  <h3 className="text-lg font-semibold mb-2">
+                    No profiles found
+                  </h3>
                   <p className="text-muted-foreground mb-4">
-                    Try adjusting your filters or check back later for new profiles.
+                    Try adjusting your filters or check back later for new
+                    profiles.
                   </p>
                   <Button onClick={() => setShowFilters(true)}>
                     <Filter className="mr-2 h-4 w-4" />
@@ -278,5 +335,5 @@ export default function MatchesPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

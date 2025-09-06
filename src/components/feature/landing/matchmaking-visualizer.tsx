@@ -1,79 +1,107 @@
-"use client"
+'use client';
 
-import { useRef, useState, useEffect } from "react"
-import { motion, AnimatePresence, useInView } from "framer-motion"
+import { useRef, useState, useEffect } from 'react';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
 
 // Purpose tags for visualization
 const purposeTags = [
-  { text: "Education", color: "bg-primary" },
-  { text: "Social Justice", color: "bg-blue-500" },
-  { text: "Environment", color: "bg-green-500" },
-  { text: "Healthcare", color: "bg-red-500" },
-  { text: "Spirituality", color: "bg-purple-500" },
-  { text: "Technology", color: "bg-yellow-500" },
-  { text: "Arts", color: "bg-pink-500" },
-  { text: "Community", color: "bg-orange-500" },
-]
+  { text: 'Education', color: 'bg-primary' },
+  { text: 'Social Justice', color: 'bg-blue-500' },
+  { text: 'Environment', color: 'bg-green-500' },
+  { text: 'Healthcare', color: 'bg-red-500' },
+  { text: 'Spirituality', color: 'bg-purple-500' },
+  { text: 'Technology', color: 'bg-yellow-500' },
+  { text: 'Arts', color: 'bg-pink-500' },
+  { text: 'Community', color: 'bg-orange-500' },
+];
 
 // Archetypes
 const archetypes = [
-  { text: "Teacher", emoji: "👨‍🏫" },
-  { text: "Healer", emoji: "🧠" },
-  { text: "Builder", emoji: "👷" },
-  { text: "Advocate", emoji: "🗣️" },
-  { text: "Connector", emoji: "🤝" },
-  { text: "Innovator", emoji: "💡" },
-  { text: "Guardian", emoji: "🛡️" },
-  { text: "Strategist", emoji: "🧩" },
-]
+  { text: 'Teacher', emoji: '👨‍🏫' },
+  { text: 'Healer', emoji: '🧠' },
+  { text: 'Builder', emoji: '👷' },
+  { text: 'Advocate', emoji: '🗣️' },
+  { text: 'Connector', emoji: '🤝' },
+  { text: 'Innovator', emoji: '💡' },
+  { text: 'Guardian', emoji: '🛡️' },
+  { text: 'Strategist', emoji: '🧩' },
+];
 
 export function MatchmakingVisualizer() {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: false, amount: 0.3 })
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: false, amount: 0.3 });
 
-  const [person1, setPerson1] = useState<{ purpose: string, archetype: string, color: string } | null>(null)
-  const [person2, setPerson2] = useState<{ purpose: string, archetype: string, color: string } | null>(null)
-  const [isMatching, setIsMatching] = useState(false)
-  const [matchScore, setMatchScore] = useState<number | null>(null)
+  const [person1, setPerson1] = useState<{
+    purpose: string;
+    archetype: string;
+    color: string;
+  } | null>(null);
+  const [person2, setPerson2] = useState<{
+    purpose: string;
+    archetype: string;
+    color: string;
+  } | null>(null);
+  const [isMatching, setIsMatching] = useState(false);
+  const [matchScore, setMatchScore] = useState<number | null>(null);
 
   // Simulate matching loop
   useEffect(() => {
-    if (!isInView) return
+    if (!isInView) return;
 
     const interval = setInterval(() => {
-      const randomPurpose1 = purposeTags[Math.floor(Math.random() * purposeTags.length)]
-      const randomArchetype1 = archetypes[Math.floor(Math.random() * archetypes.length)]
-      const randomPurpose2 = purposeTags[Math.floor(Math.random() * purposeTags.length)]
-      const randomArchetype2 = archetypes[Math.floor(Math.random() * archetypes.length)]
+      const randomPurpose1 =
+        purposeTags[Math.floor(Math.random() * purposeTags.length)];
+      const randomArchetype1 =
+        archetypes[Math.floor(Math.random() * archetypes.length)];
+      const randomPurpose2 =
+        purposeTags[Math.floor(Math.random() * purposeTags.length)];
+      const randomArchetype2 =
+        archetypes[Math.floor(Math.random() * archetypes.length)];
 
-      setPerson1({ purpose: randomPurpose1.text, archetype: randomArchetype1.text, color: randomPurpose1.color })
-      setPerson2({ purpose: randomPurpose2.text, archetype: randomArchetype2.text, color: randomPurpose2.color })
+      setPerson1({
+        purpose: randomPurpose1.text,
+        archetype: randomArchetype1.text,
+        color: randomPurpose1.color,
+      });
+      setPerson2({
+        purpose: randomPurpose2.text,
+        archetype: randomArchetype2.text,
+        color: randomPurpose2.color,
+      });
 
-      setIsMatching(true)
-      setMatchScore(null)
+      setIsMatching(true);
+      setMatchScore(null);
 
       setTimeout(() => {
-        let score = 30
-        if (randomPurpose1.text === randomPurpose2.text) score += 40
-        if (randomArchetype1.text === randomArchetype2.text) score += 20
-        score += Math.floor(Math.random() * 10)
+        let score = 30;
+        if (randomPurpose1.text === randomPurpose2.text) score += 40;
+        if (randomArchetype1.text === randomArchetype2.text) score += 20;
+        score += Math.floor(Math.random() * 10);
 
-        setMatchScore(Math.min(score, 98))
-        setIsMatching(false)
-      }, 2000)
-    }, 6000)
+        setMatchScore(Math.min(score, 98));
+        setIsMatching(false);
+      }, 2000);
+    }, 6000);
 
-    return () => clearInterval(interval)
-  }, [isInView])
+    return () => clearInterval(interval);
+  }, [isInView]);
 
   // Card for each person
-  const PersonCard = ({ person, label, side }: { person: { purpose: string, archetype: string, color: string }, label: string, side: string }) => (
+  const PersonCard = ({
+    person,
+    label,
+    side,
+  }: {
+    person: { purpose: string; archetype: string; color: string };
+    label: string;
+    side: string;
+  }) => (
     <motion.div
       key={`${person.purpose}-${person.archetype}`}
       className="w-full md:w-1/3 bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 shadow-xl text-center"
-      initial={{ opacity: 0, x: side === "left" ? -60 : 60 }}
+      initial={{ opacity: 0, x: side === 'left' ? -60 : 60 }}
       animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: side === "left" ? -60 : 60 }}
+      exit={{ opacity: 0, x: side === 'left' ? -60 : 60 }}
       transition={{ duration: 0.5 }}
     >
       <div className="w-24 h-24 rounded-full bg-background/80 mx-auto mb-4 flex items-center justify-center text-4xl">
@@ -81,15 +109,18 @@ export function MatchmakingVisualizer() {
       </div>
       <h3 className="text-lg font-bold mb-4">{label}</h3>
       <div className="space-y-3">
-        <div className={`${person.color} text-white px-3 py-1 rounded-full inline-block shadow-md`}>
+        <div
+          className={`${person.color} text-white px-3 py-1 rounded-full inline-block shadow-md`}
+        >
           {person.purpose}
         </div>
         <div className="bg-muted px-3 py-1 rounded-full inline-block">
-          {person.archetype} {archetypes.find((a) => a.text === person.archetype)?.emoji}
+          {person.archetype}{' '}
+          {archetypes.find(a => a.text === person.archetype)?.emoji}
         </div>
       </div>
     </motion.div>
-  )
+  );
 
   return (
     <section className="py-24 relative overflow-hidden" ref={ref}>
@@ -112,7 +143,11 @@ export function MatchmakingVisualizer() {
         {/* Visualization */}
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16">
           {/* Person 1 */}
-          <AnimatePresence mode="wait">{person1 && <PersonCard person={person1} label="Person 1" side="left" />}</AnimatePresence>
+          <AnimatePresence mode="wait">
+            {person1 && (
+              <PersonCard person={person1} label="Person 1" side="left" />
+            )}
+          </AnimatePresence>
 
           {/* Middle Match */}
           <div className="relative w-full md:w-1/4 h-48 flex items-center justify-center">
@@ -133,7 +168,9 @@ export function MatchmakingVisualizer() {
                 animate={{ scale: 1 }}
                 exit={{ scale: 0 }}
               >
-                <div className="text-2xl font-bold text-primary z-10">{matchScore}%</div>
+                <div className="text-2xl font-bold text-primary z-10">
+                  {matchScore}%
+                </div>
               </motion.div>
             )}
 
@@ -143,12 +180,16 @@ export function MatchmakingVisualizer() {
               initial={{ scaleX: 0 }}
               animate={{ scaleX: isMatching || matchScore !== null ? 1 : 0 }}
               transition={{ duration: 0.8 }}
-              style={{ transformOrigin: "center" }}
+              style={{ transformOrigin: 'center' }}
             />
           </div>
 
           {/* Person 2 */}
-          <AnimatePresence mode="wait">{person2 && <PersonCard person={person2} label="Person 2" side="right" />}</AnimatePresence>
+          <AnimatePresence mode="wait">
+            {person2 && (
+              <PersonCard person={person2} label="Person 2" side="right" />
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Footer text */}
@@ -158,12 +199,13 @@ export function MatchmakingVisualizer() {
           animate={isInView ? { opacity: 1 } : {}}
           transition={{ duration: 0.5, delay: 0.6 }}
         >
-          Our AI blends purpose, archetypes & human intuition to create meaningful matches.
+          Our AI blends purpose, archetypes & human intuition to create
+          meaningful matches.
         </motion.p>
       </motion.div>
 
       {/* Soft gradient background */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-purple-500/5 pointer-events-none" />
     </section>
-  )
+  );
 }

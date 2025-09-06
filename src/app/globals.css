@@ -77,11 +77,13 @@
   * {
     @apply border-border outline-ring/50;
   }
-  
+
   body {
     @apply bg-background text-foreground;
     /* Prevent theme flash by ensuring smooth transitions */
-    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+    transition:
+      background-color 0.2s ease-in-out,
+      color 0.2s ease-in-out;
   }
 
   /* Ensure smooth transitions for all theme-dependent properties */

@@ -1,22 +1,32 @@
-"use client"
+'use client';
 
-import { Checkbox } from "@/components/ui/checkbox"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Profile } from "@/types/types"
-import { Interest, Politics } from "@/types/enums"
-import { AlertCircle } from "lucide-react"
-import React from "react"
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Profile } from '@types';
+import { Interest, Politics } from '@types';
+import { AlertCircle } from 'lucide-react';
+import React from 'react';
 
 interface Step4LifestyleProps {
-  formData: Partial<Profile>
-  errors: Record<string, string>
-  onInputChange: (fieldName: string, value: string | number | string[]) => void
+  formData: Partial<Profile>;
+  errors: Record<string, string>;
+  onInputChange: (fieldName: string, value: string | number | string[]) => void;
 }
 
-export function Step4Lifestyle({ formData, errors, onInputChange }: Step4LifestyleProps) {
+export function Step4Lifestyle({
+  formData,
+  errors,
+  onInputChange,
+}: Step4LifestyleProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {/* Interests */}
@@ -24,25 +34,36 @@ export function Step4Lifestyle({ formData, errors, onInputChange }: Step4Lifesty
         <Label>Interests</Label>
         <div className="grid grid-cols-2 gap-3">
           {[
-            { value: "SPORTS", label: "Sports" },
-            { value: "MUSIC", label: "Music" },
-            { value: "TRAVEL", label: "Travel" },
-            { value: "READING", label: "Reading" },
-            { value: "COOKING", label: "Cooking" },
-            { value: "ART", label: "Art" },
-            { value: "TECHNOLOGY", label: "Technology" },
-            { value: "OTHER", label: "Other" }
-          ].map((option) => (
+            { value: 'SPORTS', label: 'Sports' },
+            { value: 'MUSIC', label: 'Music' },
+            { value: 'TRAVEL', label: 'Travel' },
+            { value: 'READING', label: 'Reading' },
+            { value: 'COOKING', label: 'Cooking' },
+            { value: 'ART', label: 'Art' },
+            { value: 'TECHNOLOGY', label: 'Technology' },
+            { value: 'OTHER', label: 'Other' },
+          ].map(option => (
             <div key={option.value} className="flex items-center space-x-2">
               <Checkbox
                 id={`interests-${option.value}`}
-                checked={Array.isArray(formData.interests) && formData.interests.includes(option.value as Interest)}
-                onCheckedChange={(checked) => {
-                  const currentValues = Array.isArray(formData.interests) ? formData.interests : []
+                checked={
+                  Array.isArray(formData.interests) &&
+                  formData.interests.includes(option.value as Interest)
+                }
+                onCheckedChange={checked => {
+                  const currentValues = Array.isArray(formData.interests)
+                    ? formData.interests
+                    : [];
                   if (checked) {
-                    onInputChange("interests", [...currentValues, option.value as Interest])
+                    onInputChange('interests', [
+                      ...currentValues,
+                      option.value as Interest,
+                    ]);
                   } else {
-                    onInputChange("interests", currentValues.filter((v: Interest) => v !== option.value))
+                    onInputChange(
+                      'interests',
+                      currentValues.filter((v: Interest) => v !== option.value)
+                    );
                   }
                 }}
               />
@@ -64,17 +85,23 @@ export function Step4Lifestyle({ formData, errors, onInputChange }: Step4Lifesty
       <div className="space-y-2">
         <Label>Personality Type</Label>
         <RadioGroup
-          value={formData.personality || ""}
-          onValueChange={(value) => onInputChange("personality", value)}
+          value={formData.personality || ''}
+          onValueChange={value => onInputChange('personality', value)}
         >
           {[
-            { value: "INTROVERT", label: "Introvert" },
-            { value: "EXTROVERT", label: "Extrovert" },
-            { value: "AMBIVERT", label: "Ambivert" }
-          ].map((option) => (
+            { value: 'INTROVERT', label: 'Introvert' },
+            { value: 'EXTROVERT', label: 'Extrovert' },
+            { value: 'AMBIVERT', label: 'Ambivert' },
+          ].map(option => (
             <div key={option.value} className="flex items-center space-x-2">
-              <RadioGroupItem value={option.value} id={`personality-${option.value}`} />
-              <Label htmlFor={`personality-${option.value}`} className="text-sm">
+              <RadioGroupItem
+                value={option.value}
+                id={`personality-${option.value}`}
+              />
+              <Label
+                htmlFor={`personality-${option.value}`}
+                className="text-sm"
+              >
                 {option.label}
               </Label>
             </div>
@@ -91,8 +118,13 @@ export function Step4Lifestyle({ formData, errors, onInputChange }: Step4Lifesty
       {/* Marital Status */}
       <div className="space-y-2">
         <Label htmlFor="maritalStatus">Marital Status</Label>
-        <Select value={formData.maritalStatus || ""} onValueChange={(value) => onInputChange("maritalStatus", value)}>
-          <SelectTrigger className={errors.maritalStatus ? "border-red-500" : ""}>
+        <Select
+          value={formData.maritalStatus || ''}
+          onValueChange={value => onInputChange('maritalStatus', value)}
+        >
+          <SelectTrigger
+            className={errors.maritalStatus ? 'border-red-500' : ''}
+          >
             <SelectValue placeholder="Select marital status" />
           </SelectTrigger>
           <SelectContent>
@@ -113,8 +145,11 @@ export function Step4Lifestyle({ formData, errors, onInputChange }: Step4Lifesty
       {/* Looking For */}
       <div className="space-y-2">
         <Label htmlFor="lookingFor">Looking For</Label>
-        <Select value={formData.lookingFor || ""} onValueChange={(value) => onInputChange("lookingFor", value)}>
-          <SelectTrigger className={errors.lookingFor ? "border-red-500" : ""}>
+        <Select
+          value={formData.lookingFor || ''}
+          onValueChange={value => onInputChange('lookingFor', value)}
+        >
+          <SelectTrigger className={errors.lookingFor ? 'border-red-500' : ''}>
             <SelectValue placeholder="Select what you're looking for" />
           </SelectTrigger>
           <SelectContent>
@@ -139,9 +174,9 @@ export function Step4Lifestyle({ formData, errors, onInputChange }: Step4Lifesty
           id="height"
           type="number"
           placeholder="Enter your height in centimeters"
-          value={formData.height || ""}
-          onChange={(e) => onInputChange("height", e.target.value)}
-          className={errors.height ? "border-red-500" : ""}
+          value={formData.height || ''}
+          onChange={e => onInputChange('height', e.target.value)}
+          className={errors.height ? 'border-red-500' : ''}
         />
         {errors.height && (
           <div className="flex items-center space-x-2 text-sm text-red-500">
@@ -158,9 +193,9 @@ export function Step4Lifestyle({ formData, errors, onInputChange }: Step4Lifesty
           id="weight"
           type="number"
           placeholder="Enter your weight in kilograms"
-          value={formData.weight || ""}
-          onChange={(e) => onInputChange("weight", e.target.value)}
-          className={errors.weight ? "border-red-500" : ""}
+          value={formData.weight || ''}
+          onChange={e => onInputChange('weight', e.target.value)}
+          className={errors.weight ? 'border-red-500' : ''}
         />
         {errors.weight && (
           <div className="flex items-center space-x-2 text-sm text-red-500">
@@ -173,8 +208,11 @@ export function Step4Lifestyle({ formData, errors, onInputChange }: Step4Lifesty
       {/* Smoking */}
       <div className="space-y-2">
         <Label htmlFor="smoke">Smoking</Label>
-        <Select value={formData.smoke || ""} onValueChange={(value) => onInputChange("smoke", value)}>
-          <SelectTrigger className={errors.smoke ? "border-red-500" : ""}>
+        <Select
+          value={formData.smoke || ''}
+          onValueChange={value => onInputChange('smoke', value)}
+        >
+          <SelectTrigger className={errors.smoke ? 'border-red-500' : ''}>
             <SelectValue placeholder="Select smoking preference" />
           </SelectTrigger>
           <SelectContent>
@@ -194,8 +232,11 @@ export function Step4Lifestyle({ formData, errors, onInputChange }: Step4Lifesty
       {/* Alcohol */}
       <div className="space-y-2">
         <Label htmlFor="alcohol">Alcohol</Label>
-        <Select value={formData.alcohol || ""} onValueChange={(value) => onInputChange("alcohol", value)}>
-          <SelectTrigger className={errors.alcohol ? "border-red-500" : ""}>
+        <Select
+          value={formData.alcohol || ''}
+          onValueChange={value => onInputChange('alcohol', value)}
+        >
+          <SelectTrigger className={errors.alcohol ? 'border-red-500' : ''}>
             <SelectValue placeholder="Select alcohol preference" />
           </SelectTrigger>
           <SelectContent>
@@ -215,8 +256,11 @@ export function Step4Lifestyle({ formData, errors, onInputChange }: Step4Lifesty
       {/* Drugs */}
       <div className="space-y-2">
         <Label htmlFor="drugs">Drugs</Label>
-        <Select value={formData.drugs || ""} onValueChange={(value) => onInputChange("drugs", value)}>
-          <SelectTrigger className={errors.drugs ? "border-red-500" : ""}>
+        <Select
+          value={formData.drugs || ''}
+          onValueChange={value => onInputChange('drugs', value)}
+        >
+          <SelectTrigger className={errors.drugs ? 'border-red-500' : ''}>
             <SelectValue placeholder="Select drug preference" />
           </SelectTrigger>
           <SelectContent>
@@ -238,24 +282,35 @@ export function Step4Lifestyle({ formData, errors, onInputChange }: Step4Lifesty
         <Label>Political Views</Label>
         <div className="grid grid-cols-2 gap-3">
           {[
-            { value: "LEFT", label: "Left" },
-            { value: "RIGHT", label: "Right" },
-            { value: "CENTER", label: "Center" },
-            { value: "LIBERTARIAN", label: "Libertarian" },
-            { value: "FUNDAMENTALIST", label: "Fundamentalist" },
-            { value: "CONSERVATIVE", label: "Conservative" },
-            { value: "OTHER", label: "Other" }
-          ].map((option) => (
+            { value: 'LEFT', label: 'Left' },
+            { value: 'RIGHT', label: 'Right' },
+            { value: 'CENTER', label: 'Center' },
+            { value: 'LIBERTARIAN', label: 'Libertarian' },
+            { value: 'FUNDAMENTALIST', label: 'Fundamentalist' },
+            { value: 'CONSERVATIVE', label: 'Conservative' },
+            { value: 'OTHER', label: 'Other' },
+          ].map(option => (
             <div key={option.value} className="flex items-center space-x-2">
               <Checkbox
                 id={`politics-${option.value}`}
-                checked={Array.isArray(formData.politics) && formData.politics.includes(option.value as Politics)}
-                onCheckedChange={(checked) => {
-                  const currentValues = Array.isArray(formData.politics) ? formData.politics : []
+                checked={
+                  Array.isArray(formData.politics) &&
+                  formData.politics.includes(option.value as Politics)
+                }
+                onCheckedChange={checked => {
+                  const currentValues = Array.isArray(formData.politics)
+                    ? formData.politics
+                    : [];
                   if (checked) {
-                    onInputChange("politics", [...currentValues, option.value as Politics])
+                    onInputChange('politics', [
+                      ...currentValues,
+                      option.value as Politics,
+                    ]);
                   } else {
-                    onInputChange("politics", currentValues.filter((v: Politics) => v !== option.value))
+                    onInputChange(
+                      'politics',
+                      currentValues.filter((v: Politics) => v !== option.value)
+                    );
                   }
                 }}
               />
@@ -273,5 +328,5 @@ export function Step4Lifestyle({ formData, errors, onInputChange }: Step4Lifesty
         )}
       </div>
     </div>
-  )
+  );
 }

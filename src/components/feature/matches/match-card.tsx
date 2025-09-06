@@ -1,47 +1,49 @@
-"use client"
+'use client';
 
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
-import { Interest } from "@/types/enums"
-import type { Match } from "@/types/matches"
-import { Briefcase, Eye, GraduationCap, Heart, MapPin, Sparkles, Target, X } from "lucide-react"
-import Image from "next/image"
-import Link from "next/link"
-import { useState } from "react"
-
-interface MatchCardProps {
-  match: Match
-  onLike: (matchId: string) => void
-  onPass: (matchId: string) => void
-}
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { Interest, MatchCardProps } from '@types';
+import {
+  Briefcase,
+  Eye,
+  GraduationCap,
+  Heart,
+  MapPin,
+  Sparkles,
+  Target,
+  X,
+} from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useState } from 'react';
 
 export function MatchCard({ match, onLike, onPass }: MatchCardProps) {
-  const [isAnimating, setIsAnimating] = useState(false)
+  const [isAnimating, setIsAnimating] = useState(false);
 
-  const { profile } = match
+  const { profile } = match;
 
   const handleAction = (action: () => void) => {
-    setIsAnimating(true)
+    setIsAnimating(true);
     setTimeout(() => {
-      action()
-      setIsAnimating(false)
-    }, 300)
-  }
+      action();
+      setIsAnimating(false);
+    }, 300);
+  };
 
-  const photo = profile.avatar || "/placeholder.svg"
+  const photo = profile.avatar || '/placeholder.svg';
 
   return (
     <Card
-      className={`overflow-hidden transition-all duration-300 hover:shadow-lg ${isAnimating ? "scale-95 opacity-50" : ""}`}
+      className={`overflow-hidden transition-all duration-300 hover:shadow-lg ${isAnimating ? 'scale-95 opacity-50' : ''}`}
     >
       <div className="relative">
         {/* Photo */}
         <div className="relative aspect-[4/5] overflow-hidden">
           <Image
             fill
-            src={photo|| "/placeholder.svg"}
+            src={photo || '/placeholder.svg'}
             alt={profile.name}
             className="w-full h-full object-cover"
           />
@@ -111,10 +113,14 @@ export function MatchCard({ match, onLike, onPass }: MatchCardProps) {
                 <Target className="mr-1 h-4 w-4 text-primary" />
                 Purpose Alignment
               </div>
-              <span className="text-sm font-semibold">{match.purposeAlignment}%</span>
+              <span className="text-sm font-semibold">
+                {match.purposeAlignment}%
+              </span>
             </div>
             <Progress value={match.purposeAlignment} className="h-2 mb-2" />
-            <p className="text-xs text-muted-foreground line-clamp-2">{match.narrative}</p>
+            <p className="text-xs text-muted-foreground line-clamp-2">
+              {match.narrative}
+            </p>
           </div>
 
           {/* Purpose Tags */}
@@ -155,9 +161,11 @@ export function MatchCard({ match, onLike, onPass }: MatchCardProps) {
               Pass
             </Button>
 
-
-
-            <Button size="sm" onClick={() => handleAction(() => onLike(match.id))} className="flex-1">
+            <Button
+              size="sm"
+              onClick={() => handleAction(() => onLike(match.id))}
+              className="flex-1"
+            >
               <Heart className="mr-1 h-4 w-4" />
               Admire
             </Button>
@@ -173,5 +181,5 @@ export function MatchCard({ match, onLike, onPass }: MatchCardProps) {
         </CardContent>
       </div>
     </Card>
-  )
+  );
 }

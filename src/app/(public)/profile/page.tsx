@@ -1,24 +1,24 @@
-"use client";
+'use client';
 
-import { Navbar } from "@/components/common/layout/navbar";
-import { PhotoGallery } from "@/components/feature/profile/photo-gallery";
-import { ProfileEditForm } from "@/components/feature/profile/profile-edit-form";
-import { PurposeSection } from "@/components/feature/profile/purpose-section";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Navbar } from '@/components/common/layout/navbar';
+import { PhotoGallery } from '@/components/feature/profile/photo-gallery';
+import { ProfileEditForm } from '@/components/feature/profile/profile-edit-form';
+import { PurposeSection } from '@/components/feature/profile/purpose-section';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { formatEnumLabel } from "@/lib/utils";
-import { useProfileStore } from "@/store";
-import { useAuthStore } from "@/store";
-import { Profile } from "@/types/types";
+} from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { formatEnumLabel } from '@/lib/utils';
+import { useProfileStore } from '@/store';
+import { useAuthStore } from '@/store';
+import { Profile } from '@types';
 import {
   Briefcase,
   Camera,
@@ -27,18 +27,19 @@ import {
   MapPin,
   Settings,
   Target,
-  User
-} from "lucide-react";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import LoaderWait from "@/components/common/layout/loader-wait";
+  User,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import LoaderWait from '@/components/common/layout/loader-wait';
 
 export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState('overview');
   const router = useRouter();
 
-  const { profile, isLoading, error, fetchProfile, updateProfile } = useProfileStore();
+  const { profile, error, fetchProfile, updateProfile } =
+    useProfileStore();
   const { user, status, checkAuth } = useAuthStore();
 
   useEffect(() => {
@@ -51,29 +52,33 @@ export default function ProfilePage() {
 
   useEffect(() => {
     // Only fetch profile if user is authenticated
-    if (status === "authenticated" && user) {
+    if (status === 'authenticated' && user) {
       fetchProfile();
-    } else if (status === "unauthenticated") {
+    } else if (status === 'unauthenticated') {
       // Redirect to login if not authenticated
-      router.push("/login");
+      router.push('/login');
     }
   }, [status, user, fetchProfile, router]);
 
   // Show loading while checking authentication
-  if (status === "loading" || status === "idle" || !profile) {
+  if (status === 'loading' || status === 'idle' || !profile) {
     return (
       <div className="min-h-screen bg-background">
         <Navbar />
-        <LoaderWait className="pt-[20vh]" variant="spinner" size="lg" color="primary" text="Loading profile..." />
+        <LoaderWait
+          className="pt-[20vh]"
+          variant="spinner"
+          size="lg"
+          color="primary"
+          text="Loading profile..."
+        />
       </div>
     );
   }
 
-
-
   // Redirect if not authenticated
-  if (status === "unauthenticated") {
-    router.push("/login");
+  if (status === 'unauthenticated') {
+    router.push('/login');
     return null;
   }
 
@@ -90,8 +95,6 @@ export default function ProfilePage() {
   const handleCancelEdit = () => {
     setIsEditing(false);
   };
-
-
 
   // Calculate age from date of birth
   const age = profile.dob
@@ -119,7 +122,7 @@ export default function ProfilePage() {
             </div>
             <Button onClick={() => setIsEditing(!isEditing)}>
               <Edit className="mr-2 h-4 w-4" />
-              {isEditing ? "Cancel" : "Edit Profile"}
+              {isEditing ? 'Cancel' : 'Edit Profile'}
             </Button>
           </div>
         </div>
@@ -131,7 +134,11 @@ export default function ProfilePage() {
         )}
 
         {isEditing ? (
-          <ProfileEditForm profile={profile} onSave={handleSaveProfile} onCancel={handleCancelEdit} />
+          <ProfileEditForm
+            profile={profile}
+            onSave={handleSaveProfile}
+            onCancel={handleCancelEdit}
+          />
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Main Profile Content */}
@@ -188,7 +195,7 @@ export default function ProfilePage() {
                               <MapPin className="mr-1 h-4 w-4" />
                               {profile.city && profile.state
                                 ? `${profile.city}, ${profile.state}`
-                                : "Location not specified"}
+                                : 'Location not specified'}
                             </p>
                           </div>
                         </div>
@@ -239,7 +246,7 @@ export default function ProfilePage() {
                       domain: profile.purposeDomain,
                       archetype: profile.purposeArchetype,
                       modality: profile.purposeModality,
-                      narrative: profile.purposeNarrative || "",
+                      narrative: profile.purposeNarrative || '',
                     }}
                   />
                 </TabsContent>
@@ -247,7 +254,7 @@ export default function ProfilePage() {
                 <TabsContent value="photo">
                   <PhotoGallery
                     avatar={profile.avatar}
-                    onAvatarChange={(avatarUrl) => {
+                    onAvatarChange={avatarUrl => {
                       // Update the profile with the new avatar
                       updateProfile({ avatar: avatarUrl });
                     }}
@@ -296,24 +303,20 @@ export default function ProfilePage() {
                           <p className="text-foreground">
                             {profile.city && profile.state
                               ? `${profile.city}, ${profile.state}`
-                              : "Not specified"}
+                              : 'Not specified'}
                           </p>
                         </div>
                         <div>
                           <label className="text-sm font-medium text-muted-foreground">
                             Height
                           </label>
-                          <p className="text-foreground">
-                            {profile.height} cm
-                          </p>
+                          <p className="text-foreground">{profile.height} cm</p>
                         </div>
                         <div>
                           <label className="text-sm font-medium text-muted-foreground">
                             Weight
                           </label>
-                          <p className="text-foreground">
-                            {profile.weight} kg
-                          </p>
+                          <p className="text-foreground">{profile.weight} kg</p>
                         </div>
                       </div>
                     </CardContent>
@@ -404,9 +407,7 @@ export default function ProfilePage() {
                 <CardContent className="pt-6">
                   <div className="text-center">
                     <Avatar className="h-24 w-24 mx-auto mb-4">
-                      <AvatarImage
-                        src={profile.avatar || "/placeholder.svg"}
-                      />
+                      <AvatarImage src={profile.avatar || '/placeholder.svg'} />
                       <AvatarFallback className="text-lg">
                         {profile?.name?.charAt(0)}
                       </AvatarFallback>
@@ -419,7 +420,7 @@ export default function ProfilePage() {
                       <MapPin className="mr-1 h-4 w-4" />
                       {profile.city && profile.state
                         ? `${profile.city}, ${profile.state}`
-                        : "Location not specified"}
+                        : 'Location not specified'}
                     </div>
                   </div>
                 </CardContent>
@@ -434,7 +435,7 @@ export default function ProfilePage() {
                   <Button
                     className="w-full bg-transparent"
                     variant="outline"
-                    onClick={() => setActiveTab("photo")}
+                    onClick={() => setActiveTab('photo')}
                   >
                     <Camera className="mr-2 h-4 w-4" />
                     View Photos
@@ -442,7 +443,7 @@ export default function ProfilePage() {
                   <Button
                     className="w-full bg-transparent"
                     variant="outline"
-                    onClick={() => setActiveTab("purpose")}
+                    onClick={() => setActiveTab('purpose')}
                   >
                     <Target className="mr-2 h-4 w-4" />
                     View Purpose
@@ -450,7 +451,7 @@ export default function ProfilePage() {
                   <Button
                     className="w-full bg-transparent"
                     variant="outline"
-                    onClick={() => setActiveTab("details")}
+                    onClick={() => setActiveTab('details')}
                   >
                     <Settings className="mr-2 h-4 w-4" />
                     View Details

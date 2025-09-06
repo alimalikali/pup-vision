@@ -1,18 +1,28 @@
-"use client"
+'use client';
 
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Profile } from "@/types/types"
-import { AlertCircle } from "lucide-react"
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Profile } from '@types';
+import { AlertCircle } from 'lucide-react';
 
 interface Step1BasicInfoProps {
-  formData: Partial<Profile>
-  errors: Record<string, string>
-  onInputChange: (fieldName: string, value: string | number | string[]) => void
+  formData: Partial<Profile>;
+  errors: Record<string, string>;
+  onInputChange: (fieldName: string, value: string | number | string[]) => void;
 }
 
-export function Step1BasicInfo({ formData, errors, onInputChange }: Step1BasicInfoProps) {
+export function Step1BasicInfo({
+  formData,
+  errors,
+  onInputChange,
+}: Step1BasicInfoProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {/* Name */}
@@ -22,9 +32,9 @@ export function Step1BasicInfo({ formData, errors, onInputChange }: Step1BasicIn
           id="name"
           type="text"
           placeholder="Enter your full name"
-          value={formData.name || ""}
-          onChange={(e) => onInputChange("name", e.target.value)}
-          className={errors.name ? "border-red-500" : ""}
+          value={formData.name || ''}
+          onChange={e => onInputChange('name', e.target.value)}
+          className={errors.name ? 'border-red-500' : ''}
         />
         {errors.name && (
           <div className="flex items-center space-x-2 text-sm text-red-500">
@@ -40,9 +50,15 @@ export function Step1BasicInfo({ formData, errors, onInputChange }: Step1BasicIn
         <Input
           id="dob"
           type="date"
-          value={formData.dob ? (formData.dob instanceof Date ? formData.dob.toISOString().split('T')[0] : formData.dob) : ""}
-          onChange={(e) => onInputChange("dob", e.target.value)}
-          className={errors.dob ? "border-red-500" : ""}
+          value={
+            formData.dob
+              ? formData.dob instanceof Date
+                ? formData.dob.toISOString().split('T')[0]
+                : formData.dob
+              : ''
+          }
+          onChange={e => onInputChange('dob', e.target.value)}
+          className={errors.dob ? 'border-red-500' : ''}
         />
         {errors.dob && (
           <div className="flex items-center space-x-2 text-sm text-red-500">
@@ -55,8 +71,11 @@ export function Step1BasicInfo({ formData, errors, onInputChange }: Step1BasicIn
       {/* Gender */}
       <div className="space-y-2">
         <Label htmlFor="gender">Gender</Label>
-        <Select value={formData.gender || ""} onValueChange={(value) => onInputChange("gender", value)}>
-          <SelectTrigger className={errors.gender ? "border-red-500" : ""}>
+        <Select
+          value={formData.gender || ''}
+          onValueChange={value => onInputChange('gender', value)}
+        >
+          <SelectTrigger className={errors.gender ? 'border-red-500' : ''}>
             <SelectValue placeholder="Select gender" />
           </SelectTrigger>
           <SelectContent>
@@ -80,9 +99,9 @@ export function Step1BasicInfo({ formData, errors, onInputChange }: Step1BasicIn
           id="income"
           type="number"
           placeholder="Enter your monthly income"
-          value={formData.income || ""}
-          onChange={(e) => onInputChange("income", e.target.value)}
-          className={errors.income ? "border-red-500" : ""}
+          value={formData.income || ''}
+          onChange={e => onInputChange('income', e.target.value)}
+          className={errors.income ? 'border-red-500' : ''}
         />
         {errors.income && (
           <div className="flex items-center space-x-2 text-sm text-red-500">
@@ -95,8 +114,11 @@ export function Step1BasicInfo({ formData, errors, onInputChange }: Step1BasicIn
       {/* Religion */}
       <div className="space-y-2">
         <Label htmlFor="religion">Religion</Label>
-        <Select value={formData.religion || ""} onValueChange={(value) => onInputChange("religion", value)}>
-          <SelectTrigger className={errors.religion ? "border-red-500" : ""}>
+        <Select
+          value={formData.religion || ''}
+          onValueChange={value => onInputChange('religion', value)}
+        >
+          <SelectTrigger className={errors.religion ? 'border-red-500' : ''}>
             <SelectValue placeholder="Select religion" />
           </SelectTrigger>
           <SelectContent className="max-h-[200px] overflow-y-auto">
@@ -120,8 +142,11 @@ export function Step1BasicInfo({ formData, errors, onInputChange }: Step1BasicIn
       {/* Education */}
       <div className="space-y-2">
         <Label htmlFor="education">Education Level</Label>
-        <Select value={formData.education || ""} onValueChange={(value) => onInputChange("education", value)}>
-          <SelectTrigger className={errors.education ? "border-red-500" : ""}>
+        <Select
+          value={formData.education || ''}
+          onValueChange={value => onInputChange('education', value)}
+        >
+          <SelectTrigger className={errors.education ? 'border-red-500' : ''}>
             <SelectValue placeholder="Select education level" />
           </SelectTrigger>
           <SelectContent className="max-h-[200px] overflow-y-auto">
@@ -147,16 +172,23 @@ export function Step1BasicInfo({ formData, errors, onInputChange }: Step1BasicIn
       {/* Profession */}
       <div className="space-y-2">
         <Label htmlFor="profession">Profession</Label>
-        <Select value={formData.profession || ""} onValueChange={(value) => onInputChange("profession", value)}>
-          <SelectTrigger className={errors.profession ? "border-red-500" : ""}>
+        <Select
+          value={formData.profession || ''}
+          onValueChange={value => onInputChange('profession', value)}
+        >
+          <SelectTrigger className={errors.profession ? 'border-red-500' : ''}>
             <SelectValue placeholder="Select profession" />
           </SelectTrigger>
           <SelectContent className="max-h-[200px] overflow-y-auto">
             <SelectItem value="STUDENT">Student</SelectItem>
             <SelectItem value="ENGINEERING">Engineering</SelectItem>
-            <SelectItem value="SOFTWARE_DEVELOPMENT">Software Development</SelectItem>
+            <SelectItem value="SOFTWARE_DEVELOPMENT">
+              Software Development
+            </SelectItem>
             <SelectItem value="DATA_SCIENCE">Data Science</SelectItem>
-            <SelectItem value="ARTIFICIAL_INTELLIGENCE">Artificial Intelligence</SelectItem>
+            <SelectItem value="ARTIFICIAL_INTELLIGENCE">
+              Artificial Intelligence
+            </SelectItem>
             <SelectItem value="MEDICINE">Medicine</SelectItem>
             <SelectItem value="DENTISTRY">Dentistry</SelectItem>
             <SelectItem value="NURSING">Nursing</SelectItem>
@@ -194,5 +226,5 @@ export function Step1BasicInfo({ formData, errors, onInputChange }: Step1BasicIn
         )}
       </div>
     </div>
-  )
+  );
 }

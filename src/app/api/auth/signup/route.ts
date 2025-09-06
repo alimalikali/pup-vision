@@ -1,36 +1,42 @@
-import { type NextRequest, NextResponse } from "next/server"
-import { PrismaClient } from '@prisma/client'
-import { passwordUtils, jwtUtils } from '@/lib/jwt'
-import { AuthUser } from '@/types/auth'
+import { type NextRequest, NextResponse } from 'next/server';
+import { PrismaClient } from '@prisma/client';
+import { passwordUtils, jwtUtils } from '@/lib/jwt';
+import { AuthUser, Role } from '@types';
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 export async function POST(request: NextRequest) {
   try {
-    const { name, email, password  } = await request.json()
+    const { name, email, password } = await request.json();
 
     // Validate required fields
     if (!name || !email || !password) {
-      return NextResponse.json({ 
-        success: false, 
-        message: "Name, email, and password are required" 
-      }, { status: 400 })
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Name, email, and password are required',
+        },
+        { status: 400 }
+      );
     }
 
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({
-      where: { email }
-    })
+      where: { email },
+    });
 
     if (existingUser) {
-      return NextResponse.json({ 
-        success: false, 
-        message: "User with this email already exists" 
-      }, { status: 400 })
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'User with this email already exists',
+        },
+        { status: 400 }
+      );
     }
 
     // Hash password
-    const hashedPassword = await passwordUtils.hashPassword(password)
+    const hashedPassword = await passwordUtils.hashPassword(password);
 
     // Create user and profile
     const user = await prisma.user.create({
@@ -62,34 +68,35 @@ export async function POST(request: NextRequest) {
             admiredBy: [],
             admiredUsers: [],
             isNew: true,
-            isActive: true
-          }
-        }
+            isActive: true,
+          },
+        },
       },
-      include: { profile: true }
-    })
+      include: { profile: true },
+    });
 
     // Generate access and refresh tokens
     const accessToken = jwtUtils.generateAccessToken({
       userId: user.id,
-      email: user.email
-    })
+      email: user.email,
+    });
 
     const refreshToken = jwtUtils.generateRefreshToken({
       userId: user.id,
-      email: user.email
-    })
+      email: user.email,
+    });
 
-    console.log("[Signup API] Generated tokens for user:", user.email)
+    console.log('[Signup API] Generated tokens for user:', user.email);
 
     // Remove password hash and sensitive fields from user object
-    const { passwordHash, ...userWithoutSensitiveData } = user
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { passwordHash: _, ...userWithoutSensitiveData } = user;
 
     // Convert to AuthUser DTO
     const authUser: AuthUser = {
       id: userWithoutSensitiveData.id,
       email: userWithoutSensitiveData.email,
-      role: userWithoutSensitiveData.role,
+      role: userWithoutSensitiveData.role as Role,
       name: userWithoutSensitiveData.profile?.name,
       avatar: userWithoutSensitiveData.profile?.avatar,
       isVerified: userWithoutSensitiveData.isVerified,
@@ -97,75 +104,80 @@ export async function POST(request: NextRequest) {
       isNew: userWithoutSensitiveData.profile?.isNew ?? true,
       createdAt: userWithoutSensitiveData.createdAt,
       updatedAt: userWithoutSensitiveData.updatedAt,
-      profile: userWithoutSensitiveData.profile ? {
-        id: userWithoutSensitiveData.profile.id,
-        userId: userWithoutSensitiveData.profile.userId,
-        name: userWithoutSensitiveData.profile.name,
-        avatar: userWithoutSensitiveData.profile.avatar,
-        dob: userWithoutSensitiveData.profile.dob,
-        gender: userWithoutSensitiveData.profile.gender,
-        income: userWithoutSensitiveData.profile.income,
-        religion: userWithoutSensitiveData.profile.religion,
-        education: userWithoutSensitiveData.profile.education,
-        profession: userWithoutSensitiveData.profile.profession,
-        lat: userWithoutSensitiveData.profile.lat,
-        lang: userWithoutSensitiveData.profile.lang,
-        city: userWithoutSensitiveData.profile.city,
-        state: userWithoutSensitiveData.profile.state,
-        country: userWithoutSensitiveData.profile.country,
-        purposeDomain: userWithoutSensitiveData.profile.purposeDomain,
-        purposeArchetype: userWithoutSensitiveData.profile.purposeArchetype,
-        purposeModality: userWithoutSensitiveData.profile.purposeModality,
-        purposeNarrative: userWithoutSensitiveData.profile.purposeNarrative,
-        interests: userWithoutSensitiveData.profile.interests,
-        personality: userWithoutSensitiveData.profile.personality,
-        maritalStatus: userWithoutSensitiveData.profile.maritalStatus,
-        lookingFor: userWithoutSensitiveData.profile.lookingFor,
-        language: userWithoutSensitiveData.profile.language,
-        height: userWithoutSensitiveData.profile.height,
-        weight: userWithoutSensitiveData.profile.weight,
-        smoke: userWithoutSensitiveData.profile.smoke,
-        alcohol: userWithoutSensitiveData.profile.alcohol,
-        drugs: userWithoutSensitiveData.profile.drugs,
-        politics: userWithoutSensitiveData.profile.politics,
-        createdAt: userWithoutSensitiveData.profile.createdAt,
-        updatedAt: userWithoutSensitiveData.profile.updatedAt,
-        admiredBy: userWithoutSensitiveData.profile.admiredBy,
-        admiredUsers: userWithoutSensitiveData.profile.admiredUsers,
-      } : undefined
-    }
+      profile: userWithoutSensitiveData.profile
+        ? {
+            id: userWithoutSensitiveData.profile.id,
+            userId: userWithoutSensitiveData.profile.userId,
+            name: userWithoutSensitiveData.profile.name,
+            avatar: userWithoutSensitiveData.profile.avatar,
+            dob: userWithoutSensitiveData.profile.dob,
+            gender: userWithoutSensitiveData.profile.gender,
+            income: userWithoutSensitiveData.profile.income,
+            religion: userWithoutSensitiveData.profile.religion,
+            education: userWithoutSensitiveData.profile.education,
+            profession: userWithoutSensitiveData.profile.profession,
+            lat: userWithoutSensitiveData.profile.lat,
+            lang: userWithoutSensitiveData.profile.lang,
+            city: userWithoutSensitiveData.profile.city,
+            state: userWithoutSensitiveData.profile.state,
+            country: userWithoutSensitiveData.profile.country,
+            purposeDomain: userWithoutSensitiveData.profile.purposeDomain,
+            purposeArchetype: userWithoutSensitiveData.profile.purposeArchetype,
+            purposeModality: userWithoutSensitiveData.profile.purposeModality,
+            purposeNarrative: userWithoutSensitiveData.profile.purposeNarrative,
+            interests: userWithoutSensitiveData.profile.interests,
+            personality: userWithoutSensitiveData.profile.personality,
+            maritalStatus: userWithoutSensitiveData.profile.maritalStatus,
+            lookingFor: userWithoutSensitiveData.profile.lookingFor,
+            language: userWithoutSensitiveData.profile.language,
+            height: userWithoutSensitiveData.profile.height,
+            weight: userWithoutSensitiveData.profile.weight,
+            smoke: userWithoutSensitiveData.profile.smoke,
+            alcohol: userWithoutSensitiveData.profile.alcohol,
+            drugs: userWithoutSensitiveData.profile.drugs,
+            politics: userWithoutSensitiveData.profile.politics,
+            createdAt: userWithoutSensitiveData.profile.createdAt,
+            updatedAt: userWithoutSensitiveData.profile.updatedAt,
+            admiredBy: userWithoutSensitiveData.profile.admiredBy,
+            admiredUsers: userWithoutSensitiveData.profile.admiredUsers,
+          }
+        : undefined,
+    };
 
     // Create response with user data
     const response = NextResponse.json({
       success: true,
       user: authUser,
-      message: "Account created successfully",
-    })
+      message: 'Account created successfully',
+    });
 
     // Set HTTP-only cookie with refresh token
-    response.cookies.set("refresh-token", refreshToken, {
+    response.cookies.set('refresh-token', refreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
       maxAge: 7 * 24 * 60 * 60, // 7 days
-    })
+    });
 
     // Set access token in a separate cookie (for client-side access if needed)
-    response.cookies.set("access-token", accessToken, {
+    response.cookies.set('access-token', accessToken, {
       httpOnly: false, // Allow client-side access
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
       maxAge: 15 * 60, // 15 minutes
-    })
+    });
 
-    await prisma.$disconnect()
-    return response
+    await prisma.$disconnect();
+    return response;
   } catch (error) {
-    console.error("Signup error:", error)
-    await prisma.$disconnect()
-    return NextResponse.json({ 
-      success: false, 
-      message: "Internal server error" 
-    }, { status: 500 })
+    console.error('Signup error:', error);
+    await prisma.$disconnect();
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'Internal server error',
+      },
+      { status: 500 }
+    );
   }
 }

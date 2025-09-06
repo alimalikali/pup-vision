@@ -1,24 +1,34 @@
-import { ThemeProvider } from "@/components/common/theme/theme-provider"
-import { Analytics } from "@vercel/analytics/next"
-import { GeistMono } from "geist/font/mono"
-import { GeistSans } from "geist/font/sans"
-import type { Metadata } from "next"
-import type React from "react"
-import { Suspense } from "react"
-import "./globals.css"
-import { GoogleAuthProvider } from "@/components/feature/auth/google-auth-provider"
-import { AuthProvider } from "@/components/feature/auth/auth-provider"
+import { ThemeProvider } from '@/components/common/theme/theme-provider';
+import { Analytics } from '@vercel/analytics/next';
+import { GeistMono } from 'geist/font/mono';
+import { GeistSans } from 'geist/font/sans';
+import type { Metadata } from 'next';
+import type React from 'react';
+import { Suspense } from 'react';
+import './globals.css';
+import { GoogleAuthProvider } from '@/components/feature/auth/google-auth-provider';
+import { AuthProvider } from '@/components/feature/auth/auth-provider';
+import * as Sentry from '@sentry/nextjs';
 
-export const metadata: Metadata = {
-  title: "Pup - Purpose-Based Marriage",
-  description: "Find your perfect match through purpose-driven connections",
-  generator: "v0.app",
+const metadata: Metadata = {
+  title: 'Pup - Purpose-Based Marriage',
+  description: 'Find your perfect match through purpose-driven connections',
+  generator: 'ali.polymath.dev',
+};
+
+export function generateMetadata(): Metadata {
+  return {
+    ...metadata,
+    other: {
+      ...(Sentry.getTraceData() as Record<string, string>),
+    },
+  };
 }
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
@@ -46,18 +56,18 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable} antialiased`}>
+      <body
+        className={`font-sans ${GeistSans.variable} ${GeistMono.variable} antialiased`}
+      >
         <Suspense fallback={null}>
-          <ThemeProvider defaultTheme="system"> 
+          <ThemeProvider defaultTheme="system">
             <AuthProvider>
-              <GoogleAuthProvider>  
-                {children}
-              </GoogleAuthProvider>
+              <GoogleAuthProvider>{children}</GoogleAuthProvider>
             </AuthProvider>
           </ThemeProvider>
         </Suspense>
         <Analytics />
       </body>
     </html>
-  )
+  );
 }

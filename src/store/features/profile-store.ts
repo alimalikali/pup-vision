@@ -1,76 +1,71 @@
-import { create } from "zustand"
-import { ProfileState } from "@/store/types"
-import { profileService } from "@/services"
-import { Profile } from "@/types/types"
+import { create } from 'zustand';
+import { ProfileState, ProfileStoreActions, Profile } from '@types';
+import { profileService } from '@/services';
 
-interface ProfileActions {
-  fetchProfile: () => Promise<void>
-  updateProfile: (profileData: Partial<Profile>) => Promise<boolean>
-  uploadPhoto: (photoData: string) => Promise<string | null>
-  removePhoto: (photoIndex: number) => Promise<boolean>
-  setMainPhoto: (photoIndex: number) => Promise<boolean>
-  clearError: () => void
-}
+export const useProfileStore = create<ProfileState & ProfileStoreActions>()(
+  (set) => ({
+    profile: null,
+    isLoading: false,
+    error: null,
 
-export const useProfileStore = create<ProfileState & ProfileActions>()((set, get) => ({
-  profile: null,
-  isLoading: false,
-  error: null,
-
-  fetchProfile: async () => {
-    set({ isLoading: true, error: null })
-    try {
-      const profile = await profileService.getProfile()
-      set({ profile: profile || null, isLoading: false })
-    } catch (error) {
-      set({ isLoading: false, error: "Failed to fetch profile" })
-    }
-  },
-
-  updateProfile: async (profileData: Partial<Profile>) => {
-    set({ isLoading: true, error: null })
-    try {
-      const result = await profileService.updateProfile(profileData)
-
-      if (result.success && result.profile) {
-        set({ profile: result.profile, isLoading: false })
-        return true
-      } else {
-        set({ isLoading: false, error: result.message || "Failed to update profile" })
-        return false
+    fetchProfile: async () => {
+      set({ isLoading: true, error: null });
+      try {
+        const profile = await profileService.getProfile();
+        set({ profile: profile || null, isLoading: false });
+      } catch {
+        set({ isLoading: false, error: 'Failed to fetch profile' });
       }
-    } catch (error) {
-      set({ isLoading: false, error: "Failed to update profile" })
-      return false
-    }
-  },
+    },
 
-  uploadPhoto: async (photoData: string) => {
-    try {
-      const photoUrl = await profileService.uploadPhoto(photoData)
-      return photoUrl
-    } catch (error) {
-      return null
-    }
-  },
+    updateProfile: async (profileData: Partial<Profile>) => {
+      set({ isLoading: true, error: null });
+      try {
+        const result = await profileService.updateProfile(profileData);
 
-  removePhoto: async (photoIndex: number) => {
-    try {
-      const success = await profileService.removePhoto(photoIndex)
-      return success
-    } catch (error) {
-      return false
-    }
-  },
+        if (result.success && result.profile) {
+          set({ profile: result.profile, isLoading: false });
+          return true;
+        } else {
+          set({
+            isLoading: false,
+            error: result.message || 'Failed to update profile',
+          });
+          return false;
+        }
+      } catch {
+        set({ isLoading: false, error: 'Failed to update profile' });
+        return false;
+      }
+    },
 
-  setMainPhoto: async (photoIndex: number) => {
-    try {
-      const success = await profileService.setMainPhoto(photoIndex)
-      return success
-    } catch (error) {
-      return false
-    }
-  },
+    uploadPhoto: async (photoData: string) => {
+      try {
+        const photoUrl = await profileService.uploadPhoto(photoData);
+        return photoUrl;
+      } catch {
+        return null;
+      }
+    },
 
-  clearError: () => set({ error: null }),
-}))
+    removePhoto: async (photoIndex: number) => {
+      try {
+        const success = await profileService.removePhoto(photoIndex);
+        return success;
+      } catch {
+        return false;
+      }
+    },
+
+    setMainPhoto: async (photoIndex: number) => {
+      try {
+        const success = await profileService.setMainPhoto(photoIndex);
+        return success;
+      } catch {
+        return false;
+      }
+    },
+
+    clearError: () => set({ error: null }),
+  })
+);

@@ -1,17 +1,21 @@
-"use client";
+'use client';
 
-import { Label } from "@/components/ui/label";
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { Profile } from "@/types/types";
-import { AlertCircle, InfoIcon } from "lucide-react";
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { Profile } from '@types';
+import { AlertCircle, InfoIcon } from 'lucide-react';
 
 interface Step3PurposeProps {
   formData: Partial<Profile>;
@@ -42,11 +46,11 @@ export function Step3Purpose({
         </div>
 
         <Select
-          value={formData.purposeDomain || ""}
-          onValueChange={(value) => onInputChange("purposeDomain", value)}
+          value={formData.purposeDomain || ''}
+          onValueChange={value => onInputChange('purposeDomain', value)}
         >
           <SelectTrigger
-            className={errors.purposeDomain ? "border-red-500" : ""}
+            className={errors.purposeDomain ? 'border-red-500' : ''}
           >
             <SelectValue placeholder="Select purpose domain" />
           </SelectTrigger>
@@ -82,11 +86,11 @@ export function Step3Purpose({
           </Tooltip>
         </div>
         <Select
-          value={formData.purposeArchetype || ""}
-          onValueChange={(value) => onInputChange("purposeArchetype", value)}
+          value={formData.purposeArchetype || ''}
+          onValueChange={value => onInputChange('purposeArchetype', value)}
         >
           <SelectTrigger
-            className={errors.purposeArchetype ? "border-red-500" : ""}
+            className={errors.purposeArchetype ? 'border-red-500' : ''}
           >
             <SelectValue placeholder="Select purpose archetype" />
           </SelectTrigger>
@@ -122,11 +126,11 @@ export function Step3Purpose({
           </Tooltip>
         </div>
         <Select
-          value={formData.purposeModality || ""}
-          onValueChange={(value) => onInputChange("purposeModality", value)}
+          value={formData.purposeModality || ''}
+          onValueChange={value => onInputChange('purposeModality', value)}
         >
           <SelectTrigger
-            className={errors.purposeModality ? "border-red-500" : ""}
+            className={errors.purposeModality ? 'border-red-500' : ''}
           >
             <SelectValue placeholder="Select purpose modality" />
           </SelectTrigger>
@@ -161,10 +165,10 @@ export function Step3Purpose({
         <Textarea
           id="purposeNarrative"
           placeholder="Tell us about your life purpose and what drives you..."
-          value={formData.purposeNarrative || ""}
-          onChange={(e) => onInputChange("purposeNarrative", e.target.value)}
+          value={formData.purposeNarrative || ''}
+          onChange={e => onInputChange('purposeNarrative', e.target.value)}
           rows={4}
-          className={errors.purposeNarrative ? "border-red-500" : ""}
+          className={errors.purposeNarrative ? 'border-red-500' : ''}
         />
         {errors.purposeNarrative && (
           <div className="flex items-center space-x-2 text-sm text-red-500">
