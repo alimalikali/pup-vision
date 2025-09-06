@@ -9,12 +9,7 @@ interface GoogleAuthProviderProps {
 }
 
 export function GoogleAuthProvider({ children }: GoogleAuthProviderProps) {
-  const { checkAuth } = useAuthStore()
-
-  useEffect(() => {
-    // Check authentication status when the provider mounts
-    checkAuth()
-  }, [checkAuth])
+  // Auth initialization is handled by AuthProvider, no need to duplicate here
 
   if (!process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID) {
     // In development, show a helpful error message

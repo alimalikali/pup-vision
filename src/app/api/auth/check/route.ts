@@ -62,7 +62,9 @@ export async function GET(request: NextRequest) {
     const authUser: AuthUser = {
       id: userWithoutSensitiveData.id,
       email: userWithoutSensitiveData.email,
+      name: userWithoutSensitiveData.profile?.name,
       role: userWithoutSensitiveData.role,
+      avatar: userWithoutSensitiveData.profile?.avatar,
       isVerified: userWithoutSensitiveData.isVerified,
       isActive: userWithoutSensitiveData.isActive,
       isNew: userWithoutSensitiveData.profile?.isNew ?? true,

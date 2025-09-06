@@ -27,7 +27,7 @@ export default function OnboardingPage() {
   const [googleUser, setGoogleUser] = useState<GoogleUser | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { updateUser, user: authUser } = useAuthStore();
+  const { updateUser } = useAuthStore();
 
   // Check for Google user data in URL params
   useEffect(() => {

@@ -1,11 +1,11 @@
 import { create } from "zustand"
-import { UIState } from "@/store/types"
+import { UIState, Notification } from "@/store/types"
 
 interface UIActions {
   setTheme: (theme: "light" | "dark" | "system") => void
   toggleSidebar: () => void
   setSidebarOpen: (open: boolean) => void
-  addNotification: (notification: any) => void
+  addNotification: (notification: Omit<Notification, 'id'>) => void
   removeNotification: (id: string) => void
   clearNotifications: () => void
 }

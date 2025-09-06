@@ -7,7 +7,8 @@ const prisma = new PrismaClient()
 export async function POST(request: NextRequest) {
   try {
     // Get current user ID from auth token
-    const token = request.cookies.get('auth-token')?.value
+    const authHeader = request.headers.get('authorization')
+    const token = authHeader?.replace('Bearer ', '') || request.cookies.get('access-token')?.value
     
     if (!token) {
       return NextResponse.json({ success: false, message: "No authentication token" }, { status: 401 })
@@ -151,7 +152,8 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     // Get current user ID from auth token
-    const token = request.cookies.get('auth-token')?.value
+    const authHeader = request.headers.get('authorization')
+    const token = authHeader?.replace('Bearer ', '') || request.cookies.get('access-token')?.value
     
     if (!token) {
       return NextResponse.json({ success: false, message: "No authentication token" }, { status: 401 })

@@ -4,7 +4,6 @@
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Navbar } from "@/components/common/layout/navbar"
 
 interface ErrorProps {
   error: Error

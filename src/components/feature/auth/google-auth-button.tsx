@@ -9,10 +9,6 @@ export function GoogleAuthButton() {
   const router = useRouter();
   const { setAuthenticated } = useAuthStore();
 
-  if (!process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID) {
-    return null;
-  }
-
   const login = useGoogleLogin({
     onSuccess: async (response) => {
       try {
@@ -76,6 +72,10 @@ export function GoogleAuthButton() {
       console.error('Google login failed');
     },
   });
+
+  if (!process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID) {
+    return null;
+  }
 
   return (
     <Button

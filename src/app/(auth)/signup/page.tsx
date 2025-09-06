@@ -12,9 +12,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Separator } from "@/components/ui/separator"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Heart, Mail, Lock, Eye, EyeOff, Loader2, User, AlertCircle } from "lucide-react"
+import { Heart, Mail, Lock, Eye, EyeOff, User, AlertCircle } from "lucide-react"
 import { useAuthStore } from "@/store"
 import { GoogleAuthButton } from "@/components/feature/auth/google-auth-button"
+import { LoaderWait } from "@/components/common/layout/loader-wait"
 
 export default function SignupPage() {
   const [formData, setFormData] = useState({
@@ -260,7 +261,7 @@ export default function SignupPage() {
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <LoaderWait variant="spinner" size="sm" color="white" centered={false} />
                     Creating account...
                   </>
                 ) : (

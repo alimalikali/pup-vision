@@ -81,6 +81,8 @@ export async function POST(request: NextRequest) {
     const authUser: AuthUser = {
       id: userWithoutSensitiveData.id,
       email: userWithoutSensitiveData.email,
+      name: userWithoutSensitiveData.profile?.name,
+      avatar: userWithoutSensitiveData.profile?.avatar,
       role: userWithoutSensitiveData.role,
       isVerified: userWithoutSensitiveData.isVerified,
       isActive: userWithoutSensitiveData.isActive,

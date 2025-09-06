@@ -24,7 +24,16 @@ export interface SettingsState extends BaseState {
   settings: SettingsState
 }
 
+export interface Notification {
+  id: string
+  type: "success" | "error" | "warning" | "info"
+  title: string
+  message: string
+  duration?: number
+}
+
 export interface UIState {
   theme: "light" | "dark" | "system"
   sidebarOpen: boolean
+  notifications: Notification[]
 }

@@ -1,15 +1,18 @@
 "use client"
 
+import { LoaderWait } from "@/components/common/layout/loader-wait"
 import { Navbar } from "@/components/common/layout/navbar"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
-import { formatEnumLabel, calculateProfileCompletion, getProfileMissingFields } from "@/lib/utils"
-import { useAuthStore, useProfileStore } from "@/store"
+import { formatEnumLabel, getProfileCompletionFromAPI } from "@/lib/utils"
+import { useAuthStore, useMatchesStore } from "@/store"
 import { AuthProfile } from "@/types/auth"
 import {
   ArrowRight,
+  Badge,
+  Briefcase,
   Calendar,
   Camera,
   Eye,
@@ -19,17 +22,55 @@ import {
   Star,
   Target,
   TrendingUp,
-  Users,
-  UserCheck
+  UserRoundPen,
+  Users
 } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useEffect } from "react"
+import { useEffect, useState, useCallback } from "react"
 
 export default function DashboardPage() {
-  const { user, isLoading } = useAuthStore()
+  const { user, status } = useAuthStore()
+  const { admireData, fetchAdmireData } = useMatchesStore()
+  const router = useRouter()
+  
+  // State for API-based profile completion
+  const [profileCompletion, setProfileCompletion] = useState<{
+    completion: number
+    missingFields: string[]
+    profile: AuthProfile | null
+  }>({ completion: 0, missingFields: [], profile: null })
+  const [isLoadingCompletion, setIsLoadingCompletion] = useState(false)
 
-    const router = useRouter()
+  // Function to fetch fresh profile completion data
+  const fetchProfileCompletion = useCallback(async () => {
+    if (status !== "authenticated" || !user) return
+    
+    setIsLoadingCompletion(true)
+    try {
+      const completionData = await getProfileCompletionFromAPI()
+      setProfileCompletion(completionData)
+    } catch (error) {
+      console.error('Failed to fetch profile completion:', error)
+    } finally {
+      setIsLoadingCompletion(false)
+    }
+  }, [status, user])
+
+  // Expose refresh function for external use (e.g., after profile updates)
+  useEffect(() => {
+    // Listen for profile updates from other components
+    const handleProfileUpdate = () => {
+      fetchProfileCompletion()
+    }
+    
+    // Add event listener for profile updates
+    window.addEventListener('profileUpdated', handleProfileUpdate)
+    
+    return () => {
+      window.removeEventListener('profileUpdated', handleProfileUpdate)
+    }
+  }, [fetchProfileCompletion])
 
   useEffect(() => {
     // Check if user is new and redirect to onboarding
@@ -39,7 +80,12 @@ export default function DashboardPage() {
       return
     }
     
-  }, [user, router])
+    // Fetch admire data and profile completion when user is authenticated
+    if (status === "authenticated" && user) {
+      fetchAdmireData()
+      fetchProfileCompletion()
+    }
+  }, [user, router, status, fetchAdmireData, fetchProfileCompletion])
 
   // Show loading while checking if user should be redirected
   if (user?.isNew) {
@@ -57,21 +103,18 @@ export default function DashboardPage() {
   }
 
   const stats = {
-    totalMatches: 0,
-    newMatches: 0,
-    profileViews: 0,
-    interests: 0,
+    totalMatches: admireData?.matches?.length || 0,
+    newMatches: admireData?.admirers?.length || 0,
+    profileViews: 0, // This would need to be tracked separately
+    interests: admireData?.admired?.length || 0,
   }
 
-  if (!user?.profile || isLoading) {
+  if (status === "loading" || status === "idle") {
     return (
         <div className="min-h-screen bg-background">
           <Navbar />
           <div className="flex items-center justify-center min-h-[50vh]">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-              <p className="text-muted-foreground">Loading profile...</p>
-            </div>
+            <LoaderWait variant="spinner" size="lg" color="primary" text="Loading profile..." />
           </div>
         </div>
     );
@@ -128,12 +171,12 @@ export default function DashboardPage() {
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Interested</CardTitle>
+                <CardTitle className="text-sm font-medium">You Admire</CardTitle>
                 <Star className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{stats.interests}</div>
-                <p className="text-xs text-muted-foreground">People who liked you</p>
+                <p className="text-xs text-muted-foreground">People you&apos;ve admired</p>
               </CardContent>
             </Card>
 
@@ -143,7 +186,9 @@ export default function DashboardPage() {
                 <TrendingUp className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{user?.profile ? calculateProfileCompletion(user.profile) : 0}%</div>
+                <div className="text-2xl font-bold">
+                  {isLoadingCompletion ? "..." : profileCompletion.completion}%
+                </div>
                 <p className="text-xs text-muted-foreground">Profile completion</p>
               </CardContent>
             </Card>
@@ -154,8 +199,8 @@ export default function DashboardPage() {
             <div className="lg:col-span-2 space-y-8">
               {/* Profile Completion */}
               {(() => {
-                const completion = user?.profile ? calculateProfileCompletion(user.profile) : 0
-                const missingFields = user?.profile ? getProfileMissingFields(user.profile) : []
+                const completion = profileCompletion.completion
+                const missingFields = profileCompletion.missingFields
                 return completion < 100 && (
                   <Card>
                     <CardHeader>
@@ -163,7 +208,7 @@ export default function DashboardPage() {
                         <Target className="mr-2 h-5 w-5 text-primary" />
                         Complete Your Profile
                       </CardTitle>
-                      <CardDescription>A complete profile gets 3x more matches. Required fields are worth 70%, optional fields 30%.</CardDescription>
+                      <CardDescription>A complete profile gets 3x more matches.</CardDescription>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-4">
@@ -200,7 +245,7 @@ export default function DashboardPage() {
                           </div>
                           <Button variant="outline" size="sm" asChild>
                             <Link href="/profile">
-                              <UserCheck className="mr-2 h-4 w-4" />
+                              <UserRoundPen className="mr-2 h-4 w-4" />
                               Complete Profile
                             </Link>
                           </Button>
@@ -212,50 +257,101 @@ export default function DashboardPage() {
               })()}
 
               {/* Recent Matches */}
-              {/* <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <CardTitle>Recent Matches</CardTitle>
-                      <CardDescription>Your latest purpose-based matches</CardDescription>
-                    </div>
-                    <Button variant="outline" asChild>
-                      <Link href="/matches">View All</Link>
-                    </Button>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {recentMatches.map((match) => (
-                      <div key={match.id} className="flex items-center space-x-4 p-4 rounded-lg border">
-                        <Avatar className="h-12 w-12">
-                          <AvatarImage src={match.profile?.avatar || "/placeholder.svg"} />
-                          <AvatarFallback>{match.profile.name.charAt(0)}</AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between">
-                            <p className="text-sm font-medium text-foreground truncate">{match.profile?.name}</p>
-                            <Badge variant="secondary" className="ml-2">
-                              {match.compatibilityScore}% Match
-                            </Badge>
-                          </div>
-                          <div className="flex items-center mt-1 text-xs text-muted-foreground">
-                            <MapPin className="mr-1 h-3 w-3" />
-                            {match.profile?.city}, {match.profile?.state}
-                            <span className="mx-2">•</span>
-                            <Briefcase className="mr-1 h-3 w-3" />
-                            {match.profile.profession}
-                          </div>
-                          <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{match.narrative}</p>
-                        </div>
-                        <Button size="sm" asChild>
-                          <Link href={`/matches/${match.id}`}>View</Link>
-                        </Button>
+              {admireData?.matches && admireData.matches.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <CardTitle>Your Matches</CardTitle>
+                        <CardDescription>People who admire you back</CardDescription>
                       </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card> */}
+                      <Button variant="outline" asChild>
+                        <Link href="/matches">View All</Link>
+                      </Button>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {admireData.matches.slice(0, 3).map((match) => (
+                        <div key={match.id} className="flex items-center space-x-4 p-4 rounded-lg border">
+                          <Avatar className="h-12 w-12">
+                            <AvatarImage src={match.otherUser?.avatar || "/placeholder.svg"} />
+                            <AvatarFallback>{match.otherUser?.name?.charAt(0) || "U"}</AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between">
+                              <p className="text-sm font-medium text-foreground truncate">{match.otherUser?.name}</p>
+                              <Badge  className="ml-2">
+                                {match.compatibilityScore}% Match
+                              </Badge>
+                            </div>
+                            <div className="flex items-center mt-1 text-xs text-muted-foreground">
+                              <MapPin className="mr-1 h-3 w-3" />
+                              {match.otherUser?.city}, {match.otherUser?.state}
+                              <span className="mx-2">•</span>
+                              <Briefcase className="mr-1 h-3 w-3" />
+                              {match.otherUser?.profession}
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                              Great compatibility based on shared interests and values.
+                            </p>
+                          </div>
+                          <Button size="sm" asChild>
+                            <Link href={`/matches/${match.otherUser?.id}`}>View</Link>
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Who Admires You */}
+              {admireData?.admirers && admireData.admirers.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <CardTitle>Who Admires You</CardTitle>
+                        <CardDescription>People who have admired your profile</CardDescription>
+                      </div>
+                      <Button variant="outline" asChild>
+                        <Link href="/matches">View All</Link>
+                      </Button>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {admireData.admirers.slice(0, 3).map((admirer) => (
+                        <div key={admirer.id} className="flex items-center space-x-4 p-4 rounded-lg border">
+                          <Avatar className="h-12 w-12">
+                            <AvatarImage src={admirer.avatar || "/placeholder.svg"} />
+                            <AvatarFallback>{admirer.name?.charAt(0) || "U"}</AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between">
+                              <p className="text-sm font-medium text-foreground truncate">{admirer.name}</p>
+                              <Badge  className="ml-2">
+                                {admirer.age} years old
+                              </Badge>
+                            </div>
+                            <div className="flex items-center mt-1 text-xs text-muted-foreground">
+                              <MapPin className="mr-1 h-3 w-3" />
+                              {admirer.city}, {admirer.state}
+                              <span className="mx-2">•</span>
+                              <Briefcase className="mr-1 h-3 w-3" />
+                              {admirer.profession}
+                            </div>
+                          </div>
+                          <Button size="sm" asChild>
+                            <Link href={`/matches/${admirer.id}`}>View</Link>
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
 
               {/* Purpose Insights */}
               {/* <Card>
@@ -331,7 +427,7 @@ export default function DashboardPage() {
                     <div className="flex items-center">
                       <Target className="mr-2 h-4 w-4 text-muted-foreground" />
                       <span>
-                        Profile: {user?.profile ? calculateProfileCompletion(user.profile) : 0}% complete
+                        Profile: {isLoadingCompletion ? "..." : profileCompletion.completion}% complete
                       </span>
                     </div>
                   </div>

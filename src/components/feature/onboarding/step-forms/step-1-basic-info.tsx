@@ -1,16 +1,15 @@
 "use client"
 
-import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Profile } from "@/types/types"
 import { AlertCircle } from "lucide-react"
-import React from "react"
 
 interface Step1BasicInfoProps {
-  formData: any
+  formData: Partial<Profile>
   errors: Record<string, string>
-  onInputChange: (fieldName: string, value: any) => void
+  onInputChange: (fieldName: string, value: string | number | string[]) => void
 }
 
 export function Step1BasicInfo({ formData, errors, onInputChange }: Step1BasicInfoProps) {
@@ -41,7 +40,7 @@ export function Step1BasicInfo({ formData, errors, onInputChange }: Step1BasicIn
         <Input
           id="dob"
           type="date"
-          value={formData.dob || ""}
+          value={formData.dob ? (formData.dob instanceof Date ? formData.dob.toISOString().split('T')[0] : formData.dob) : ""}
           onChange={(e) => onInputChange("dob", e.target.value)}
           className={errors.dob ? "border-red-500" : ""}
         />
@@ -76,11 +75,11 @@ export function Step1BasicInfo({ formData, errors, onInputChange }: Step1BasicIn
 
       {/* Income */}
       <div className="space-y-2">
-        <Label htmlFor="income">Annual Income</Label>
+        <Label htmlFor="income">Monthly Income</Label>
         <Input
           id="income"
           type="number"
-          placeholder="Enter your annual income"
+          placeholder="Enter your monthly income"
           value={formData.income || ""}
           onChange={(e) => onInputChange("income", e.target.value)}
           className={errors.income ? "border-red-500" : ""}
@@ -100,7 +99,7 @@ export function Step1BasicInfo({ formData, errors, onInputChange }: Step1BasicIn
           <SelectTrigger className={errors.religion ? "border-red-500" : ""}>
             <SelectValue placeholder="Select religion" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="max-h-[200px] overflow-y-auto">
             <SelectItem value="ISLAM">Islam</SelectItem>
             <SelectItem value="CHRISTIANITY">Christianity</SelectItem>
             <SelectItem value="HINDUISM">Hinduism</SelectItem>
@@ -125,13 +124,13 @@ export function Step1BasicInfo({ formData, errors, onInputChange }: Step1BasicIn
           <SelectTrigger className={errors.education ? "border-red-500" : ""}>
             <SelectValue placeholder="Select education level" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="max-h-[200px] overflow-y-auto">
             <SelectItem value="NONE">None</SelectItem>
             <SelectItem value="PRIMARY">Primary</SelectItem>
             <SelectItem value="SECONDARY">Secondary</SelectItem>
             <SelectItem value="HIGH_SCHOOL">High School</SelectItem>
-            <SelectItem value="BACHELORS">Bachelor's Degree</SelectItem>
-            <SelectItem value="MASTERS">Master's Degree</SelectItem>
+            <SelectItem value="BACHELORS">Bachelor&apos;s Degree</SelectItem>
+            <SelectItem value="MASTERS">Master&apos;s Degree</SelectItem>
             <SelectItem value="PHD">PhD</SelectItem>
             <SelectItem value="SELF_TAUGHT">Self Taught</SelectItem>
             <SelectItem value="OTHER">Other</SelectItem>
@@ -152,7 +151,7 @@ export function Step1BasicInfo({ formData, errors, onInputChange }: Step1BasicIn
           <SelectTrigger className={errors.profession ? "border-red-500" : ""}>
             <SelectValue placeholder="Select profession" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="max-h-[200px] overflow-y-auto">
             <SelectItem value="STUDENT">Student</SelectItem>
             <SelectItem value="ENGINEERING">Engineering</SelectItem>
             <SelectItem value="SOFTWARE_DEVELOPMENT">Software Development</SelectItem>

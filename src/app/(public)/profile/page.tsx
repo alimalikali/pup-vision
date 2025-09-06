@@ -31,6 +31,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import LoaderWait from "@/components/common/layout/loader-wait";
 
 export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
@@ -63,12 +64,7 @@ export default function ProfilePage() {
     return (
       <div className="min-h-screen bg-background">
         <Navbar />
-        <div className="flex items-center justify-center min-h-[70vh]">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Loading profile...</p>
-          </div>
-        </div>
+        <LoaderWait className="pt-[20vh]" variant="spinner" size="lg" color="primary" text="Loading profile..." />
       </div>
     );
   }
