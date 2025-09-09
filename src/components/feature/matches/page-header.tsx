@@ -13,7 +13,7 @@ interface PageHeaderProps {
   onSortChange: (value: string) => void;
 }
 
-export function PageHeader({ title, description, showFilters, onToggleFilters, sortBy, onSortChange }: PageHeaderProps) {
+export function PageHeader({ title, description, onToggleFilters, sortBy, onSortChange }: PageHeaderProps) {
   return (
     <div className="mb-8">
       <div className="flex items-center justify-between">

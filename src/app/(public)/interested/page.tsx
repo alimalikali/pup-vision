@@ -1,17 +1,15 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { LoaderWait } from '@/components/common/layout/loader-wait';
 import { Navbar } from '@/components/common/layout/navbar';
+import { EmptyStateCard } from '@/components/feature/interested/empty-state-card';
+import { InterestCard as InterestCardComponent } from '@/components/feature/interested/interest-card';
 import { PageHeader } from '@/components/feature/interested/page-header';
 import { StatsCards } from '@/components/feature/interested/stats-cards';
-import { InterestCard as InterestCardComponent } from '@/components/feature/interested/interest-card';
-import { EmptyStateCard } from '@/components/feature/interested/empty-state-card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { useMatchesStore, useAuthStore } from '@/store';
-import { MatchProfile } from '@types';
-import { LoaderWait } from '@/components/common/layout/loader-wait';
-
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useAuthStore, useMatchesStore } from '@/store';
+import { useEffect } from 'react';
 export default function InterestedPage() {
   const { user, status } = useAuthStore();
   const { admireData, isLoadingAdmire, error, fetchAdmireData, admireUser, passUser, clearError } = useMatchesStore();

@@ -1,8 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 import { jwtUtils } from '@/lib/jwt';
-
-const prisma = new PrismaClient();
 
 export async function POST(request: NextRequest) {
   try {
@@ -148,7 +146,6 @@ export async function POST(request: NextRequest) {
         console.log('[Admire API] Mutual admiration - match created!');
       }
 
-      await prisma.$disconnect();
       return NextResponse.json({
         success: true,
         message: 'User admired successfully',
@@ -175,7 +172,6 @@ export async function POST(request: NextRequest) {
         },
       });
 
-      await prisma.$disconnect();
       return NextResponse.json({
         success: true,
         message: 'User passed successfully',
@@ -183,7 +179,6 @@ export async function POST(request: NextRequest) {
     }
   } catch (error) {
     console.error('[Admire API] Error processing admire/pass:', error);
-    await prisma.$disconnect();
     return NextResponse.json(
       {
         success: false,
@@ -338,8 +333,6 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    await prisma.$disconnect();
-
     return NextResponse.json({
       success: true,
       data: {
@@ -372,7 +365,6 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('[Admire API] Error fetching admire data:', error);
-    await prisma.$disconnect();
     return NextResponse.json(
       {
         success: false,

@@ -1,9 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 import { passwordUtils, jwtUtils } from '@/lib/jwt';
 import { AuthUser, Role } from '@types';
-
-const prisma = new PrismaClient();
 
 export async function POST(request: NextRequest) {
   try {
