@@ -1,26 +1,40 @@
-"use client"
+'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
-import { Target, Lightbulb, Users, Zap } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Target, Lightbulb, Users, Zap } from 'lucide-react';
 
 interface PurposeSectionProps {
   purpose: {
-    domain: string
-    archetype: string
-    modality: string
-    narrative: string
-  }
+    domain: string;
+    archetype: string;
+    modality: string;
+    narrative: string;
+  };
 }
 
 export function PurposeSection({ purpose }: PurposeSectionProps) {
-  const purposeInsights = [
-    { label: "Domain Alignment", value: 92, description: "Strong match with tech professionals" },
-    { label: "Archetype Compatibility", value: 88, description: "Great fit with other creators" },
-    { label: "Modality Synergy", value: 85, description: "Collaborative approach resonates well" },
-    { label: "Narrative Strength", value: 90, description: "Clear and compelling purpose story" },
-  ]
+  // const purposeInsights = [
+  //   {
+  //     label: 'Domain Alignment',
+  //     value: 92,
+  //     description: 'Strong match with tech professionals',
+  //   },
+  //   {
+  //     label: 'Archetype Compatibility',
+  //     value: 88,
+  //     description: 'Great fit with other creators',
+  //   },
+  //   {
+  //     label: 'Modality Synergy',
+  //     value: 85,
+  //     description: 'Collaborative approach resonates well',
+  //   },
+  //   {
+  //     label: 'Narrative Strength',
+  //     value: 90,
+  //     description: 'Clear and compelling purpose story',
+  //   },
+  // ];
 
   return (
     <div className="space-y-6">
@@ -109,5 +123,5 @@ export function PurposeSection({ purpose }: PurposeSectionProps) {
         </CardContent>
       </Card> */}
     </div>
-  )
+  );
 }

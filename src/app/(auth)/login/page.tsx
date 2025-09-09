@@ -1,99 +1,98 @@
-"use client"
+'use client';
 
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import { useSearchParams } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Heart, Mail, Lock, Eye, EyeOff, AlertCircle } from "lucide-react"
-import { useAuthStore } from "@/store"
-import { GoogleAuthButton } from "@/components/feature/auth/google-auth-button"
-import { LoaderWait } from "@/components/common/layout/loader-wait"
-
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Heart, Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react';
+import { useAuthStore } from '@/store';
+import { GoogleAuthButton } from '@/components/feature/auth/google-auth-button';
+import { LoaderWait } from '@/components/common/layout/loader-wait';
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [showPassword, setShowPassword] = useState(false)
-  const [error, setError] = useState("")
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
 
-  const searchParams = useSearchParams()
+  const searchParams = useSearchParams();
 
-  const { login, isLoading } = useAuthStore()
+  const { login, isLoading } = useAuthStore();
 
   // Check for OAuth errors in URL params
   useEffect(() => {
-    const errorParam = searchParams.get("error")
+    const errorParam = searchParams.get('error');
     if (errorParam) {
       switch (errorParam) {
-        case "google_auth_failed":
-          setError("Google authentication failed. Please try again.")
-          break
-        case "no_auth_code":
-          setError("Authentication incomplete. Please try signing in with Google again.")
-          break
-        case "token_exchange_failed":
-          setError("Authentication token exchange failed. Please try again.")
-          break
-        case "user_info_failed":
-          setError("Failed to retrieve user information from Google. Please try again.")
-          break
-        case "callback_failed":
-          setError("Authentication callback failed. Please try again.")
-          break
+        case 'google_auth_failed':
+          setError('Google authentication failed. Please try again.');
+          break;
+        case 'no_auth_code':
+          setError('Authentication incomplete. Please try signing in with Google again.');
+          break;
+        case 'token_exchange_failed':
+          setError('Authentication token exchange failed. Please try again.');
+          break;
+        case 'user_info_failed':
+          setError('Failed to retrieve user information from Google. Please try again.');
+          break;
+        case 'callback_failed':
+          setError('Authentication callback failed. Please try again.');
+          break;
         default:
-          setError("An authentication error occurred. Please try again.")
+          setError('An authentication error occurred. Please try again.');
       }
-      
+
       // Clean up URL params
-      const newUrl = new URL(window.location.href)
-      newUrl.searchParams.delete("error")
-      window.history.replaceState({}, "", newUrl.toString())
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.delete('error');
+      window.history.replaceState({}, '', newUrl.toString());
     }
-  }, [searchParams])
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError("")
+    e.preventDefault();
+    setError('');
 
-    console.log('Login attempt for:', email)
-    const success = await login(email, password)
-    console.log('Login result:', success)
+    console.log('Login attempt for:', email);
+    const success = await login(email, password);
+    console.log('Login result:', success);
 
     if (success) {
       // Check if there's a redirect parameter
-      const redirect = searchParams.get('redirect')
-      console.log('Redirect parameter:', redirect)
-      
+      const redirect = searchParams.get('redirect');
+      console.log('Redirect parameter:', redirect);
+
       // Force a page reload to ensure the auth state is properly updated
       if (redirect) {
-        console.log('Redirecting to:', redirect)
-        window.location.href = redirect
+        console.log('Redirecting to:', redirect);
+        window.location.href = redirect;
       } else {
-        console.log('Redirecting to dashboard')
-        window.location.href = "/dashboard"
+        console.log('Redirecting to dashboard');
+        window.location.href = '/dashboard';
       }
     } else {
-      setError("Invalid email or password. Try demo@pup.com / password")
+      setError('Invalid email or password. Try demo@pup.com / password');
     }
-  }
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.name === "email") {
-      setEmail(e.target.value)
-    } else if (e.target.name === "password") {
-      setPassword(e.target.value)
+    if (e.target.name === 'email') {
+      setEmail(e.target.value);
+    } else if (e.target.name === 'password') {
+      setPassword(e.target.value);
     }
-    
+
     // Clear error when user starts typing
     if (error) {
-      setError("")
+      setError('');
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-accent/5 px-4">
@@ -110,9 +109,7 @@ export default function LoginPage() {
         <Card className="border-0 shadow-lg">
           <CardHeader className="space-y-1 pb-4">
             <CardTitle className="text-2xl text-center">Sign in</CardTitle>
-            <CardDescription className="text-center">
-              Enter your email and password to access your account
-            </CardDescription>
+            <CardDescription className="text-center">Enter your email and password to access your account</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <GoogleAuthButton />
@@ -138,44 +135,16 @@ export default function LoginPage() {
                 <Label htmlFor="email">Email</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={handleInputChange}
-                    className="pl-10"
-                    required
-                  />
+                  <Input id="email" name="email" type="email" placeholder="Enter your email" value={email} onChange={handleInputChange} className="pl-10" required />
                 </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="password"
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Enter your password"
-                    value={password}
-                    onChange={handleInputChange}
-                    className="pl-10 pr-10"
-                    required
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4 text-muted-foreground" />
-                    ) : (
-                      <Eye className="h-4 w-4 text-muted-foreground" />
-                    )}
+                  <Input id="password" name="password" type={showPassword ? 'text' : 'password'} placeholder="Enter your password" value={password} onChange={handleInputChange} className="pl-10 pr-10" required />
+                  <Button type="button" variant="ghost" size="sm" className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" onClick={() => setShowPassword(!showPassword)}>
+                    {showPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
                   </Button>
                 </div>
               </div>
@@ -191,7 +160,7 @@ export default function LoginPage() {
                     Signing in...
                   </>
                 ) : (
-                  "Sign in"
+                  'Sign in'
                 )}
               </Button>
             </form>
@@ -210,5 +179,5 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

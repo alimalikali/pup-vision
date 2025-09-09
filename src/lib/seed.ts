@@ -1,11 +1,11 @@
-import { Role, Gender, Religion, Education, Profession, PurposeDomain, PurposeArchetype, PurposeModality, Interest, Personality, MaritalStatus, LookingFor, Language, Smoke, Alcohol, Drugs, Politics, MatchStatus, PrismaClient } from '@prisma/client'
-import bcrypt from 'bcryptjs'
-import { config } from 'dotenv'
+import { Role, Gender, Religion, Education, Profession, PurposeDomain, PurposeArchetype, PurposeModality, Interest, Personality, MaritalStatus, LookingFor, Language, Smoke, Alcohol, Drugs, Politics, MatchStatus, PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs';
+import { config } from 'dotenv';
 
 // Load environment variables
-config({ path: '.env.local' })
+config({ path: '.env.local' });
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 export const sampleUsers = [
   // --- existing admin (kept) ---
@@ -36,8 +36,8 @@ export const sampleUsers = [
       state: 'CA',
       country: 'USA',
       dob: new Date('1990-01-15'),
-      isNew: false
-    }
+      isNew: false,
+    },
   },
 
   // ---------- Pakistan / regional realistic users ----------
@@ -69,8 +69,8 @@ export const sampleUsers = [
       state: 'Punjab',
       country: 'Pakistan',
       dob: new Date('1996-05-22'),
-      isNew: false
-    }
+      isNew: false,
+    },
   },
 
   {
@@ -100,8 +100,8 @@ export const sampleUsers = [
       state: 'Sindh',
       country: 'Pakistan',
       dob: new Date('1999-11-03'),
-      isNew: false
-    }
+      isNew: false,
+    },
   },
 
   {
@@ -131,8 +131,8 @@ export const sampleUsers = [
       state: 'ICT',
       country: 'Pakistan',
       dob: new Date('1995-08-14'),
-      isNew: false
-    }
+      isNew: false,
+    },
   },
 
   {
@@ -162,8 +162,8 @@ export const sampleUsers = [
       state: 'Punjab',
       country: 'Pakistan',
       dob: new Date('1993-03-09'),
-      isNew: false
-    }
+      isNew: false,
+    },
   },
 
   {
@@ -193,8 +193,8 @@ export const sampleUsers = [
       state: 'Sindh',
       country: 'Pakistan',
       dob: new Date('1997-10-27'),
-      isNew: false
-    }
+      isNew: false,
+    },
   },
 
   {
@@ -224,8 +224,8 @@ export const sampleUsers = [
       state: 'Punjab',
       country: 'Pakistan',
       dob: new Date('1994-06-18'),
-      isNew: false
-    }
+      isNew: false,
+    },
   },
 
   {
@@ -255,8 +255,8 @@ export const sampleUsers = [
       state: 'Sindh',
       country: 'Pakistan',
       dob: new Date('1992-12-01'),
-      isNew: false
-    }
+      isNew: false,
+    },
   },
 
   {
@@ -286,8 +286,8 @@ export const sampleUsers = [
       state: 'Punjab',
       country: 'Pakistan',
       dob: new Date('1991-09-05'),
-      isNew: false
-    }
+      isNew: false,
+    },
   },
 
   {
@@ -317,8 +317,8 @@ export const sampleUsers = [
       state: 'Sindh',
       country: 'Pakistan',
       dob: new Date('1998-02-19'),
-      isNew: false
-    }
+      isNew: false,
+    },
   },
 
   {
@@ -348,8 +348,8 @@ export const sampleUsers = [
       state: 'Punjab',
       country: 'Pakistan',
       dob: new Date('1990-07-30'),
-      isNew: false
-    }
+      isNew: false,
+    },
   },
 
   // you can keep your original US-based examples below if you want extra diversity
@@ -380,28 +380,26 @@ export const sampleUsers = [
       state: 'CA',
       country: 'USA',
       dob: new Date('1998-09-17'),
-      isNew: false
-    }
-  }
-]
-
-
+      isNew: false,
+    },
+  },
+];
 
 async function seedDatabase() {
   try {
-    console.log('🌱 Starting database seeding...')
+    console.log('🌱 Starting database seeding...');
 
     // Clear existing data
-    console.log('🗑️  Clearing existing data...')
-    await prisma.match.deleteMany()
-    await prisma.profile.deleteMany()
-    await prisma.user.deleteMany()
+    console.log('🗑️  Clearing existing data...');
+    await prisma.match.deleteMany();
+    await prisma.profile.deleteMany();
+    await prisma.user.deleteMany();
 
-    console.log('👥 Creating users and profiles...')
+    console.log('👥 Creating users and profiles...');
 
     // Assume `sampleUsers` is imported or defined above
     for (const userData of sampleUsers) {
-      const hashedPassword = await bcrypt.hash(userData.password, 12)
+      const hashedPassword = await bcrypt.hash(userData.password, 12);
 
       const user = await prisma.user.create({
         data: {
@@ -421,29 +419,29 @@ async function seedDatabase() {
           },
         },
         include: { profile: true },
-      })
+      });
 
-      console.log(`✅ Created user: ${user.email} (${user.profile?.name})`)
+      console.log(`✅ Created user: ${user.email} (${user.profile?.name})`);
     }
 
     // Fetch users with profiles for matching
     const users = await prisma.user.findMany({
       where: { role: 'USER' },
       include: { profile: true },
-    })
+    });
 
     // Define mutual match pairs by email
     const matchPairs = [
       ['fatima.zahra@pup.com', 'hassan.raza@pup.com'],
       ['nimra.shah@pup.com', 'ahmed.karim@pup.com'],
       ['zainab.naeem@pup.com', 'bilal.hameed@pup.com'],
-    ]
+    ];
 
     for (const [emailA, emailB] of matchPairs) {
       try {
-        const userA = users.find(u => u.email === emailA)
-        const userB = users.find(u => u.email === emailB)
-        if (!userA || !userB || !userA.profile || !userB.profile) continue
+        const userA = users.find(u => u.email === emailA);
+        const userB = users.find(u => u.email === emailB);
+        if (!userA || !userB || !userA.profile || !userB.profile) continue;
 
         // Create mutual matches
         await prisma.match.createMany({
@@ -463,7 +461,7 @@ async function seedDatabase() {
               status: MatchStatus.MATCHED,
             },
           ],
-        })
+        });
 
         // Update admiration safely
         await prisma.profile.update({
@@ -472,7 +470,7 @@ async function seedDatabase() {
             admiredBy: { set: [...userA.profile.admiredBy, userB.id] },
             admiredUsers: { set: [...userA.profile.admiredUsers, userB.id] },
           },
-        })
+        });
 
         await prisma.profile.update({
           where: { id: userB.profile.id },
@@ -480,11 +478,11 @@ async function seedDatabase() {
             admiredBy: { set: [...userB.profile.admiredBy, userA.id] },
             admiredUsers: { set: [...userB.profile.admiredUsers, userA.id] },
           },
-        })
+        });
 
-        console.log(`💕 Created mutual match: ${userA.profile.name} & ${userB.profile.name}`)
+        console.log(`💕 Created mutual match: ${userA.profile.name} & ${userB.profile.name}`);
       } catch (err) {
-        console.error('⚠️ Error creating mutual match:', err)
+        console.error('⚠️ Error creating mutual match:', err);
       }
     }
 
@@ -493,13 +491,13 @@ async function seedDatabase() {
       ['maryam.saeed@pup.com', 'usman.tariq@pup.com'],
       ['hina.iqbal@pup.com', 'haris.nawaz@pup.com'],
       ['aisha.hassan@pup.com', 'fatima.zahra@pup.com'],
-    ]
+    ];
 
     for (const [likerEmail, likedEmail] of pendingLikes) {
       try {
-        const liker = users.find(u => u.email === likerEmail)
-        const liked = users.find(u => u.email === likedEmail)
-        if (!liker || !liked || !liker.profile || !liked.profile) continue
+        const liker = users.find(u => u.email === likerEmail);
+        const liked = users.find(u => u.email === likedEmail);
+        if (!liker || !liked || !liker.profile || !liked.profile) continue;
 
         await prisma.match.create({
           data: {
@@ -509,46 +507,48 @@ async function seedDatabase() {
             compatibilityScore: 75.0,
             status: MatchStatus.PENDING,
           },
-        })
+        });
 
         await prisma.profile.update({
           where: { id: liked.profile.id },
           data: { admiredBy: { set: [...liked.profile.admiredBy, liker.id] } },
-        })
+        });
 
         await prisma.profile.update({
           where: { id: liker.profile.id },
-          data: { admiredUsers: { set: [...liker.profile.admiredUsers, liked.id] } },
-        })
+          data: {
+            admiredUsers: { set: [...liker.profile.admiredUsers, liked.id] },
+          },
+        });
 
-        console.log(`❤️  Created pending like: ${liker.profile.name} → ${liked.profile.name}`)
+        console.log(`❤️  Created pending like: ${liker.profile.name} → ${liked.profile.name}`);
       } catch (err) {
-        console.error('⚠️ Error creating pending like:', err)
+        console.error('⚠️ Error creating pending like:', err);
       }
     }
 
-    console.log('✅ Database seeding completed successfully!')
-    console.log('\n📊 Summary:')
-    console.log(`- Created ${sampleUsers.length} users with profiles`)
-    console.log('- Created 3 mutual matches')
-    console.log('- Created 3 pending likes')
-    console.log('\n🔑 Admin credentials:')
-    console.log('Email: admin@pup.com')
-    console.log('Password: admin123')
+    console.log('✅ Database seeding completed successfully!');
+    console.log('\n📊 Summary:');
+    console.log(`- Created ${sampleUsers.length} users with profiles`);
+    console.log('- Created 3 mutual matches');
+    console.log('- Created 3 pending likes');
+    console.log('\n🔑 Admin credentials:');
+    console.log('Email: admin@pup.com');
+    console.log('Password: admin123');
   } catch (error) {
-    console.error('❌ Error seeding database:', error)
-    throw error
+    console.error('❌ Error seeding database:', error);
+    throw error;
   } finally {
-    await prisma.$disconnect()
+    await prisma.$disconnect();
   }
 }
 
 seedDatabase()
   .then(() => {
-    console.log('🎉 Seeding completed!')
-    process.exit(0)
+    console.log('🎉 Seeding completed!');
+    process.exit(0);
   })
   .catch(error => {
-    console.error('💥 Seeding failed:', error)
-    process.exit(1)
-  })
+    console.error('💥 Seeding failed:', error);
+    process.exit(1);
+  });

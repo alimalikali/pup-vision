@@ -1,19 +1,39 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
-import { AuthProfile } from "@/types/auth"
-import { profileService } from "@/services/api/profile-service"
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+import { AuthProfile } from '@types';
+import { profileService } from '@/services/api/profile-service';
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
+interface formatPriceProps {
+  currency?: string;
+  display?: 'symbol' | 'code' | 'narrowSymbol' | 'name';
+  minimumFractionDigits?: number;
+  maximumFractionDigits?: number;
+}
+
+export const formatPrice = (value: number, { currency, display, minimumFractionDigits, maximumFractionDigits }: formatPriceProps = {}): string => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: currency ?? 'PKR',
+    minimumFractionDigits: minimumFractionDigits ?? 0,
+    maximumFractionDigits: maximumFractionDigits ?? 0,
+    currencyDisplay: display ?? 'code',
+  }).format(value);
+};
+
 export function formatEnumLabel(value: string | undefined | null): string {
-  if (!value) return ''
-  return value.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase())
+  if (!value) return '';
+  return value
+    .replace(/_/g, ' ')
+    .toLowerCase()
+    .replace(/\b\w/g, l => l.toUpperCase());
 }
 
 export function calculateProfileCompletion(profile: AuthProfile): number {
-  if (!profile) return 0
+  if (!profile) return 0;
 
   // All fields are treated equally - no distinction between required and optional
   const allFields = [
@@ -42,27 +62,27 @@ export function calculateProfileCompletion(profile: AuthProfile): number {
     'country',
     'purposeNarrative',
     'height',
-    'weight'
-  ]
+    'weight',
+  ];
 
-  let completedFields = 0
+  let completedFields = 0;
 
   // Check all fields equally
   allFields.forEach(field => {
-    const value = profile[field as keyof AuthProfile]
+    const value = profile[field as keyof AuthProfile];
     if (value !== null && value !== undefined && value !== '') {
       if (Array.isArray(value) && value.length > 0) {
-        completedFields++
+        completedFields++;
       } else if (!Array.isArray(value)) {
-        completedFields++
+        completedFields++;
       }
     }
-  })
+  });
 
   // Calculate completion percentage - all fields weighted equally
-  const completionPercentage = Math.round((completedFields / allFields.length) * 100)
-  
-  return Math.min(completionPercentage, 100)
+  const completionPercentage = Math.round((completedFields / allFields.length) * 100);
+
+  return Math.min(completionPercentage, 100);
 }
 
 /**
@@ -71,7 +91,7 @@ export function calculateProfileCompletion(profile: AuthProfile): number {
  * @returns Array of human-readable field names that are missing (max 5)
  */
 export function getProfileMissingFields(profile: AuthProfile): string[] {
-  if (!profile) return []
+  if (!profile) return [];
 
   // All fields are treated equally - no distinction between required and optional
   const allFields = [
@@ -100,26 +120,26 @@ export function getProfileMissingFields(profile: AuthProfile): string[] {
     { key: 'country', label: 'Country' },
     { key: 'purposeNarrative', label: 'Purpose Story' },
     { key: 'height', label: 'Height' },
-    { key: 'weight', label: 'Weight' }
-  ]
+    { key: 'weight', label: 'Weight' },
+  ];
 
-  const missingFields: string[] = []
+  const missingFields: string[] = [];
 
   // Check all fields equally
   allFields.forEach(field => {
-    const value = profile[field.key as keyof AuthProfile]
+    const value = profile[field.key as keyof AuthProfile];
     if (Array.isArray(value)) {
       if (value.length === 0) {
-        missingFields.push(field.label)
+        missingFields.push(field.label);
       }
     } else {
       if (value === null || value === undefined || value === '') {
-        missingFields.push(field.label)
+        missingFields.push(field.label);
       }
     }
-  })
+  });
 
-  return missingFields.slice(0, 5) // Show only first 5 missing fields
+  return missingFields.slice(0, 5); // Show only first 5 missing fields
 }
 
 /**
@@ -127,23 +147,23 @@ export function getProfileMissingFields(profile: AuthProfile): string[] {
  * @returns Promise with completion percentage and missing fields
  */
 export async function getProfileCompletionFromAPI(): Promise<{
-  completion: number
-  missingFields: string[]
-  profile: AuthProfile | null
+  completion: number;
+  missingFields: string[];
+  profile: AuthProfile | null;
 }> {
   try {
-    const profile = await profileService.getProfile()
+    const profile = await profileService.getProfile();
     if (!profile) {
-      return { completion: 0, missingFields: [], profile: null }
+      return { completion: 0, missingFields: [], profile: null };
     }
 
-    const completion = calculateProfileCompletion(profile)
-    const missingFields = getProfileMissingFields(profile)
+    const completion = calculateProfileCompletion(profile);
+    const missingFields = getProfileMissingFields(profile);
 
-    return { completion, missingFields, profile }
+    return { completion, missingFields, profile };
   } catch (error) {
-    console.error('Failed to fetch profile completion from API:', error)
-    return { completion: 0, missingFields: [], profile: null }
+    console.error('Failed to fetch profile completion from API:', error);
+    return { completion: 0, missingFields: [], profile: null };
   }
 }
 
@@ -153,6 +173,6 @@ export async function getProfileCompletionFromAPI(): Promise<{
  */
 export function triggerProfileCompletionRefresh(): void {
   if (typeof window !== 'undefined') {
-    window.dispatchEvent(new CustomEvent('profileUpdated'))
+    window.dispatchEvent(new CustomEvent('profileUpdated'));
   }
 }

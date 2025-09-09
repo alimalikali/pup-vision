@@ -1,113 +1,113 @@
-"use client"
+'use client';
 
-import type React from "react"
+import type React from 'react';
 
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import { useRouter, useSearchParams } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Heart, Mail, Lock, Eye, EyeOff, User, AlertCircle } from "lucide-react"
-import { useAuthStore } from "@/store"
-import { GoogleAuthButton } from "@/components/feature/auth/google-auth-button"
-import { LoaderWait } from "@/components/common/layout/loader-wait"
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Heart, Mail, Lock, Eye, EyeOff, User, AlertCircle } from 'lucide-react';
+import { useAuthStore } from '@/store';
+import { GoogleAuthButton } from '@/components/feature/auth/google-auth-button';
+import { LoaderWait } from '@/components/common/layout/loader-wait';
 
 export default function SignupPage() {
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  })
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [agreedToTerms, setAgreedToTerms] = useState(false)
-  const [error, setError] = useState("")
-  const router = useRouter()
-  const searchParams = useSearchParams()
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [error, setError] = useState('');
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-  const { signup, isLoading } = useAuthStore()
+  const { signup, isLoading } = useAuthStore();
 
   // Check for OAuth errors in URL params
   useEffect(() => {
-    const errorParam = searchParams.get("error")
+    const errorParam = searchParams.get('error');
     if (errorParam) {
       switch (errorParam) {
-        case "google_auth_failed":
-          setError("Google authentication failed. Please try again.")
-          break
-        case "no_auth_code":
-          setError("Authentication incomplete. Please try signing in with Google again.")
-          break
-        case "token_exchange_failed":
-          setError("Authentication token exchange failed. Please try again.")
-          break
-        case "user_info_failed":
-          setError("Failed to retrieve user information from Google. Please try again.")
-          break
-        case "callback_failed":
-          setError("Authentication callback failed. Please try again.")
-          break
+        case 'google_auth_failed':
+          setError('Google authentication failed. Please try again.');
+          break;
+        case 'no_auth_code':
+          setError('Authentication incomplete. Please try signing in with Google again.');
+          break;
+        case 'token_exchange_failed':
+          setError('Authentication token exchange failed. Please try again.');
+          break;
+        case 'user_info_failed':
+          setError('Failed to retrieve user information from Google. Please try again.');
+          break;
+        case 'callback_failed':
+          setError('Authentication callback failed. Please try again.');
+          break;
         default:
-          setError("An authentication error occurred. Please try again.")
+          setError('An authentication error occurred. Please try again.');
       }
-      
+
       // Clean up URL params
-      const newUrl = new URL(window.location.href)
-      newUrl.searchParams.delete("error")
-      window.history.replaceState({}, "", newUrl.toString())
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.delete('error');
+      window.history.replaceState({}, '', newUrl.toString());
     }
-  }, [searchParams])
+  }, [searchParams]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
-    })
-    
+    });
+
     // Clear error when user starts typing
     if (error) {
-      setError("")
+      setError('');
     }
-  }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError("")
+    e.preventDefault();
+    setError('');
 
     // Basic validation
     if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match")
-      return
+      setError('Passwords do not match');
+      return;
     }
 
     if (formData.password.length < 8) {
-      setError("Password must be at least 8 characters long")
-      return
+      setError('Password must be at least 8 characters long');
+      return;
     }
 
     if (!agreedToTerms) {
-      setError("Please agree to the terms and conditions")
-      return
+      setError('Please agree to the terms and conditions');
+      return;
     }
 
     const success = await signup({
       name: formData.name,
       email: formData.email,
       password: formData.password,
-    })
+    });
 
     if (success) {
-      router.push("/onboarding")
+      router.push('/onboarding');
     } else {
-      setError("Failed to create account. Please try again.")
+      setError('Failed to create account. Please try again.');
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-accent/5 px-4 py-8">
@@ -150,60 +150,23 @@ export default function SignupPage() {
                 <Label htmlFor="name">Full Name</Label>
                 <div className="relative">
                   <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="name"
-                    name="name"
-                    type="text"
-                    placeholder="Enter your full name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    className="pl-10"
-                    required
-                  />
+                  <Input id="name" name="name" type="text" placeholder="Enter your full name" value={formData.name} onChange={handleInputChange} className="pl-10" required />
                 </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    placeholder="Enter your email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    className="pl-10"
-                    required
-                  />
+                  <Input id="email" name="email" type="email" placeholder="Enter your email" value={formData.email} onChange={handleInputChange} className="pl-10" required />
                 </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="password"
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Create a password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    className="pl-10 pr-10"
-                    required
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4 text-muted-foreground" />
-                    ) : (
-                      <Eye className="h-4 w-4 text-muted-foreground" />
-                    )}
+                  <Input id="password" name="password" type={showPassword ? 'text' : 'password'} placeholder="Create a password" value={formData.password} onChange={handleInputChange} className="pl-10 pr-10" required />
+                  <Button type="button" variant="ghost" size="sm" className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" onClick={() => setShowPassword(!showPassword)}>
+                    {showPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
                   </Button>
                 </div>
               </div>
@@ -211,47 +174,21 @@ export default function SignupPage() {
                 <Label htmlFor="confirmPassword">Confirm Password</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
-                    placeholder="Confirm your password"
-                    value={formData.confirmPassword}
-                    onChange={handleInputChange}
-                    className="pl-10 pr-10"
-                    required
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  >
-                    {showConfirmPassword ? (
-                      <EyeOff className="h-4 w-4 text-muted-foreground" />
-                    ) : (
-                      <Eye className="h-4 w-4 text-muted-foreground" />
-                    )}
+                  <Input id="confirmPassword" name="confirmPassword" type={showConfirmPassword ? 'text' : 'password'} placeholder="Confirm your password" value={formData.confirmPassword} onChange={handleInputChange} className="pl-10 pr-10" required />
+                  <Button type="button" variant="ghost" size="sm" className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+                    {showConfirmPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
                   </Button>
                 </div>
               </div>
 
               <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="terms"
-                  checked={agreedToTerms}
-                  onCheckedChange={(checked) => setAgreedToTerms(checked as boolean)}
-                />
-                <Label
-                  htmlFor="terms"
-                  className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  I agree to the{" "}
+                <Checkbox id="terms" checked={agreedToTerms} onCheckedChange={checked => setAgreedToTerms(checked as boolean)} />
+                <Label htmlFor="terms" className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                  I agree to the{' '}
                   <Link href="/terms" className="text-primary hover:underline">
                     Terms of Service
-                  </Link>{" "}
-                  and{" "}
+                  </Link>{' '}
+                  and{' '}
                   <Link href="/privacy" className="text-primary hover:underline">
                     Privacy Policy
                   </Link>
@@ -265,7 +202,7 @@ export default function SignupPage() {
                     Creating account...
                   </>
                 ) : (
-                  "Create account"
+                  'Create account'
                 )}
               </Button>
             </form>
@@ -280,5 +217,5 @@ export default function SignupPage() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

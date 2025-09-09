@@ -1,21 +1,21 @@
 // app/error.tsx
-"use client"
+'use client';
 
-import { useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
 
 interface ErrorProps {
-  error: Error
-  reset: () => void
+  error: Error;
+  reset: () => void;
 }
 
 export default function ErrorPage({ error, reset }: ErrorProps) {
-  const router = useRouter()
+  const router = useRouter();
 
   useEffect(() => {
-    console.error("[ErrorPage] Caught error:", error)
-  }, [error])
+    console.error('[ErrorPage] Caught error:', error);
+  }, [error]);
 
   return (
     <div className="flex flex-col items-center justify-center h-screen text-center px-4">
@@ -23,8 +23,10 @@ export default function ErrorPage({ error, reset }: ErrorProps) {
       <p className="text-muted-foreground mb-6">{error.message}</p>
       <div className="flex gap-4">
         <Button onClick={() => router.refresh()}>Refresh Page</Button>
-        <Button variant="outline" onClick={reset}>Try Again</Button>
+        <Button variant="outline" onClick={reset}>
+          Try Again
+        </Button>
       </div>
     </div>
-  )
+  );
 }

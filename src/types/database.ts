@@ -1,27 +1,13 @@
-import {
-  Alcohol, Drugs,
-  Education,
-  Gender,
-  Interest as InterestEnum,
-  Language,
-  LookingFor,
-  MaritalStatus,
-  MatchStatus,
-  PaymentMethod,
-  Personality,
-  Plan,
-  Politics,
-  Profession,
-  PurposeArchetype,
-  PurposeDomain,
-  PurposeModality,
-  Religion,
-  Role,
-  Smoke,
-  SubscriptionStatus,
-  TransactionStatus
-} from './enums';
+/**
+ * Core database models - derived from Prisma schema
+ * These represent the actual database entities
+ */
 
+import { Role, Gender, Religion, Education, Profession, PurposeDomain, PurposeArchetype, PurposeModality, Interest, Personality, MaritalStatus, LookingFor, Language, Smoke, Alcohol, Drugs, Politics, MatchStatus, Plan, SubscriptionStatus, PaymentMethod, TransactionStatus } from './enums';
+
+/**
+ * Core User entity from database
+ */
 export interface User {
   id: string;
   email: string;
@@ -32,9 +18,9 @@ export interface User {
   isNew: boolean;
   isDeleted: boolean;
   updatedAt: Date;
-  // System flags
   createdAt: Date;
 
+  // Relations
   profile?: Profile;
   matchesA: Match[];
   matchesB: Match[];
@@ -42,6 +28,9 @@ export interface User {
   subscriptions: Subscription[];
 }
 
+/**
+ * User profile entity from database
+ */
 export interface Profile {
   id: string;
   userId: string;
@@ -68,7 +57,7 @@ export interface Profile {
   purposeNarrative?: string | null;
 
   // Other details
-  interests: InterestEnum[];
+  interests: Interest[];
   personality: Personality;
   maritalStatus: MaritalStatus;
   lookingFor: LookingFor;
@@ -83,9 +72,14 @@ export interface Profile {
   updatedAt: Date;
   admiredBy: string[];
   admiredUsers: string[];
+
+  // Relations
   user: User;
 }
 
+/**
+ * Match entity from database
+ */
 export interface Match {
   id: string;
   userAId: string;
@@ -96,11 +90,15 @@ export interface Match {
   createdAt: Date;
   updatedAt: Date;
 
+  // Relations
   userA: User;
   userB: User;
   initiatedBy: User;
 }
 
+/**
+ * Subscription entity from database
+ */
 export interface Subscription {
   id: string;
   userId: string;
@@ -111,10 +109,14 @@ export interface Subscription {
   createdAt: Date;
   updatedAt: Date;
 
+  // Relations
   user: User;
   transactions: Transaction[];
 }
 
+/**
+ * Transaction entity from database
+ */
 export interface Transaction {
   id: string;
   subscriptionId: string;
@@ -125,49 +127,6 @@ export interface Transaction {
   transactionId: string;
   createdAt: Date;
 
+  // Relations
   subscription: Subscription;
-}
-
-// Frontend-specific types
-export interface Interest {
-  id: string;
-  profile: {
-    id: string;
-    name: string;
-    age: number;
-    avatar?: string | null;
-    city?: string | null;
-    state?: string | null;
-    profession: Profession;
-    education: string;
-    purpose: {
-      domain: PurposeDomain;
-      archetype: PurposeArchetype;
-      modality: PurposeModality;
-      narrative?: string | null;
-    };
-    interests: InterestEnum[];
-    maritalStatus: MaritalStatus;
-    isNew: boolean;
-  };
-  likedAt: string;
-  status: "pending";
-}
-
-export interface Settings {
-  notifications: {
-    email: boolean;
-    push: boolean;
-    sms: boolean;
-  };
-  privacy: {
-    profileVisibility: "public" | "private" | "friends";
-    showOnlineStatus: boolean;
-    showLastSeen: boolean;
-  };
-  matching: {
-    ageRange: { min: number; max: number };
-    maxDistance: number;
-    showVerifiedOnly: boolean;
-  };
 }

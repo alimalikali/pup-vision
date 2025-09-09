@@ -1,45 +1,45 @@
-import { type NextRequest, NextResponse } from "next/server"
-import { validateProfile } from "@/validation/validation"
-import { PrismaClient } from '@prisma/client'
-import { jwtUtils } from '@/lib/jwt'
-import { calculateProfileCompletion } from '@/lib/utils'
+import { type NextRequest, NextResponse } from 'next/server';
+import { validateProfile } from '@/validation/validation';
+import { PrismaClient } from '@prisma/client';
+import { jwtUtils } from '@/lib/jwt';
+import { calculateProfileCompletion } from '@/lib/utils';
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest) {
   try {
     // Get current user ID from auth token
-    const authHeader = request.headers.get('authorization')
-    const token = authHeader?.replace('Bearer ', '') || request.cookies.get('access-token')?.value
-    
+    const authHeader = request.headers.get('authorization');
+    const token = authHeader?.replace('Bearer ', '') || request.cookies.get('access-token')?.value;
+
     if (!token) {
-      return NextResponse.json({ success: false, message: "No authentication token" }, { status: 401 })
+      return NextResponse.json({ success: false, message: 'No authentication token' }, { status: 401 });
     }
 
     // Verify token
-    const decoded = jwtUtils.verifyToken(token)
+    const decoded = jwtUtils.verifyToken(token);
     if (!decoded) {
-      return NextResponse.json({ success: false, message: "Invalid token" }, { status: 401 })
+      return NextResponse.json({ success: false, message: 'Invalid token' }, { status: 401 });
     }
 
-    const currentUserId = decoded.userId
+    const currentUserId = decoded.userId;
 
     // Fetch user profile from database
     const user = await prisma.user.findUnique({
       where: { id: currentUserId },
       include: {
-        profile: true
-      }
-    })
+        profile: true,
+      },
+    });
 
     if (!user || !user.profile) {
-      return NextResponse.json({ success: false, message: "Profile not found" }, { status: 404 })
+      return NextResponse.json({ success: false, message: 'Profile not found' }, { status: 404 });
     }
 
-    const profile = user.profile
+    const profile = user.profile;
 
     // Calculate age from date of birth
-    const age = profile.dob ? Math.floor((Date.now() - new Date(profile.dob).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : 0
+    const age = profile.dob ? Math.floor((Date.now() - new Date(profile.dob).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : 0;
 
     // Return the profile data directly from the schema
     const profileData = {
@@ -60,83 +60,92 @@ export async function GET(request: NextRequest) {
       drugs: profile.drugs,
       politics: profile.politics,
       createdAt: profile.createdAt.toISOString(),
-      updatedAt: profile.updatedAt.toISOString()
-    }
+      updatedAt: profile.updatedAt.toISOString(),
+    };
 
-    await prisma.$disconnect()
+    await prisma.$disconnect();
     // console.log("[v0] Profile data:",  profileData)
     return NextResponse.json({
       success: true,
-      profile: profileData
-    })
+      profile: profileData,
+    });
   } catch (error) {
-    console.error("Profile GET error:", error)
-    await prisma.$disconnect()
-    return NextResponse.json({ success: false, message: "Internal server error" }, { status: 500 })
+    console.error('Profile GET error:', error);
+    await prisma.$disconnect();
+    return NextResponse.json({ success: false, message: 'Internal server error' }, { status: 500 });
   }
 }
 
 export async function PUT(request: NextRequest) {
   try {
     // Get current user ID from auth token
-    const authHeader = request.headers.get('authorization')
-    const token = authHeader?.replace('Bearer ', '') || request.cookies.get('access-token')?.value
-    
+    const authHeader = request.headers.get('authorization');
+    const token = authHeader?.replace('Bearer ', '') || request.cookies.get('access-token')?.value;
+
     if (!token) {
-      return NextResponse.json({ success: false, message: "No authentication token" }, { status: 401 })
+      return NextResponse.json({ success: false, message: 'No authentication token' }, { status: 401 });
     }
 
     // Verify token
-    const decoded = jwtUtils.verifyToken(token)
+    const decoded = jwtUtils.verifyToken(token);
     if (!decoded) {
-      return NextResponse.json({ success: false, message: "Invalid token" }, { status: 401 })
+      return NextResponse.json({ success: false, message: 'Invalid token' }, { status: 401 });
     }
 
-    const currentUserId = decoded.userId
-    const profileData = await request.json()
-    
+    const currentUserId = decoded.userId;
+    const profileData = await request.json();
+
     // Log the incoming data for debugging
-    console.log("[v0] Received profile data:", JSON.stringify(profileData, null, 2))
+    console.log('[v0] Received profile data:', JSON.stringify(profileData, null, 2));
 
     // Validate the incoming data against our schema
-    const validation = validateProfile(profileData, true) // true for update
-    
+    const validation = validateProfile(profileData, true); // true for update
+
     if (!validation.success) {
-      console.log("[v0] Validation failed:", validation.errors)
-      return NextResponse.json({
-        success: false,
-        message: "Validation failed",
-        errors: validation.errors
-      }, { status: 400 })
+      console.log('[v0] Validation failed:', validation.errors);
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Validation failed',
+          errors: validation.errors,
+        },
+        { status: 400 }
+      );
     }
 
     try {
       // First check if the user and profile exist
       const existingUser = await prisma.user.findUnique({
         where: { id: currentUserId },
-        include: { profile: true }
-      })
+        include: { profile: true },
+      });
 
       if (!existingUser) {
-        console.log("[v0] User not found with ID:", currentUserId)
-        await prisma.$disconnect()
-        return NextResponse.json({
-          success: false,
-          message: "User not found"
-        }, { status: 404 })
+        console.log('[v0] User not found with ID:', currentUserId);
+        await prisma.$disconnect();
+        return NextResponse.json(
+          {
+            success: false,
+            message: 'User not found',
+          },
+          { status: 404 }
+        );
       }
 
       if (!existingUser.profile) {
-        console.log("[v0] Profile not found for user:", currentUserId)
-        await prisma.$disconnect()
-        return NextResponse.json({
-          success: false,
-          message: "Profile not found"
-        }, { status: 404 })
+        console.log('[v0] Profile not found for user:', currentUserId);
+        await prisma.$disconnect();
+        return NextResponse.json(
+          {
+            success: false,
+            message: 'Profile not found',
+          },
+          { status: 404 }
+        );
       }
 
-      console.log("[v0] Found existing user:", existingUser.id)
-      console.log("[v0] Existing profile:", existingUser.profile.id)
+      console.log('[v0] Found existing user:', existingUser.id);
+      console.log('[v0] Existing profile:', existingUser.profile.id);
 
       // Update the profile
       const updatedProfile = await prisma.profile.update({
@@ -170,19 +179,19 @@ export async function PUT(request: NextRequest) {
           interests: profileData.interests || [],
           isNew: false, // Mark as completed onboarding
           isActive: true,
-          updatedAt: new Date()
-        }
-      })
+          updatedAt: new Date(),
+        },
+      });
 
-      await prisma.$disconnect()
+      await prisma.$disconnect();
 
-      console.log("[v0] Profile updated successfully:", updatedProfile.id)
+      console.log('[v0] Profile updated successfully:', updatedProfile.id);
 
       // Calculate profile completion
-      const completionScore = calculateProfileCompletion(updatedProfile)
+      const completionScore = calculateProfileCompletion(updatedProfile);
 
       // Return the updated profile in the same format as GET
-      const age = updatedProfile.dob ? Math.floor((Date.now() - new Date(updatedProfile.dob).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : 0
+      const age = updatedProfile.dob ? Math.floor((Date.now() - new Date(updatedProfile.dob).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : 0;
 
       const transformedProfile = {
         id: updatedProfile.id,
@@ -214,17 +223,17 @@ export async function PUT(request: NextRequest) {
         alcohol: updatedProfile.alcohol,
         drugs: updatedProfile.drugs,
         politics: updatedProfile.politics,
-        bio: updatedProfile.purposeNarrative || "No bio available",
+        bio: updatedProfile.purposeNarrative || 'No bio available',
         purpose: {
           domain: updatedProfile.purposeDomain,
           archetype: updatedProfile.purposeArchetype,
           modality: updatedProfile.purposeModality,
-          narrative: updatedProfile.purposeNarrative
+          narrative: updatedProfile.purposeNarrative,
         },
         lifestyle: {
           smoking: updatedProfile.smoke,
           drinking: updatedProfile.alcohol,
-          exercise: updatedProfile.drugs
+          exercise: updatedProfile.drugs,
         },
         photos: updatedProfile.avatar ? [updatedProfile.avatar] : [],
         stats: {
@@ -235,34 +244,35 @@ export async function PUT(request: NextRequest) {
         },
         preferences: {
           ageRange: { min: 25, max: 40 },
-          location: "Within 50 miles",
+          location: 'Within 50 miles',
           education: "Bachelor's or higher",
-          lookingFor: updatedProfile.lookingFor
+          lookingFor: updatedProfile.lookingFor,
         },
         isNew: updatedProfile.isNew,
         isActive: updatedProfile.isActive,
         createdAt: updatedProfile.createdAt.toISOString(),
-        updatedAt: updatedProfile.updatedAt.toISOString()
-      }
+        updatedAt: updatedProfile.updatedAt.toISOString(),
+      };
 
       return NextResponse.json({
         success: true,
         profile: transformedProfile,
-        message: "Profile updated successfully",
-      })
-
+        message: 'Profile updated successfully',
+      });
     } catch (dbError) {
-      console.error("[v0] Database error:", dbError)
-      await prisma.$disconnect()
-      return NextResponse.json({
-        success: false,
-        message: "Failed to update profile in database"
-      }, { status: 500 })
+      console.error('[v0] Database error:', dbError);
+      await prisma.$disconnect();
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Failed to update profile in database',
+        },
+        { status: 500 }
+      );
     }
-
   } catch (error) {
-    console.error("Profile update error:", error)
-    await prisma.$disconnect()
-    return NextResponse.json({ success: false, message: "Internal server error" }, { status: 500 })
+    console.error('Profile update error:', error);
+    await prisma.$disconnect();
+    return NextResponse.json({ success: false, message: 'Internal server error' }, { status: 500 });
   }
 }
