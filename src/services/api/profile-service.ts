@@ -34,9 +34,7 @@ class ProfileService {
     }
   }
 
-  async updateProfile(
-    profileData: Partial<Profile>
-  ): Promise<ProfileUpdateResponse> {
+  async updateProfile(profileData: Partial<Profile>): Promise<ProfileUpdateResponse> {
     try {
       const response = await fetch(`${this.baseUrl}/profile`, {
         method: 'PUT',

@@ -30,9 +30,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         console.log('[AuthProvider] User is new, redirecting to onboarding');
         router.push('/onboarding');
       } else {
-        console.log(
-          '[AuthProvider] User is authenticated and completed onboarding'
-        );
+        console.log('[AuthProvider] User is authenticated and completed onboarding');
         // User is authenticated and has completed onboarding
         // They can access the dashboard
       }

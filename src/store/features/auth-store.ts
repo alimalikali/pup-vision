@@ -18,10 +18,7 @@ export const useAuthStore = create<Store>()(
       login: async (email, password) => {
         set({ status: 'loading', error: null, isLoading: true });
         try {
-          const { success, user, message } = await authService.login(
-            email,
-            password
-          );
+          const { success, user, message } = await authService.login(email, password);
           if (success && user) {
             set({
               user,
@@ -104,7 +101,7 @@ export const useAuthStore = create<Store>()(
       checkAuth: async () => {
         set({ status: 'loading', isLoading: true });
         try {
-          const { success, user } = await authService.checkAuth();
+          const { success, user, message } = await authService.checkAuth();
           if (success && user) {
             set({
               user,
@@ -113,12 +110,23 @@ export const useAuthStore = create<Store>()(
               isLoading: false,
             });
           } else {
-            set({
-              user: null,
-              status: 'unauthenticated',
-              error: null,
-              isLoading: false,
-            });
+            // If checkAuth fails, try to refresh the token
+            const refreshResult = await authService.refreshToken();
+            if (refreshResult.success && refreshResult.user) {
+              set({
+                user: refreshResult.user,
+                status: 'authenticated',
+                error: null,
+                isLoading: false,
+              });
+            } else {
+              set({
+                user: null,
+                status: 'unauthenticated',
+                error: message || 'Session expired. Please log in again.',
+                isLoading: false,
+              });
+            }
           }
         } catch {
           set({
@@ -132,6 +140,38 @@ export const useAuthStore = create<Store>()(
 
       setAuthenticated: user => {
         set({ user, status: 'authenticated', error: null });
+      },
+
+      refreshAuth: async () => {
+        set({ isLoading: true });
+        try {
+          const { success, user, message } = await authService.refreshToken();
+          if (success && user) {
+            set({
+              user,
+              status: 'authenticated',
+              error: null,
+              isLoading: false,
+            });
+            return true;
+          } else {
+            set({
+              user: null,
+              status: 'unauthenticated',
+              error: message || 'Session expired. Please log in again.',
+              isLoading: false,
+            });
+            return false;
+          }
+        } catch {
+          set({
+            user: null,
+            status: 'error',
+            error: 'Failed to refresh authentication',
+            isLoading: false,
+          });
+          return false;
+        }
       },
 
       initialize: async () => {

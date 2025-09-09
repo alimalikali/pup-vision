@@ -3,24 +3,7 @@
  */
 
 import { z } from 'zod';
-import {
-  Gender,
-  Religion,
-  Education,
-  Profession,
-  PurposeDomain,
-  PurposeArchetype,
-  PurposeModality,
-  Interest,
-  Personality,
-  MaritalStatus,
-  LookingFor,
-  Language,
-  Smoke,
-  Alcohol,
-  Drugs,
-  Politics,
-} from './enums';
+import { Gender, Religion, Education, Profession, PurposeDomain, PurposeArchetype, PurposeModality, Interest, Personality, MaritalStatus, LookingFor, Language, Smoke, Alcohol, Drugs, Politics } from './enums';
 
 /**
  * Profile validation schema
@@ -48,9 +31,7 @@ export const profileSchema = z.object({
   purposeNarrative: z.string().max(1000).optional(),
 
   // Other details
-  interests: z
-    .array(z.nativeEnum(Interest))
-    .min(1, 'At least one interest is required'),
+  interests: z.array(z.nativeEnum(Interest)).min(1, 'At least one interest is required'),
   personality: z.nativeEnum(Personality),
   maritalStatus: z.nativeEnum(MaritalStatus),
   lookingFor: z.nativeEnum(LookingFor),
@@ -60,9 +41,7 @@ export const profileSchema = z.object({
   smoke: z.nativeEnum(Smoke),
   alcohol: z.nativeEnum(Alcohol),
   drugs: z.nativeEnum(Drugs),
-  politics: z
-    .array(z.nativeEnum(Politics))
-    .min(1, 'At least one political view is required'),
+  politics: z.array(z.nativeEnum(Politics)).min(1, 'At least one political view is required'),
 });
 
 /**

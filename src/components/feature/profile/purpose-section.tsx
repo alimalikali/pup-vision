@@ -51,31 +51,23 @@ export function PurposeSection({ purpose }: PurposeSectionProps) {
             <div className="text-center p-4 bg-accent/50 rounded-lg">
               <Lightbulb className="h-8 w-8 text-primary mx-auto mb-2" />
               <h3 className="font-semibold">Domain</h3>
-              <p className="text-sm text-muted-foreground mt-1">
-                {purpose.domain}
-              </p>
+              <p className="text-sm text-muted-foreground mt-1">{purpose.domain}</p>
             </div>
             <div className="text-center p-4 bg-accent/50 rounded-lg">
               <Users className="h-8 w-8 text-primary mx-auto mb-2" />
               <h3 className="font-semibold">Archetype</h3>
-              <p className="text-sm text-muted-foreground mt-1">
-                {purpose.archetype}
-              </p>
+              <p className="text-sm text-muted-foreground mt-1">{purpose.archetype}</p>
             </div>
             <div className="text-center p-4 bg-accent/50 rounded-lg">
               <Zap className="h-8 w-8 text-primary mx-auto mb-2" />
               <h3 className="font-semibold">Modality</h3>
-              <p className="text-sm text-muted-foreground mt-1">
-                {purpose.modality}
-              </p>
+              <p className="text-sm text-muted-foreground mt-1">{purpose.modality}</p>
             </div>
           </div>
 
           <div>
             <h3 className="font-semibold mb-2">Your Purpose Narrative</h3>
-            <p className="text-foreground leading-relaxed bg-accent/30 p-4 rounded-lg">
-              {purpose.narrative}
-            </p>
+            <p className="text-foreground leading-relaxed bg-accent/30 p-4 rounded-lg">{purpose.narrative}</p>
           </div>
         </CardContent>
       </Card>

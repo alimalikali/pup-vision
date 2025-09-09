@@ -7,6 +7,23 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+interface formatPriceProps {
+  currency?: string;
+  display?: 'symbol' | 'code' | 'narrowSymbol' | 'name';
+  minimumFractionDigits?: number;
+  maximumFractionDigits?: number;
+}
+
+export const formatPrice = (value: number, { currency, display, minimumFractionDigits, maximumFractionDigits }: formatPriceProps = {}): string => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: currency ?? 'PKR',
+    minimumFractionDigits: minimumFractionDigits ?? 0,
+    maximumFractionDigits: maximumFractionDigits ?? 0,
+    currencyDisplay: display ?? 'code',
+  }).format(value);
+};
+
 export function formatEnumLabel(value: string | undefined | null): string {
   if (!value) return '';
   return value
@@ -63,9 +80,7 @@ export function calculateProfileCompletion(profile: AuthProfile): number {
   });
 
   // Calculate completion percentage - all fields weighted equally
-  const completionPercentage = Math.round(
-    (completedFields / allFields.length) * 100
-  );
+  const completionPercentage = Math.round((completedFields / allFields.length) * 100);
 
   return Math.min(completionPercentage, 100);
 }

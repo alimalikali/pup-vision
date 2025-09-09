@@ -19,13 +19,10 @@ export function useFilterState(options: UseFilterStateOptions = {}) {
     return () => clearTimeout(timer);
   }, [filters, debounceMs, onFiltersChange, isDirty]);
 
-  const updateFilter = useCallback(
-    <K extends keyof AdvancedFilters>(key: K, value: AdvancedFilters[K]) => {
-      setFilters(prev => ({ ...prev, [key]: value }));
-      setIsDirty(true);
-    },
-    []
-  );
+  const updateFilter = useCallback(<K extends keyof AdvancedFilters>(key: K, value: AdvancedFilters[K]) => {
+    setFilters(prev => ({ ...prev, [key]: value }));
+    setIsDirty(true);
+  }, []);
 
   const updateFilters = useCallback((newFilters: Partial<AdvancedFilters>) => {
     setFilters(prev => ({ ...prev, ...newFilters }));
@@ -47,16 +44,10 @@ export function useFilterState(options: UseFilterStateOptions = {}) {
   }, []);
 
   const getActiveFiltersCount = useCallback(() => {
-    return Object.values(filters).filter(
-      value =>
-        value !== undefined && (Array.isArray(value) ? value.length > 0 : true)
-    ).length;
+    return Object.values(filters).filter(value => value !== undefined && (Array.isArray(value) ? value.length > 0 : true)).length;
   }, [filters]);
 
-  const hasActiveFilters = useMemo(
-    () => getActiveFiltersCount() > 0,
-    [getActiveFiltersCount]
-  );
+  const hasActiveFilters = useMemo(() => getActiveFiltersCount() > 0, [getActiveFiltersCount]);
 
   return {
     filters,

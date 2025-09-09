@@ -3,12 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import React, { useState } from 'react';
-import {
-  Step1BasicInfo,
-  Step2Location,
-  Step3Purpose,
-  Step4Lifestyle,
-} from './step-forms';
+import { Step1BasicInfo, Step2Location, Step3Purpose, Step4Lifestyle } from './step-forms';
 import { Profile } from '@types';
 
 // Schema-based field definitions for validation
@@ -58,12 +53,7 @@ interface RadioGroupField extends BaseField {
   options: { value: string; label: string }[];
 }
 
-type SchemaField =
-  | TextField
-  | SelectField
-  | TextareaField
-  | CheckboxGroupField
-  | RadioGroupField;
+type SchemaField = TextField | SelectField | TextareaField | CheckboxGroupField | RadioGroupField;
 
 const SCHEMA_FIELDS: Record<string, SchemaField> = {
   // Basic Information
@@ -76,8 +66,7 @@ const SCHEMA_FIELDS: Record<string, SchemaField> = {
       minLength: 2,
       maxLength: 50,
       pattern: /^[a-zA-Z\s]+$/,
-      message:
-        'Name must be 2-50 characters and contain only letters and spaces',
+      message: 'Name must be 2-50 characters and contain only letters and spaces',
     },
   },
   dob: {
@@ -403,28 +392,16 @@ interface DynamicFormProps {
   initialData?: Partial<Profile>;
 }
 
-export function DynamicForm({
-  fields,
-  title,
-  description,
-  onNext,
-  initialData = {},
-}: DynamicFormProps) {
+export function DynamicForm({ fields, title, description, onNext, initialData = {} }: DynamicFormProps) {
   const [formData, setFormData] = useState(initialData);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const validateField = (
-    fieldName: string,
-    value: string | number | string[] | undefined
-  ): string | null => {
+  const validateField = (fieldName: string, value: string | number | string[] | undefined): string | null => {
     const field = SCHEMA_FIELDS[fieldName as keyof typeof SCHEMA_FIELDS];
     if (!field) return null;
 
-    if (
-      field.required &&
-      (!value || (Array.isArray(value) && value.length === 0))
-    ) {
+    if (field.required && (!value || (Array.isArray(value) && value.length === 0))) {
       return `${field.label} is required`;
     }
 
@@ -434,93 +411,43 @@ export function DynamicForm({
     const { validation } = field;
 
     // Type guard for validation object - only validate string values for length
-    if (
-      'minLength' in validation &&
-      validation.minLength &&
-      typeof value === 'string' &&
-      value.length < validation.minLength
-    ) {
-      return (
-        validation.message ||
-        `${field.label} must be at least ${validation.minLength} characters`
-      );
+    if ('minLength' in validation && validation.minLength && typeof value === 'string' && value.length < validation.minLength) {
+      return validation.message || `${field.label} must be at least ${validation.minLength} characters`;
     }
 
-    if (
-      'maxLength' in validation &&
-      validation.maxLength &&
-      typeof value === 'string' &&
-      value.length > validation.maxLength
-    ) {
-      return (
-        validation.message ||
-        `${field.label} must be no more than ${validation.maxLength} characters`
-      );
+    if ('maxLength' in validation && validation.maxLength && typeof value === 'string' && value.length > validation.maxLength) {
+      return validation.message || `${field.label} must be no more than ${validation.maxLength} characters`;
     }
 
-    if (
-      'min' in validation &&
-      validation.min &&
-      typeof value === 'number' &&
-      value < validation.min
-    ) {
-      return (
-        validation.message ||
-        `${field.label} must be at least ${validation.min}`
-      );
+    if ('min' in validation && validation.min && typeof value === 'number' && value < validation.min) {
+      return validation.message || `${field.label} must be at least ${validation.min}`;
     }
 
-    if (
-      'max' in validation &&
-      validation.max &&
-      typeof value === 'number' &&
-      value > validation.max
-    ) {
-      return (
-        validation.message ||
-        `${field.label} must be no more than ${validation.max}`
-      );
+    if ('max' in validation && validation.max && typeof value === 'number' && value > validation.max) {
+      return validation.message || `${field.label} must be no more than ${validation.max}`;
     }
 
-    if (
-      'pattern' in validation &&
-      validation.pattern &&
-      typeof value === 'string' &&
-      !validation.pattern.test(value)
-    ) {
+    if ('pattern' in validation && validation.pattern && typeof value === 'string' && !validation.pattern.test(value)) {
       return validation.message || `${field.label} format is invalid`;
     }
 
-    if (
-      'minAge' in validation &&
-      validation.minAge &&
-      typeof value === 'string'
-    ) {
+    if ('minAge' in validation && validation.minAge && typeof value === 'string') {
       const birthDate = new Date(value);
       const today = new Date();
       let age = today.getFullYear() - birthDate.getFullYear();
       const monthDiff = today.getMonth() - birthDate.getMonth();
-      if (
-        monthDiff < 0 ||
-        (monthDiff === 0 && today.getDate() < birthDate.getDate())
-      ) {
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
         age--;
       }
       if (age < validation.minAge) {
-        return (
-          validation.message ||
-          `You must be at least ${validation.minAge} years old`
-        );
+        return validation.message || `You must be at least ${validation.minAge} years old`;
       }
     }
 
     return null;
   };
 
-  const handleInputChange = (
-    fieldName: string,
-    value: string | number | string[]
-  ) => {
+  const handleInputChange = (fieldName: string, value: string | number | string[]) => {
     setFormData({ ...formData, [fieldName]: value });
 
     // Clear error when user starts typing
@@ -539,11 +466,7 @@ export function DynamicForm({
 
       if (fieldValue === null || fieldValue === undefined) {
         validationValue = undefined;
-      } else if (
-        typeof fieldValue === 'string' ||
-        typeof fieldValue === 'number' ||
-        Array.isArray(fieldValue)
-      ) {
+      } else if (typeof fieldValue === 'string' || typeof fieldValue === 'number' || Array.isArray(fieldValue)) {
         validationValue = fieldValue;
       } else {
         // For other types like Date, convert to string
@@ -581,58 +504,23 @@ export function DynamicForm({
   // Determine which step component to render based on the fields
   const renderStepComponent = () => {
     // Check if this is step 1 (Basic Information)
-    if (
-      fields.includes('name') &&
-      fields.includes('dob') &&
-      fields.includes('gender')
-    ) {
-      return (
-        <Step1BasicInfo
-          formData={formData}
-          errors={errors}
-          onInputChange={handleInputChange}
-        />
-      );
+    if (fields.includes('name') && fields.includes('dob') && fields.includes('gender')) {
+      return <Step1BasicInfo formData={formData} errors={errors} onInputChange={handleInputChange} />;
     }
 
     // Check if this is step 2 (Location & Contact)
-    if (
-      fields.includes('city') &&
-      fields.includes('state') &&
-      fields.includes('country')
-    ) {
-      return (
-        <Step2Location
-          formData={formData}
-          errors={errors}
-          onInputChange={handleInputChange}
-        />
-      );
+    if (fields.includes('city') && fields.includes('state') && fields.includes('country')) {
+      return <Step2Location formData={formData} errors={errors} onInputChange={handleInputChange} />;
     }
 
     // Check if this is step 3 (Purpose & Values)
-    if (
-      fields.includes('purposeDomain') &&
-      fields.includes('purposeArchetype')
-    ) {
-      return (
-        <Step3Purpose
-          formData={formData}
-          errors={errors}
-          onInputChange={handleInputChange}
-        />
-      );
+    if (fields.includes('purposeDomain') && fields.includes('purposeArchetype')) {
+      return <Step3Purpose formData={formData} errors={errors} onInputChange={handleInputChange} />;
     }
 
     // Check if this is step 4 (Lifestyle & Preferences)
     if (fields.includes('interests') && fields.includes('personality')) {
-      return (
-        <Step4Lifestyle
-          formData={formData}
-          errors={errors}
-          onInputChange={handleInputChange}
-        />
-      );
+      return <Step4Lifestyle formData={formData} errors={errors} onInputChange={handleInputChange} />;
     }
 
     // Fallback: render individual fields (for backward compatibility)
@@ -655,14 +543,7 @@ export function DynamicForm({
                   <label htmlFor={fieldName} className="text-sm font-medium">
                     {field.label}
                   </label>
-                  <input
-                    id={fieldName}
-                    type={field.type}
-                    placeholder={field.placeholder || ''}
-                    value={(value as string) || ''}
-                    onChange={e => handleInputChange(fieldName, e.target.value)}
-                    className={`w-full px-3 py-2 border rounded-md ${error ? 'border-red-500' : 'border-gray-300'}`}
-                  />
+                  <input id={fieldName} type={field.type} placeholder={field.placeholder || ''} value={(value as string) || ''} onChange={e => handleInputChange(fieldName, e.target.value)} className={`w-full px-3 py-2 border rounded-md ${error ? 'border-red-500' : 'border-gray-300'}`} />
                   {error && <p className="text-sm text-red-500">{error}</p>}
                 </div>
               );
@@ -670,9 +551,7 @@ export function DynamicForm({
               return (
                 <div key={fieldName} className="space-y-2">
                   <label className="text-sm font-medium">{field.label}</label>
-                  <p className="text-sm text-gray-500">
-                    Field type not supported in fallback mode
-                  </p>
+                  <p className="text-sm text-gray-500">Field type not supported in fallback mode</p>
                 </div>
               );
           }

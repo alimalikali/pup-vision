@@ -51,12 +51,8 @@ export function PhotoUpload({ onNext, initialData = {} }: PhotoUploadProps) {
   return (
     <div>
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-foreground mb-2">
-          Add Your Photos
-        </h2>
-        <p className="text-muted-foreground">
-          Help others get to know you better with some great photos
-        </p>
+        <h2 className="text-2xl font-bold text-foreground mb-2">Add Your Photos</h2>
+        <p className="text-muted-foreground">Help others get to know you better with some great photos</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -69,27 +65,14 @@ export function PhotoUpload({ onNext, initialData = {} }: PhotoUploadProps) {
               <Card key={index} className="relative group">
                 <CardContent className="p-2">
                   <div className="relative aspect-square rounded-lg overflow-hidden">
-                    <Image
-                      src={photo}
-                      alt={`Photo ${index + 1}`}
-                      fill
-                      className="object-cover"
-                    />
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      size="sm"
-                      className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={() => handleRemovePhoto(index)}
-                    >
+                    <Image src={photo} alt={`Photo ${index + 1}`} fill className="object-cover" />
+                    <Button type="button" variant="destructive" size="sm" className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => handleRemovePhoto(index)}>
                       <X className="h-4 w-4" />
                     </Button>
                   </div>
                   {index === 0 && (
                     <div className="absolute top-2 left-2">
-                      <span className="bg-primary text-primary-foreground text-xs px-2 py-1 rounded">
-                        Main
-                      </span>
+                      <span className="bg-primary text-primary-foreground text-xs px-2 py-1 rounded">Main</span>
                     </div>
                   )}
                 </CardContent>
@@ -102,26 +85,11 @@ export function PhotoUpload({ onNext, initialData = {} }: PhotoUploadProps) {
                 <CardContent className="p-4">
                   <div className="flex flex-col items-center justify-center h-full min-h-[120px] space-y-2">
                     <Camera className="h-8 w-8 text-muted-foreground" />
-                    <Label
-                      htmlFor="photo-upload"
-                      className="cursor-pointer text-center"
-                    >
-                      <div className="text-sm font-medium text-muted-foreground">
-                        Add Photo
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        {photos.length}/6 photos
-                      </div>
+                    <Label htmlFor="photo-upload" className="cursor-pointer text-center">
+                      <div className="text-sm font-medium text-muted-foreground">Add Photo</div>
+                      <div className="text-xs text-muted-foreground">{photos.length}/6 photos</div>
                     </Label>
-                    <Input
-                      id="photo-upload"
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      onChange={handlePhotoUpload}
-                      className="hidden"
-                      disabled={isUploading}
-                    />
+                    <Input id="photo-upload" type="file" accept="image/*" multiple onChange={handlePhotoUpload} className="hidden" disabled={isUploading} />
                   </div>
                 </CardContent>
               </Card>
@@ -137,11 +105,7 @@ export function PhotoUpload({ onNext, initialData = {} }: PhotoUploadProps) {
           </div>
         </div>
 
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={photos.length === 0 || isUploading}
-        >
+        <Button type="submit" className="w-full" disabled={photos.length === 0 || isUploading}>
           {isUploading ? 'Uploading...' : 'Complete Profile'}
           <ArrowRight className="ml-2 h-4 w-4" />
         </Button>

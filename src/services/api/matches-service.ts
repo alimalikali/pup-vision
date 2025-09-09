@@ -1,11 +1,4 @@
-import {
-  MatchesResponse,
-  MatchesFilters,
-  ProfileResponse,
-  AdmireResponse,
-  AdmireDataResponse,
-  AuthResponse,
-} from '@types';
+import { MatchesResponse, MatchesFilters, ProfileResponse, AdmireResponse, AdmireDataResponse, AuthResponse } from '@types';
 
 class MatchesService {
   private baseUrl = '/api';
@@ -15,10 +8,7 @@ class MatchesService {
   /**
    * Core request handler for all matches endpoints
    */
-  private async request<T = unknown>(
-    path: string,
-    options: RequestInit
-  ): Promise<T> {
+  private async request<T = unknown>(path: string, options: RequestInit): Promise<T> {
     const doFetch = async (): Promise<Response> => {
       return fetch(`${this.baseUrl}${path}`, {
         ...options,
@@ -60,9 +50,7 @@ class MatchesService {
       }
 
       if (!response.ok) {
-        throw new Error(
-          data.message || `Request failed with status ${response.status}`
-        );
+        throw new Error(data.message || `Request failed with status ${response.status}`);
       }
 
       return data as T;
@@ -75,12 +63,7 @@ class MatchesService {
   /**
    * Get matches with cursor-based pagination and filtering
    */
-  async getMatches(
-    cursor?: string | null,
-    limit: number = 20,
-    includeCompatibility: boolean = true,
-    filters: MatchesFilters = {}
-  ): Promise<MatchesResponse> {
+  async getMatches(cursor?: string | null, limit: number = 20, includeCompatibility: boolean = true, filters: MatchesFilters = {}): Promise<MatchesResponse> {
     const searchParams = new URLSearchParams();
 
     if (cursor) searchParams.set('cursor', cursor);
@@ -95,36 +78,26 @@ class MatchesService {
     if (filters.state) searchParams.set('state', filters.state);
     if (filters.education) searchParams.set('education', filters.education);
     if (filters.profession) searchParams.set('profession', filters.profession);
-    if (filters.purposeDomain)
-      searchParams.set('purposeDomain', filters.purposeDomain);
+    if (filters.purposeDomain) searchParams.set('purposeDomain', filters.purposeDomain);
     if (filters.interests && filters.interests.length > 0) {
       searchParams.set('interests', filters.interests.join(','));
     }
 
-    return this.request<MatchesResponse>(
-      `/matches?${searchParams.toString()}`,
-      {
-        method: 'GET',
-      }
-    );
+    return this.request<MatchesResponse>(`/matches?${searchParams.toString()}`, {
+      method: 'GET',
+    });
   }
 
   /**
    * Get a single profile by ID
    */
-  async getProfile(
-    profileId: string,
-    includeCompatibility: boolean = true
-  ): Promise<ProfileResponse> {
+  async getProfile(profileId: string, includeCompatibility: boolean = true): Promise<ProfileResponse> {
     const searchParams = new URLSearchParams();
     searchParams.set('includeCompatibility', includeCompatibility.toString());
 
-    return this.request<ProfileResponse>(
-      `/profile/${profileId}?${searchParams.toString()}`,
-      {
-        method: 'GET',
-      }
-    );
+    return this.request<ProfileResponse>(`/profile/${profileId}?${searchParams.toString()}`, {
+      method: 'GET',
+    });
   }
 
   /**

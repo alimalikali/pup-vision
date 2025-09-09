@@ -2,13 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
@@ -24,48 +18,13 @@ interface MatchFiltersProps {
     purpose: string;
     interests: string[];
   };
-  onFiltersChange: (filters: {
-    ageRange: [number, number];
-    location: string;
-    education: string;
-    profession: string;
-    purpose: string;
-    interests: string[];
-  }) => void;
+  onFiltersChange: (filters: { ageRange: [number, number]; location: string; education: string; profession: string; purpose: string; interests: string[] }) => void;
 }
 
 export function MatchFilters({ filters, onFiltersChange }: MatchFiltersProps) {
-  const interests = [
-    'Technology',
-    'Travel',
-    'Cooking',
-    'Reading',
-    'Music',
-    'Art',
-    'Sports',
-    'Fitness',
-    'Photography',
-    'Dancing',
-    'Movies',
-    'Gaming',
-    'Hiking',
-    'Yoga',
-    'Meditation',
-    'Volunteering',
-  ];
+  const interests = ['Technology', 'Travel', 'Cooking', 'Reading', 'Music', 'Art', 'Sports', 'Fitness', 'Photography', 'Dancing', 'Movies', 'Gaming', 'Hiking', 'Yoga', 'Meditation', 'Volunteering'];
 
-  const purposeDomains = [
-    'Technology & Innovation',
-    'Healthcare & Wellness',
-    'Education & Learning',
-    'Arts & Creativity',
-    'Business & Entrepreneurship',
-    'Social Impact & Advocacy',
-    'Science & Research',
-    'Finance & Investment',
-    'Environment & Sustainability',
-    'Sports & Fitness',
-  ];
+  const purposeDomains = ['Technology & Innovation', 'Healthcare & Wellness', 'Education & Learning', 'Arts & Creativity', 'Business & Entrepreneurship', 'Social Impact & Advocacy', 'Science & Research', 'Finance & Investment', 'Environment & Sustainability', 'Sports & Fitness'];
 
   const handleAgeRangeChange = (values: number[]) => {
     onFiltersChange({
@@ -75,9 +34,7 @@ export function MatchFilters({ filters, onFiltersChange }: MatchFiltersProps) {
   };
 
   const handleInterestToggle = (interest: string) => {
-    const updatedInterests = filters.interests.includes(interest)
-      ? filters.interests.filter(i => i !== interest)
-      : [...filters.interests, interest];
+    const updatedInterests = filters.interests.includes(interest) ? filters.interests.filter(i => i !== interest) : [...filters.interests, interest];
 
     onFiltersChange({
       ...filters,
@@ -114,14 +71,7 @@ export function MatchFilters({ filters, onFiltersChange }: MatchFiltersProps) {
         <div className="space-y-3">
           <Label>Age Range</Label>
           <div className="px-2">
-            <Slider
-              value={[filters.ageRange.min, filters.ageRange.max]}
-              onValueChange={handleAgeRangeChange}
-              min={18}
-              max={60}
-              step={1}
-              className="w-full"
-            />
+            <Slider value={[filters.ageRange.min, filters.ageRange.max]} onValueChange={handleAgeRangeChange} min={18} max={60} step={1} className="w-full" />
             <div className="flex justify-between text-sm text-muted-foreground mt-1">
               <span>{filters.ageRange.min}</span>
               <span>{filters.ageRange.max}</span>
@@ -132,12 +82,7 @@ export function MatchFilters({ filters, onFiltersChange }: MatchFiltersProps) {
         {/* Location */}
         <div className="space-y-2">
           <Label>Location</Label>
-          <Select
-            value={filters.location}
-            onValueChange={value =>
-              onFiltersChange({ ...filters, location: value })
-            }
-          >
+          <Select value={filters.location} onValueChange={value => onFiltersChange({ ...filters, location: value })}>
             <SelectTrigger>
               <SelectValue placeholder="Any location" />
             </SelectTrigger>
@@ -155,12 +100,7 @@ export function MatchFilters({ filters, onFiltersChange }: MatchFiltersProps) {
         {/* Education */}
         <div className="space-y-2">
           <Label>Education</Label>
-          <Select
-            value={filters.education}
-            onValueChange={value =>
-              onFiltersChange({ ...filters, education: value })
-            }
-          >
+          <Select value={filters.education} onValueChange={value => onFiltersChange({ ...filters, education: value })}>
             <SelectTrigger>
               <SelectValue placeholder="Any education" />
             </SelectTrigger>
@@ -177,12 +117,7 @@ export function MatchFilters({ filters, onFiltersChange }: MatchFiltersProps) {
         {/* Purpose Domain */}
         <div className="space-y-2">
           <Label>Purpose Domain</Label>
-          <Select
-            value={filters.purpose}
-            onValueChange={value =>
-              onFiltersChange({ ...filters, purpose: value })
-            }
-          >
+          <Select value={filters.purpose} onValueChange={value => onFiltersChange({ ...filters, purpose: value })}>
             <SelectTrigger>
               <SelectValue placeholder="Any purpose" />
             </SelectTrigger>
@@ -203,11 +138,7 @@ export function MatchFilters({ filters, onFiltersChange }: MatchFiltersProps) {
           <div className="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto">
             {interests.map(interest => (
               <div key={interest} className="flex items-center space-x-2">
-                <Checkbox
-                  id={interest}
-                  checked={filters.interests.includes(interest)}
-                  onCheckedChange={() => handleInterestToggle(interest)}
-                />
+                <Checkbox id={interest} checked={filters.interests.includes(interest)} onCheckedChange={() => handleInterestToggle(interest)} />
                 <Label htmlFor={interest} className="text-sm">
                   {interest}
                 </Label>
@@ -221,12 +152,7 @@ export function MatchFilters({ filters, onFiltersChange }: MatchFiltersProps) {
               <Label className="text-xs">Selected:</Label>
               <div className="flex flex-wrap gap-1">
                 {filters.interests.map(interest => (
-                  <Badge
-                    key={interest}
-                    variant="secondary"
-                    className="text-xs cursor-pointer"
-                    onClick={() => handleInterestToggle(interest)}
-                  >
+                  <Badge key={interest} variant="secondary" className="text-xs cursor-pointer" onClick={() => handleInterestToggle(interest)}>
                     {interest}
                     <X className="ml-1 h-3 w-3" />
                   </Badge>

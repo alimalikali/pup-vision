@@ -3,30 +3,7 @@
  * These represent the actual database entities
  */
 
-import {
-  Role,
-  Gender,
-  Religion,
-  Education,
-  Profession,
-  PurposeDomain,
-  PurposeArchetype,
-  PurposeModality,
-  Interest,
-  Personality,
-  MaritalStatus,
-  LookingFor,
-  Language,
-  Smoke,
-  Alcohol,
-  Drugs,
-  Politics,
-  MatchStatus,
-  Plan,
-  SubscriptionStatus,
-  PaymentMethod,
-  TransactionStatus,
-} from './enums';
+import { Role, Gender, Religion, Education, Profession, PurposeDomain, PurposeArchetype, PurposeModality, Interest, Personality, MaritalStatus, LookingFor, Language, Smoke, Alcohol, Drugs, Politics, MatchStatus, Plan, SubscriptionStatus, PaymentMethod, TransactionStatus } from './enums';
 
 /**
  * Core User entity from database

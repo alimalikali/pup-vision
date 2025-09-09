@@ -10,9 +10,7 @@ export async function POST(request: NextRequest) {
     console.log('[Onboarding] Starting onboarding completion...');
 
     // Get access token from cookie or Authorization header
-    const accessToken =
-      request.cookies.get('access-token')?.value ||
-      request.headers.get('authorization')?.replace('Bearer ', '');
+    const accessToken = request.cookies.get('access-token')?.value || request.headers.get('authorization')?.replace('Bearer ', '');
 
     if (!accessToken) {
       return NextResponse.json(
@@ -153,10 +151,7 @@ export async function POST(request: NextRequest) {
         : undefined,
     };
 
-    console.log(
-      '[Onboarding] Onboarding completed successfully for user:',
-      user.email
-    );
+    console.log('[Onboarding] Onboarding completed successfully for user:', user.email);
     await prisma.$disconnect();
 
     return NextResponse.json({
@@ -170,8 +165,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        message:
-          error instanceof Error ? error.message : 'Internal server error',
+        message: error instanceof Error ? error.message : 'Internal server error',
       },
       { status: 500 }
     );

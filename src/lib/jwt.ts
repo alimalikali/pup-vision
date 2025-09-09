@@ -3,8 +3,7 @@ import jwt from 'jsonwebtoken';
 import { JWTPayload } from '@types';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
-const JWT_REFRESH_SECRET =
-  process.env.JWT_REFRESH_SECRET || 'your-refresh-secret-key';
+const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'your-refresh-secret-key';
 const ACCESS_TOKEN_EXPIRES_IN = '15m'; // 15 minutes
 const REFRESH_TOKEN_EXPIRES_IN = '7d'; // 7 days
 
@@ -15,10 +14,7 @@ export const passwordUtils = {
     return bcrypt.hash(password, saltRounds);
   },
 
-  async comparePassword(
-    password: string,
-    hashedPassword: string
-  ): Promise<boolean> {
+  async comparePassword(password: string, hashedPassword: string): Promise<boolean> {
     return bcrypt.compare(password, hashedPassword);
   },
 };

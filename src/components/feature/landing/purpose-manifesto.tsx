@@ -36,38 +36,16 @@ export function PurposeManifesto() {
   };
 
   return (
-    <section
-      id="manifesto"
-      className="py-24 md:py-32 bg-black text-white"
-      ref={containerRef}
-    >
-      <motion.div
-        className="container mx-auto px-4"
-        style={{ opacity, y }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1 }}
-      >
+    <section id="manifesto" className="py-24 md:py-32 bg-black text-white" ref={containerRef}>
+      <motion.div className="container mx-auto px-4" style={{ opacity, y }} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }}>
         <div className="max-w-4xl mx-auto">
-          <motion.h2
-            className="text-3xl md:text-4xl font-light mb-16 text-center"
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.8 }}
-          >
+          <motion.h2 className="text-3xl md:text-4xl font-light mb-16 text-center" initial={{ opacity: 0, y: 20 }} animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }} transition={{ duration: 0.8 }}>
             Our Manifesto
           </motion.h2>
 
           <div className="space-y-12 md:space-y-16">
             {manifestoLines.map((line, i) => (
-              <motion.div
-                key={i}
-                custom={i}
-                variants={lineVariants}
-                initial="hidden"
-                animate={isInView ? 'visible' : 'hidden'}
-                className="text-3xl md:text-5xl font-serif leading-tight tracking-tight"
-              >
+              <motion.div key={i} custom={i} variants={lineVariants} initial="hidden" animate={isInView ? 'visible' : 'hidden'} className="text-3xl md:text-5xl font-serif leading-tight tracking-tight">
                 {line}
               </motion.div>
             ))}

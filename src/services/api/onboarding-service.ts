@@ -6,9 +6,7 @@ class OnboardingService {
   /**
    * Complete onboarding by updating user profile
    */
-  async completeOnboarding(
-    profileData: Record<string, unknown>
-  ): Promise<AuthResponse> {
+  async completeOnboarding(profileData: Record<string, unknown>): Promise<AuthResponse> {
     try {
       let response = await fetch(`${this.baseUrl}/onboarding`, {
         method: 'POST',
@@ -21,9 +19,7 @@ class OnboardingService {
 
       // If we get a 401, try to refresh the token and retry
       if (response.status === 401) {
-        console.log(
-          '[OnboardingService] Access token expired, attempting refresh...'
-        );
+        console.log('[OnboardingService] Access token expired, attempting refresh...');
 
         const refreshResponse = await fetch('/api/auth/refresh', {
           method: 'POST',
@@ -51,8 +47,7 @@ class OnboardingService {
 
       return {
         success: false,
-        message:
-          data.message || `Request failed with status ${response.status}`,
+        message: data.message || `Request failed with status ${response.status}`,
       };
     } catch (err) {
       console.error('OnboardingService error:', err);

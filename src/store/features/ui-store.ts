@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { UIState, UIStoreActions } from '@types';
 
-export const useUIStore = create<UIState & UIStoreActions>()((set) => ({
+export const useUIStore = create<UIState & UIStoreActions>()(set => ({
   theme: 'system',
   sidebarOpen: false,
   notifications: [],
@@ -15,10 +15,7 @@ export const useUIStore = create<UIState & UIStoreActions>()((set) => ({
       root.classList.remove('light', 'dark');
 
       if (theme === 'system') {
-        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)')
-          .matches
-          ? 'dark'
-          : 'light';
+        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         root.classList.add(systemTheme);
       } else {
         root.classList.add(theme);
@@ -36,10 +33,7 @@ export const useUIStore = create<UIState & UIStoreActions>()((set) => ({
 
   addNotification: notification => {
     set(state => ({
-      notifications: [
-        ...state.notifications,
-        { ...notification, id: Date.now().toString() },
-      ],
+      notifications: [...state.notifications, { ...notification, id: Date.now().toString() }],
     }));
   },
 

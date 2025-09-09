@@ -8,24 +8,16 @@ export async function POST(request: NextRequest) {
   try {
     // Get current user ID from auth token
     const authHeader = request.headers.get('authorization');
-    const token =
-      authHeader?.replace('Bearer ', '') ||
-      request.cookies.get('access-token')?.value;
+    const token = authHeader?.replace('Bearer ', '') || request.cookies.get('access-token')?.value;
 
     if (!token) {
-      return NextResponse.json(
-        { success: false, message: 'No authentication token' },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, message: 'No authentication token' }, { status: 401 });
     }
 
     // Verify token
     const decoded = jwtUtils.verifyToken(token);
     if (!decoded) {
-      return NextResponse.json(
-        { success: false, message: 'Invalid token' },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, message: 'Invalid token' }, { status: 401 });
     }
 
     const currentUserId = decoded.userId;
@@ -176,10 +168,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Photo upload error:', error);
     await prisma.$disconnect();
-    return NextResponse.json(
-      { success: false, message: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, message: 'Internal server error' }, { status: 500 });
   }
 }
 
@@ -187,24 +176,16 @@ export async function GET(request: NextRequest) {
   try {
     // Get current user ID from auth token
     const authHeader = request.headers.get('authorization');
-    const token =
-      authHeader?.replace('Bearer ', '') ||
-      request.cookies.get('access-token')?.value;
+    const token = authHeader?.replace('Bearer ', '') || request.cookies.get('access-token')?.value;
 
     if (!token) {
-      return NextResponse.json(
-        { success: false, message: 'No authentication token' },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, message: 'No authentication token' }, { status: 401 });
     }
 
     // Verify token
     const decoded = jwtUtils.verifyToken(token);
     if (!decoded) {
-      return NextResponse.json(
-        { success: false, message: 'Invalid token' },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, message: 'Invalid token' }, { status: 401 });
     }
 
     const currentUserId = decoded.userId;
@@ -239,9 +220,6 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Photo GET error:', error);
     await prisma.$disconnect();
-    return NextResponse.json(
-      { success: false, message: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, message: 'Internal server error' }, { status: 500 });
   }
 }

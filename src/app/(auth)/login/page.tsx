@@ -6,13 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Heart, Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react';
@@ -39,17 +33,13 @@ export default function LoginPage() {
           setError('Google authentication failed. Please try again.');
           break;
         case 'no_auth_code':
-          setError(
-            'Authentication incomplete. Please try signing in with Google again.'
-          );
+          setError('Authentication incomplete. Please try signing in with Google again.');
           break;
         case 'token_exchange_failed':
           setError('Authentication token exchange failed. Please try again.');
           break;
         case 'user_info_failed':
-          setError(
-            'Failed to retrieve user information from Google. Please try again.'
-          );
+          setError('Failed to retrieve user information from Google. Please try again.');
           break;
         case 'callback_failed':
           setError('Authentication callback failed. Please try again.');
@@ -112,20 +102,14 @@ export default function LoginPage() {
             <Heart className="h-8 w-8 text-primary" />
             <span className="text-2xl font-bold text-primary">Pup</span>
           </Link>
-          <h2 className="text-3xl font-bold tracking-tight text-foreground">
-            Welcome back
-          </h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Sign in to your account to continue your journey
-          </p>
+          <h2 className="text-3xl font-bold tracking-tight text-foreground">Welcome back</h2>
+          <p className="mt-2 text-sm text-muted-foreground">Sign in to your account to continue your journey</p>
         </div>
 
         <Card className="border-0 shadow-lg">
           <CardHeader className="space-y-1 pb-4">
             <CardTitle className="text-2xl text-center">Sign in</CardTitle>
-            <CardDescription className="text-center">
-              Enter your email and password to access your account
-            </CardDescription>
+            <CardDescription className="text-center">Enter your email and password to access your account</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <GoogleAuthButton />
@@ -135,9 +119,7 @@ export default function LoginPage() {
                 <Separator className="w-full" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card px-2 text-muted-foreground">
-                  Or continue with
-                </span>
+                <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
               </div>
             </div>
 
@@ -153,64 +135,28 @@ export default function LoginPage() {
                 <Label htmlFor="email">Email</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={handleInputChange}
-                    className="pl-10"
-                    required
-                  />
+                  <Input id="email" name="email" type="email" placeholder="Enter your email" value={email} onChange={handleInputChange} className="pl-10" required />
                 </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="password"
-                    name="password"
-                    type={showPassword ? 'text' : 'password'}
-                    placeholder="Enter your password"
-                    value={password}
-                    onChange={handleInputChange}
-                    className="pl-10 pr-10"
-                    required
-                  />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4 text-muted-foreground" />
-                    ) : (
-                      <Eye className="h-4 w-4 text-muted-foreground" />
-                    )}
+                  <Input id="password" name="password" type={showPassword ? 'text' : 'password'} placeholder="Enter your password" value={password} onChange={handleInputChange} className="pl-10 pr-10" required />
+                  <Button type="button" variant="ghost" size="sm" className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent" onClick={() => setShowPassword(!showPassword)}>
+                    {showPassword ? <EyeOff className="h-4 w-4 text-muted-foreground" /> : <Eye className="h-4 w-4 text-muted-foreground" />}
                   </Button>
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <Link
-                  href="/forgot-password"
-                  className="text-sm text-primary hover:underline"
-                >
+                <Link href="/forgot-password" className="text-sm text-primary hover:underline">
                   Forgot password?
                 </Link>
               </div>
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? (
                   <>
-                    <LoaderWait
-                      variant="spinner"
-                      size="sm"
-                      color="white"
-                      centered={false}
-                    />
+                    <LoaderWait variant="spinner" size="sm" color="white" centered={false} />
                     Signing in...
                   </>
                 ) : (
@@ -220,13 +166,8 @@ export default function LoginPage() {
             </form>
 
             <div className="text-center text-sm">
-              <span className="text-muted-foreground">
-                Don&apos;t have an account?{' '}
-              </span>
-              <Link
-                href="/signup"
-                className="text-primary hover:underline font-medium"
-              >
+              <span className="text-muted-foreground">Don&apos;t have an account? </span>
+              <Link href="/signup" className="text-primary hover:underline font-medium">
                 Sign up
               </Link>
             </div>

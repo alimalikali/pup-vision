@@ -65,15 +65,7 @@ export default function OnboardingPage() {
       step: 1,
       title: 'Basic Information',
       description: 'Tell us about yourself',
-      fields: [
-        'name',
-        'dob',
-        'gender',
-        'income in PKR (per month)',
-        'religion',
-        'education',
-        'profession',
-      ],
+      fields: ['name', 'dob', 'gender', 'income in PKR (per month)', 'religion', 'education', 'profession'],
     },
     {
       step: 2,
@@ -85,37 +77,19 @@ export default function OnboardingPage() {
       step: 3,
       title: 'Purpose & Values',
       description: 'What drives you in life?',
-      fields: [
-        'purposeDomain',
-        'purposeArchetype',
-        'purposeModality',
-        'purposeNarrative',
-      ],
+      fields: ['purposeDomain', 'purposeArchetype', 'purposeModality', 'purposeNarrative'],
     },
     {
       step: 4,
       title: 'Lifestyle & Preferences',
       description: "Tell us about your lifestyle and what you're looking for",
-      fields: [
-        'interests',
-        'personality',
-        'maritalStatus',
-        'lookingFor',
-        'height',
-        'weight',
-        'smoke',
-        'alcohol',
-        'drugs',
-        'politics',
-      ],
+      fields: ['interests', 'personality', 'maritalStatus', 'lookingFor', 'height', 'weight', 'smoke', 'alcohol', 'drugs', 'politics'],
     },
   ];
 
   const totalSteps = onboardingSteps.length;
   const progress = (currentStep / totalSteps) * 100;
-  const currentStepData = onboardingSteps.find(
-    step => step.step === currentStep
-  );
+  const currentStepData = onboardingSteps.find(step => step.step === currentStep);
 
   const handleNext = (stepData: Partial<Profile>) => {
     // Merge the new step data with existing form data
@@ -139,30 +113,20 @@ export default function OnboardingPage() {
         // Convert date string to Date object for database
         dob: completeData.dob ? new Date(completeData.dob) : undefined,
         // Ensure arrays are properly formatted
-        interests: Array.isArray(completeData.interests)
-          ? completeData.interests
-          : [],
-        politics: Array.isArray(completeData.politics)
-          ? completeData.politics
-          : [],
+        interests: Array.isArray(completeData.interests) ? completeData.interests : [],
+        politics: Array.isArray(completeData.politics) ? completeData.politics : [],
         // Convert number fields
         income: completeData.income ? Number(completeData.income) : undefined,
         height: completeData.height ? Number(completeData.height) : undefined,
         weight: completeData.weight ? Number(completeData.weight) : undefined,
         // Filter out empty strings and undefined values
-        ...Object.fromEntries(
-          Object.entries(completeData).filter(
-            ([, value]) =>
-              value !== '' && value !== undefined && value !== null
-          )
-        ),
+        ...Object.fromEntries(Object.entries(completeData).filter(([, value]) => value !== '' && value !== undefined && value !== null)),
       };
 
       console.log('[Onboarding] Transformed data:', transformedData);
 
       // Submit to onboarding completion API using service
-      const response =
-        await onboardingService.completeOnboarding(transformedData);
+      const response = await onboardingService.completeOnboarding(transformedData);
 
       console.log('[Onboarding] Onboarding completion response:', response);
 
@@ -205,29 +169,17 @@ export default function OnboardingPage() {
           {googleUser && (
             <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
               <div className="flex items-center justify-center space-x-3">
-                <Image
-                  src={googleUser.picture}
-                  alt={googleUser.name}
-                  className="w-12 h-12 rounded-full border-2 border-green-300"
-                />
+                <Image src={googleUser.picture} alt={googleUser.name} className="w-12 h-12 rounded-full border-2 border-green-300" />
                 <div className="text-left">
-                  <p className="font-medium text-green-800">
-                    Welcome, {googleUser.name}!
-                  </p>
-                  <p className="text-sm text-green-600">
-                    Signed in with Google
-                  </p>
+                  <p className="font-medium text-green-800">Welcome, {googleUser.name}!</p>
+                  <p className="text-sm text-green-600">Signed in with Google</p>
                 </div>
               </div>
             </div>
           )}
 
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            Let&apos;s set up your profile
-          </h1>
-          <p className="mt-2 text-muted-foreground">
-            Help us understand you better to find your perfect match
-          </p>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Let&apos;s set up your profile</h1>
+          <p className="mt-2 text-muted-foreground">Help us understand you better to find your perfect match</p>
         </div>
 
         <div className="mb-8">
@@ -242,23 +194,10 @@ export default function OnboardingPage() {
 
         <Card className="border-0 shadow-lg">
           <CardContent className="p-6">
-            {currentStepData && (
-              <DynamicForm
-                fields={currentStepData.fields}
-                title={currentStepData.title}
-                description={currentStepData.description}
-                onNext={handleNext}
-                initialData={formData}
-              />
-            )}
+            {currentStepData && <DynamicForm fields={currentStepData.fields} title={currentStepData.title} description={currentStepData.description} onNext={handleNext} initialData={formData} />}
 
             <div className="flex justify-between mt-8">
-              <Button
-                variant="outline"
-                onClick={handleBack}
-                disabled={currentStep === 1}
-                className="flex items-center bg-transparent"
-              >
+              <Button variant="outline" onClick={handleBack} disabled={currentStep === 1} className="flex items-center bg-transparent">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back
               </Button>

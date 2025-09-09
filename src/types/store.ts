@@ -59,15 +59,12 @@ export interface AuthState {
  */
 export interface AuthActions {
   login: (email: string, password: string) => Promise<boolean>;
-  signup: (data: {
-    name: string;
-    email: string;
-    password: string;
-  }) => Promise<boolean>;
+  signup: (data: { name: string; email: string; password: string }) => Promise<boolean>;
   logout: () => Promise<void>;
   updateUser: (updates: Partial<AuthUser>) => void;
   clearError: () => void;
   checkAuth: () => Promise<void>;
+  refreshAuth: () => Promise<boolean>;
   setAuthenticated: (user: AuthUser) => void;
   initialize: () => Promise<void>;
 }

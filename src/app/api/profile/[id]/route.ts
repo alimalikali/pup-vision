@@ -6,10 +6,7 @@ import { Profile } from '@types';
 const prisma = new PrismaClient();
 
 // Helper function to calculate compatibility score (same as in matches API)
-function calculateCompatibilityScore(
-  userProfile: Profile,
-  targetProfile: Profile
-): number {
+function calculateCompatibilityScore(userProfile: Profile, targetProfile: Profile): number {
   let score = 0;
   let factors = 0;
 
@@ -37,11 +34,8 @@ function calculateCompatibilityScore(
     SELF_TAUGHT: 3,
     OTHER: 2,
   };
-  const userEduLevel =
-    educationLevels[userProfile.education as keyof typeof educationLevels] || 0;
-  const targetEduLevel =
-    educationLevels[targetProfile.education as keyof typeof educationLevels] ||
-    0;
+  const userEduLevel = educationLevels[userProfile.education as keyof typeof educationLevels] || 0;
+  const targetEduLevel = educationLevels[targetProfile.education as keyof typeof educationLevels] || 0;
   const eduDiff = Math.abs(userEduLevel - targetEduLevel);
   const eduScore = Math.max(0, 15 - eduDiff * 3);
   score += eduScore;
@@ -50,13 +44,8 @@ function calculateCompatibilityScore(
   // Interest overlap (20% weight)
   const userInterests = new Set(userProfile.interests || []);
   const targetInterests = new Set(targetProfile.interests || []);
-  const commonInterests = new Set(
-    [...userInterests].filter(x => targetInterests.has(x))
-  );
-  const interestScore =
-    (commonInterests.size /
-      Math.max(userInterests.size, targetInterests.size, 1)) *
-    20;
+  const commonInterests = new Set([...userInterests].filter(x => targetInterests.has(x)));
+  const interestScore = (commonInterests.size / Math.max(userInterests.size, targetInterests.size, 1)) * 20;
   score += interestScore;
   factors += 20;
 
@@ -67,18 +56,8 @@ function calculateCompatibilityScore(
   factors += 15;
 
   // Age compatibility (10% weight)
-  const userAge = userProfile.dob
-    ? Math.floor(
-        (Date.now() - new Date(userProfile.dob).getTime()) /
-          (365.25 * 24 * 60 * 60 * 1000)
-      )
-    : 25;
-  const targetAge = targetProfile.dob
-    ? Math.floor(
-        (Date.now() - new Date(targetProfile.dob).getTime()) /
-          (365.25 * 24 * 60 * 60 * 1000)
-      )
-    : 25;
+  const userAge = userProfile.dob ? Math.floor((Date.now() - new Date(userProfile.dob).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : 25;
+  const targetAge = targetProfile.dob ? Math.floor((Date.now() - new Date(targetProfile.dob).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : 25;
   const ageDiff = Math.abs(userAge - targetAge);
   const ageScore = Math.max(0, 10 - ageDiff / 2);
   score += ageScore;
@@ -92,17 +71,12 @@ function calculateCompatibilityScore(
   return Math.round((score / factors) * 100);
 }
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     console.log('[Profile API] Fetching profile:', params.id);
 
     // Get access token from cookie or Authorization header
-    const accessToken =
-      request.cookies.get('access-token')?.value ||
-      request.headers.get('authorization')?.replace('Bearer ', '');
+    const accessToken = request.cookies.get('access-token')?.value || request.headers.get('authorization')?.replace('Bearer ', '');
 
     if (!accessToken) {
       return NextResponse.json(
@@ -128,8 +102,7 @@ export async function GET(
 
     // Get query parameters
     const { searchParams } = new URL(request.url);
-    const includeCompatibility =
-      searchParams.get('includeCompatibility') === 'true';
+    const includeCompatibility = searchParams.get('includeCompatibility') === 'true';
 
     // Fetch the target profile
     const profile = await prisma.profile.findUnique({
@@ -205,12 +178,7 @@ export async function GET(
       admiredBy: profile.admiredBy,
       admiredUsers: profile.admiredUsers,
       user: profile.user,
-      age: profile.dob
-        ? Math.floor(
-            (Date.now() - new Date(profile.dob).getTime()) /
-              (365.25 * 24 * 60 * 60 * 1000)
-          )
-        : null,
+      age: profile.dob ? Math.floor((Date.now() - new Date(profile.dob).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : null,
     };
 
     if (includeCompatibility) {
@@ -221,10 +189,7 @@ export async function GET(
       });
 
       if (currentUser?.profile) {
-        const compatibilityScore = calculateCompatibilityScore(
-          currentUser.profile,
-          profile
-        );
+        const compatibilityScore = calculateCompatibilityScore(currentUser.profile, profile);
         const response = {
           ...baseProfile,
           compatibilityScore,

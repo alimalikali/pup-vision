@@ -17,12 +17,7 @@ export interface JWTPayload {
 /**
  * Authentication status
  */
-export type AuthStatus =
-  | 'idle'
-  | 'loading'
-  | 'authenticated'
-  | 'unauthenticated'
-  | 'error';
+export type AuthStatus = 'idle' | 'loading' | 'authenticated' | 'unauthenticated' | 'error';
 
 /**
  * Authenticated user with profile information

@@ -2,13 +2,7 @@
  * Matchmaking and matching related types
  */
 
-import {
-  Profession,
-  PurposeDomain,
-  PurposeArchetype,
-  PurposeModality,
-  MaritalStatus,
-} from './enums';
+import { Profession, PurposeDomain, PurposeArchetype, PurposeModality, MaritalStatus } from './enums';
 
 /**
  * Profile used in matchmaking context

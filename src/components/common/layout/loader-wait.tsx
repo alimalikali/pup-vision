@@ -26,16 +26,7 @@ const colorClasses = {
   white: 'text-white',
 };
 
-export function LoaderWait({
-  variant = 'spinner',
-  size = 'md',
-  color = 'primary',
-  text,
-  centered = true,
-  fullScreen = false,
-  className,
-  backdrop = false,
-}: LoaderWaitProps) {
+export function LoaderWait({ variant = 'spinner', size = 'md', color = 'primary', text, centered = true, fullScreen = false, className, backdrop = false }: LoaderWaitProps) {
   const iconSize = sizeClasses[size];
   const textSize = textSizeClasses[size];
   const iconColor = colorClasses[color];
@@ -53,22 +44,8 @@ export function LoaderWait({
                 key={i}
                 className={cn(
                   'rounded-full animate-pulse',
-                  size === 'sm'
-                    ? 'h-2 w-2'
-                    : size === 'md'
-                      ? 'h-3 w-3'
-                      : size === 'lg'
-                        ? 'h-4 w-4'
-                        : 'h-5 w-5',
-                  color === 'primary'
-                    ? 'bg-primary'
-                    : color === 'secondary'
-                      ? 'bg-secondary'
-                      : color === 'accent'
-                        ? 'bg-accent'
-                        : color === 'muted'
-                          ? 'bg-muted-foreground'
-                          : 'bg-white'
+                  size === 'sm' ? 'h-2 w-2' : size === 'md' ? 'h-3 w-3' : size === 'lg' ? 'h-4 w-4' : 'h-5 w-5',
+                  color === 'primary' ? 'bg-primary' : color === 'secondary' ? 'bg-secondary' : color === 'accent' ? 'bg-accent' : color === 'muted' ? 'bg-muted-foreground' : 'bg-white'
                 )}
                 style={{
                   animationDelay: `${i * 0.2}s`,
@@ -84,22 +61,8 @@ export function LoaderWait({
           <div
             className={cn(
               'rounded-full animate-pulse',
-              size === 'sm'
-                ? 'h-4 w-4'
-                : size === 'md'
-                  ? 'h-6 w-6'
-                  : size === 'lg'
-                    ? 'h-8 w-8'
-                    : 'h-12 w-12',
-              color === 'primary'
-                ? 'bg-primary'
-                : color === 'secondary'
-                  ? 'bg-secondary'
-                  : color === 'accent'
-                    ? 'bg-accent'
-                    : color === 'muted'
-                      ? 'bg-muted-foreground'
-                      : 'bg-white'
+              size === 'sm' ? 'h-4 w-4' : size === 'md' ? 'h-6 w-6' : size === 'lg' ? 'h-8 w-8' : 'h-12 w-12',
+              color === 'primary' ? 'bg-primary' : color === 'secondary' ? 'bg-secondary' : color === 'accent' ? 'bg-accent' : color === 'muted' ? 'bg-muted-foreground' : 'bg-white'
             )}
           />
         );
@@ -114,9 +77,7 @@ export function LoaderWait({
         return <Target className={cn(iconSize, iconColor, 'animate-pulse')} />;
 
       case 'sparkles':
-        return (
-          <Sparkles className={cn(iconSize, iconColor, 'animate-pulse')} />
-        );
+        return <Sparkles className={cn(iconSize, iconColor, 'animate-pulse')} />;
 
       default:
         return <Loader2 className={cn(iconSize, iconColor, 'animate-spin')} />;
@@ -131,24 +92,11 @@ export function LoaderWait({
   );
 
   if (fullScreen) {
-    return (
-      <div
-        className={cn(
-          'fixed inset-0 z-50 flex items-center justify-center',
-          backdrop ? 'backdrop-blur-sm bg-background/80' : 'bg-background'
-        )}
-      >
-        {loaderContent}
-      </div>
-    );
+    return <div className={cn('fixed inset-0 z-50 flex items-center justify-center', backdrop ? 'backdrop-blur-sm bg-background/80' : 'bg-background')}>{loaderContent}</div>;
   }
 
   if (centered) {
-    return (
-      <div className="flex items-center justify-center min-h-[200px]">
-        {loaderContent}
-      </div>
-    );
+    return <div className="flex items-center justify-center min-h-[200px]">{loaderContent}</div>;
   }
 
   return loaderContent;
@@ -157,61 +105,25 @@ export function LoaderWait({
 // Predefined loader variants for common use cases
 export const LoaderVariants = {
   // Authentication related
-  Auth: () => (
-    <LoaderWait
-      variant="spinner"
-      size="lg"
-      color="primary"
-      text="Authenticating..."
-    />
-  ),
+  Auth: () => <LoaderWait variant="spinner" size="lg" color="primary" text="Authenticating..." />,
 
   // Data loading
-  Data: () => (
-    <LoaderWait variant="dots" size="md" color="muted" text="Loading data..." />
-  ),
+  Data: () => <LoaderWait variant="dots" size="md" color="muted" text="Loading data..." />,
 
   // Profile related
-  Profile: () => (
-    <LoaderWait
-      variant="heart"
-      size="lg"
-      color="primary"
-      text="Loading profile..."
-    />
-  ),
+  Profile: () => <LoaderWait variant="heart" size="lg" color="primary" text="Loading profile..." />,
 
   // Matches related
-  Matches: () => (
-    <LoaderWait
-      variant="target"
-      size="lg"
-      color="primary"
-      text="Finding matches..."
-    />
-  ),
+  Matches: () => <LoaderWait variant="target" size="lg" color="primary" text="Finding matches..." />,
 
   // General loading
-  General: () => (
-    <LoaderWait variant="spinner" size="md" color="muted" text="Loading..." />
-  ),
+  General: () => <LoaderWait variant="spinner" size="md" color="muted" text="Loading..." />,
 
   // Full screen loader
-  FullScreen: (text?: string) => (
-    <LoaderWait
-      variant="spinner"
-      size="xl"
-      color="primary"
-      text={text || 'Loading...'}
-      fullScreen
-      backdrop
-    />
-  ),
+  FullScreen: (text?: string) => <LoaderWait variant="spinner" size="xl" color="primary" text={text || 'Loading...'} fullScreen backdrop />,
 
   // Inline loader
-  Inline: () => (
-    <LoaderWait variant="spinner" size="sm" color="muted" centered={false} />
-  ),
+  Inline: () => <LoaderWait variant="spinner" size="sm" color="muted" centered={false} />,
 };
 
 export default LoaderWait;

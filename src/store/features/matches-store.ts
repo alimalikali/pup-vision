@@ -1,12 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { matchesService } from '@/services/api/matches-service';
-import {
-  MatchesFilters,
-  AdvancedFilters,
-  MatchesStoreState,
-  MatchesStoreActions,
-} from '@types';
+import { MatchesFilters, AdvancedFilters, MatchesStoreState, MatchesStoreActions } from '@types';
 
 type Store = MatchesStoreState & MatchesStoreActions;
 
@@ -45,18 +40,11 @@ export const useMatchesStore = create<Store>()(
         }
 
         try {
-          const response = await matchesService.getMatches(
-            reset ? null : cursor,
-            20,
-            true,
-            filters
-          );
+          const response = await matchesService.getMatches(reset ? null : cursor, 20, true, filters);
 
           if (response.success) {
             set({
-              profiles: reset
-                ? response.data
-                : [...get().profiles, ...response.data],
+              profiles: reset ? response.data : [...get().profiles, ...response.data],
               cursor: response.pagination.cursor,
               hasMore: response.pagination.hasMore,
               isLoading: false,
@@ -71,10 +59,7 @@ export const useMatchesStore = create<Store>()(
         } catch (error) {
           console.error('Error fetching profiles:', error);
           set({
-            error:
-              error instanceof Error
-                ? error.message
-                : 'Failed to fetch profiles',
+            error: error instanceof Error ? error.message : 'Failed to fetch profiles',
             isLoading: false,
           });
         }
@@ -92,10 +77,7 @@ export const useMatchesStore = create<Store>()(
           set({ isLoadingMore: false });
         } catch (error) {
           set({
-            error:
-              error instanceof Error
-                ? error.message
-                : 'Failed to load more profiles',
+            error: error instanceof Error ? error.message : 'Failed to load more profiles',
             isLoadingMore: false,
           });
         }
@@ -122,10 +104,7 @@ export const useMatchesStore = create<Store>()(
         } catch (error) {
           console.error('Error fetching profile:', error);
           set({
-            error:
-              error instanceof Error
-                ? error.message
-                : 'Failed to fetch profile',
+            error: error instanceof Error ? error.message : 'Failed to fetch profile',
             isLoadingProfile: false,
           });
         }
@@ -144,9 +123,7 @@ export const useMatchesStore = create<Store>()(
           if (response.success) {
             // Remove the profile from the list since it's been admired
             set({
-              profiles: get().profiles.filter(
-                profile => profile.userId !== targetUserId
-              ),
+              profiles: get().profiles.filter(profile => profile.userId !== targetUserId),
             });
 
             // Refresh admire data to get updated lists
@@ -160,8 +137,7 @@ export const useMatchesStore = create<Store>()(
         } catch (error) {
           console.error('Error admiring user:', error);
           set({
-            error:
-              error instanceof Error ? error.message : 'Failed to admire user',
+            error: error instanceof Error ? error.message : 'Failed to admire user',
           });
           return false;
         }
@@ -174,9 +150,7 @@ export const useMatchesStore = create<Store>()(
           if (response.success) {
             // Remove the profile from the list since it's been passed
             set({
-              profiles: get().profiles.filter(
-                profile => profile.userId !== targetUserId
-              ),
+              profiles: get().profiles.filter(profile => profile.userId !== targetUserId),
             });
 
             return true;
@@ -187,8 +161,7 @@ export const useMatchesStore = create<Store>()(
         } catch (error) {
           console.error('Error passing user:', error);
           set({
-            error:
-              error instanceof Error ? error.message : 'Failed to pass user',
+            error: error instanceof Error ? error.message : 'Failed to pass user',
           });
           return false;
         }
@@ -215,10 +188,7 @@ export const useMatchesStore = create<Store>()(
         } catch (error) {
           console.error('Error fetching admire data:', error);
           set({
-            error:
-              error instanceof Error
-                ? error.message
-                : 'Failed to fetch admire data',
+            error: error instanceof Error ? error.message : 'Failed to fetch admire data',
             isLoadingAdmire: false,
           });
         }
@@ -266,10 +236,7 @@ export const useMatchesStore = create<Store>()(
           basicFilters.profession = updatedFilters.profession[0];
         }
 
-        if (
-          updatedFilters.purposeDomain &&
-          updatedFilters.purposeDomain.length > 0
-        ) {
+        if (updatedFilters.purposeDomain && updatedFilters.purposeDomain.length > 0) {
           basicFilters.purposeDomain = updatedFilters.purposeDomain[0];
         }
 

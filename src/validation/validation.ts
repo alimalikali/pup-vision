@@ -1,21 +1,4 @@
-import {
-  Gender,
-  Religion,
-  Profession,
-  PurposeDomain,
-  PurposeArchetype,
-  PurposeModality,
-  Interest,
-  Personality,
-  MaritalStatus,
-  LookingFor,
-  Language,
-  Smoke,
-  Alcohol,
-  Drugs,
-  Politics,
-  Education,
-} from '@types';
+import { Gender, Religion, Profession, PurposeDomain, PurposeArchetype, PurposeModality, Interest, Personality, MaritalStatus, LookingFor, Language, Smoke, Alcohol, Drugs, Politics, Education } from '@types';
 import { z } from 'zod';
 
 // Validation schemas that match our Prisma database schema exactly
@@ -46,10 +29,7 @@ export const profileSchema = z.object({
           const num = Number(val);
           return isNaN(num) ? undefined : num;
         })
-        .refine(
-          val => val === undefined || val >= 0,
-          'Income must be between 0'
-        ),
+        .refine(val => val === undefined || val >= 0, 'Income must be between 0'),
     ])
     .optional(),
   religion: z.enum(Object.values(Religion) as [string, ...string[]]),
@@ -63,12 +43,8 @@ export const profileSchema = z.object({
 
   // Purpose
   purposeDomain: z.enum(Object.values(PurposeDomain) as [string, ...string[]]),
-  purposeArchetype: z.enum(
-    Object.values(PurposeArchetype) as [string, ...string[]]
-  ),
-  purposeModality: z.enum(
-    Object.values(PurposeModality) as [string, ...string[]]
-  ),
+  purposeArchetype: z.enum(Object.values(PurposeArchetype) as [string, ...string[]]),
+  purposeModality: z.enum(Object.values(PurposeModality) as [string, ...string[]]),
   purposeNarrative: z
     .string()
     .refine(val => {
@@ -95,10 +71,7 @@ export const profileSchema = z.object({
           const num = Number(val);
           return isNaN(num) ? undefined : num;
         })
-        .refine(
-          val => !val || (val >= 100 && val <= 250),
-          'Height must be between 100 and 250 cm'
-        )
+        .refine(val => !val || (val >= 100 && val <= 250), 'Height must be between 100 and 250 cm')
     ),
   weight: z
     .number()
@@ -112,10 +85,7 @@ export const profileSchema = z.object({
           const num = Number(val);
           return isNaN(num) ? undefined : num;
         })
-        .refine(
-          val => !val || (val >= 30 && val <= 300),
-          'Weight must be between 30 and 300 kg'
-        )
+        .refine(val => !val || (val >= 30 && val <= 300), 'Weight must be between 30 and 300 kg')
     ),
   smoke: z.enum(Object.values(Smoke) as [string, ...string[]]),
   alcohol: z.enum(Object.values(Alcohol) as [string, ...string[]]),
@@ -136,20 +106,8 @@ export const profileUpdateSchema = profileSchema.partial().refine(
     }
 
     // Ensure at least the essential fields are present for other updates
-    const essentialFields = [
-      'name',
-      'dob',
-      'gender',
-      'religion',
-      'education',
-      'profession',
-      'city',
-      'state',
-      'country',
-    ];
-    const missingFields = essentialFields.filter(
-      field => !data[field as keyof typeof data]
-    );
+    const essentialFields = ['name', 'dob', 'gender', 'religion', 'education', 'profession', 'city', 'state', 'country'];
+    const missingFields = essentialFields.filter(field => !data[field as keyof typeof data]);
 
     if (missingFields.length > 0) {
       return false;
@@ -157,8 +115,7 @@ export const profileUpdateSchema = profileSchema.partial().refine(
     return true;
   },
   {
-    message:
-      'Missing required fields: name, dob, gender, religion, education, profession, city, state, country',
+    message: 'Missing required fields: name, dob, gender, religion, education, profession, city, state, country',
     path: ['missing_fields'],
   }
 );

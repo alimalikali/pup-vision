@@ -45,16 +45,12 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       console.error('Google OAuth error:', error);
-      return NextResponse.redirect(
-        `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/login?error=google_auth_failed`
-      );
+      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/login?error=google_auth_failed`);
     }
 
     if (!code) {
       console.error('No authorization code received');
-      return NextResponse.redirect(
-        `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/login?error=no_auth_code`
-      );
+      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/login?error=no_auth_code`);
     }
 
     // Exchange authorization code for access token
@@ -74,24 +70,18 @@ export async function GET(request: NextRequest) {
 
     if (!tokenResponse.ok) {
       console.error('Token exchange failed:', await tokenResponse.text());
-      return NextResponse.redirect(
-        `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/login?error=token_exchange_failed`
-      );
+      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/login?error=token_exchange_failed`);
     }
 
     const tokenData = await tokenResponse.json();
     const { access_token } = tokenData;
 
     // Get user info from Google
-    const userInfoResponse = await fetch(
-      `https://www.googleapis.com/oauth2/v2/userinfo?access_token=${access_token}`
-    );
+    const userInfoResponse = await fetch(`https://www.googleapis.com/oauth2/v2/userinfo?access_token=${access_token}`);
 
     if (!userInfoResponse.ok) {
       console.error('User info fetch failed:', await userInfoResponse.text());
-      return NextResponse.redirect(
-        `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/login?error=user_info_failed`
-      );
+      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/login?error=user_info_failed`);
     }
 
     const userInfo = await userInfoResponse.json();
@@ -99,10 +89,7 @@ export async function GET(request: NextRequest) {
 
     // For now, we'll redirect to onboarding with user data
     // In production, you would create/update user in database and set JWT cookies
-    const redirectUrl = new URL(
-      '/onboarding',
-      process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
-    );
+    const redirectUrl = new URL('/onboarding', process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000');
     redirectUrl.searchParams.set(
       'google_user',
       JSON.stringify({
@@ -118,9 +105,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(redirectUrl.toString());
   } catch (error) {
     console.error('Google OAuth callback error:', error);
-    return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/login?error=callback_failed`
-    );
+    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/login?error=callback_failed`);
   }
 }
 
@@ -140,9 +125,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get user info from Google
-    const userInfoResponse = await fetch(
-      `https://www.googleapis.com/oauth2/v2/userinfo?access_token=${access_token}`
-    );
+    const userInfoResponse = await fetch(`https://www.googleapis.com/oauth2/v2/userinfo?access_token=${access_token}`);
 
     if (!userInfoResponse.ok) {
       return NextResponse.json(

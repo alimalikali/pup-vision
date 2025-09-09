@@ -10,24 +10,16 @@ export async function GET(request: NextRequest) {
   try {
     // Get current user ID from auth token
     const authHeader = request.headers.get('authorization');
-    const token =
-      authHeader?.replace('Bearer ', '') ||
-      request.cookies.get('access-token')?.value;
+    const token = authHeader?.replace('Bearer ', '') || request.cookies.get('access-token')?.value;
 
     if (!token) {
-      return NextResponse.json(
-        { success: false, message: 'No authentication token' },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, message: 'No authentication token' }, { status: 401 });
     }
 
     // Verify token
     const decoded = jwtUtils.verifyToken(token);
     if (!decoded) {
-      return NextResponse.json(
-        { success: false, message: 'Invalid token' },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, message: 'Invalid token' }, { status: 401 });
     }
 
     const currentUserId = decoded.userId;
@@ -41,21 +33,13 @@ export async function GET(request: NextRequest) {
     });
 
     if (!user || !user.profile) {
-      return NextResponse.json(
-        { success: false, message: 'Profile not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, message: 'Profile not found' }, { status: 404 });
     }
 
     const profile = user.profile;
 
     // Calculate age from date of birth
-    const age = profile.dob
-      ? Math.floor(
-          (Date.now() - new Date(profile.dob).getTime()) /
-            (365.25 * 24 * 60 * 60 * 1000)
-        )
-      : 0;
+    const age = profile.dob ? Math.floor((Date.now() - new Date(profile.dob).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : 0;
 
     // Return the profile data directly from the schema
     const profileData = {
@@ -88,10 +72,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Profile GET error:', error);
     await prisma.$disconnect();
-    return NextResponse.json(
-      { success: false, message: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, message: 'Internal server error' }, { status: 500 });
   }
 }
 
@@ -99,34 +80,23 @@ export async function PUT(request: NextRequest) {
   try {
     // Get current user ID from auth token
     const authHeader = request.headers.get('authorization');
-    const token =
-      authHeader?.replace('Bearer ', '') ||
-      request.cookies.get('access-token')?.value;
+    const token = authHeader?.replace('Bearer ', '') || request.cookies.get('access-token')?.value;
 
     if (!token) {
-      return NextResponse.json(
-        { success: false, message: 'No authentication token' },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, message: 'No authentication token' }, { status: 401 });
     }
 
     // Verify token
     const decoded = jwtUtils.verifyToken(token);
     if (!decoded) {
-      return NextResponse.json(
-        { success: false, message: 'Invalid token' },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, message: 'Invalid token' }, { status: 401 });
     }
 
     const currentUserId = decoded.userId;
     const profileData = await request.json();
 
     // Log the incoming data for debugging
-    console.log(
-      '[v0] Received profile data:',
-      JSON.stringify(profileData, null, 2)
-    );
+    console.log('[v0] Received profile data:', JSON.stringify(profileData, null, 2));
 
     // Validate the incoming data against our schema
     const validation = validateProfile(profileData, true); // true for update
@@ -221,12 +191,7 @@ export async function PUT(request: NextRequest) {
       const completionScore = calculateProfileCompletion(updatedProfile);
 
       // Return the updated profile in the same format as GET
-      const age = updatedProfile.dob
-        ? Math.floor(
-            (Date.now() - new Date(updatedProfile.dob).getTime()) /
-              (365.25 * 24 * 60 * 60 * 1000)
-          )
-        : 0;
+      const age = updatedProfile.dob ? Math.floor((Date.now() - new Date(updatedProfile.dob).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : 0;
 
       const transformedProfile = {
         id: updatedProfile.id,
@@ -308,9 +273,6 @@ export async function PUT(request: NextRequest) {
   } catch (error) {
     console.error('Profile update error:', error);
     await prisma.$disconnect();
-    return NextResponse.json(
-      { success: false, message: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, message: 'Internal server error' }, { status: 500 });
   }
 }

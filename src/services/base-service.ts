@@ -13,10 +13,7 @@ export class BaseService {
    * Core request handler for all service endpoints
    * Handles authentication, token refresh, and error handling
    */
-  protected async request<T = unknown>(
-    path: string,
-    options: RequestOptions = {}
-  ): Promise<ServiceResponse<T>> {
+  protected async request<T = unknown>(path: string, options: RequestOptions = {}): Promise<ServiceResponse<T>> {
     const { skipAuth = false, skipRefresh = false, ...fetchOptions } = options;
 
     const doFetch = async (): Promise<Response> => {
@@ -35,12 +32,7 @@ export class BaseService {
       let data = await response.json().catch(() => ({}));
 
       // Handle authentication errors (401) with token refresh
-      if (
-        response.status === 401 &&
-        !skipAuth &&
-        !skipRefresh &&
-        path !== '/refresh'
-      ) {
+      if (response.status === 401 && !skipAuth && !skipRefresh && path !== '/refresh') {
         console.warn(`[BaseService] Access token expired, refreshing...`);
 
         // Avoid multiple simultaneous refresh calls
@@ -75,8 +67,7 @@ export class BaseService {
 
       return {
         success: false,
-        message:
-          data.message || `Request failed with status ${response.status}`,
+        message: data.message || `Request failed with status ${response.status}`,
       };
     } catch (err) {
       console.error(`BaseService request error [${path}]:`, err);
@@ -90,21 +81,14 @@ export class BaseService {
   /**
    * GET request helper
    */
-  protected async get<T = unknown>(
-    path: string,
-    options: RequestOptions = {}
-  ): Promise<ServiceResponse<T>> {
+  protected async get<T = unknown>(path: string, options: RequestOptions = {}): Promise<ServiceResponse<T>> {
     return this.request<T>(path, { ...options, method: 'GET' });
   }
 
   /**
    * POST request helper
    */
-  protected async post<T = unknown>(
-    path: string,
-    body?: unknown,
-    options: RequestOptions = {}
-  ): Promise<ServiceResponse<T>> {
+  protected async post<T = unknown>(path: string, body?: unknown, options: RequestOptions = {}): Promise<ServiceResponse<T>> {
     return this.request<T>(path, {
       ...options,
       method: 'POST',
@@ -115,11 +99,7 @@ export class BaseService {
   /**
    * PUT request helper
    */
-  protected async put<T = unknown>(
-    path: string,
-    body?: unknown,
-    options: RequestOptions = {}
-  ): Promise<ServiceResponse<T>> {
+  protected async put<T = unknown>(path: string, body?: unknown, options: RequestOptions = {}): Promise<ServiceResponse<T>> {
     return this.request<T>(path, {
       ...options,
       method: 'PUT',
@@ -130,10 +110,7 @@ export class BaseService {
   /**
    * DELETE request helper
    */
-  protected async delete<T = unknown>(
-    path: string,
-    options: RequestOptions = {}
-  ): Promise<ServiceResponse<T>> {
+  protected async delete<T = unknown>(path: string, options: RequestOptions = {}): Promise<ServiceResponse<T>> {
     return this.request<T>(path, { ...options, method: 'DELETE' });
   }
 
@@ -172,10 +149,7 @@ export class BaseService {
   /**
    * Handle service-specific errors
    */
-  protected handleError(
-    error: unknown,
-    defaultMessage: string
-  ): ServiceResponse {
+  protected handleError(error: unknown, defaultMessage: string): ServiceResponse {
     console.error(`Service error:`, error);
     return {
       success: false,
@@ -187,11 +161,7 @@ export class BaseService {
    * Check if response indicates authentication is required
    */
   protected isAuthRequired(response: ServiceResponse): boolean {
-    return (
-      (!response.success &&
-        response.message?.includes('Authentication required')) ??
-      false
-    );
+    return (!response.success && response.message?.includes('Authentication required')) ?? false;
   }
 
   /**

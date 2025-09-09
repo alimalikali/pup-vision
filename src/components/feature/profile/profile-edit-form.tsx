@@ -6,36 +6,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { Save, X, Upload } from 'lucide-react';
 import { formatEnumLabel } from '@/lib/utils';
-import {
-  Education,
-  Profession,
-  Gender,
-  Religion,
-  Interest,
-  Personality,
-  MaritalStatus,
-  LookingFor,
-  Language,
-  Smoke,
-  Alcohol,
-  Drugs,
-  Politics,
-  PurposeDomain,
-  PurposeArchetype,
-  PurposeModality,
-} from '@types';
+import { Education, Profession, Gender, Religion, Interest, Personality, MaritalStatus, LookingFor, Language, Smoke, Alcohol, Drugs, Politics, PurposeDomain, PurposeArchetype, PurposeModality } from '@types';
 import { Profile } from '@types';
 import Image from 'next/image';
 
@@ -45,11 +22,7 @@ interface ProfileEditFormProps {
   onCancel?: () => void;
 }
 
-export function ProfileEditForm({
-  profile,
-  onSave,
-  onCancel,
-}: ProfileEditFormProps) {
+export function ProfileEditForm({ profile, onSave, onCancel }: ProfileEditFormProps) {
   const [formData, setFormData] = useState<Partial<Profile>>({
     name: profile.name || '',
     avatar: profile.avatar || '',
@@ -79,12 +52,8 @@ export function ProfileEditForm({
     country: profile.country || '',
   });
 
-  const [selectedInterests, setSelectedInterests] = useState<Interest[]>(
-    profile.interests || []
-  );
-  const [selectedPolitics, setSelectedPolitics] = useState<Politics[]>(
-    profile.politics || []
-  );
+  const [selectedInterests, setSelectedInterests] = useState<Interest[]>(profile.interests || []);
+  const [selectedPolitics, setSelectedPolitics] = useState<Politics[]>(profile.politics || []);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Update form data when profile changes
@@ -143,10 +112,7 @@ export function ProfileEditForm({
     }
   };
 
-  const handleInputChange = (
-    field: keyof Profile,
-    value: string | number | Date | null
-  ) => {
+  const handleInputChange = (field: keyof Profile, value: string | number | Date | null) => {
     setFormData({ ...formData, [field]: value });
   };
 
@@ -155,19 +121,11 @@ export function ProfileEditForm({
   };
 
   const handleInterestToggle = (interest: Interest) => {
-    setSelectedInterests(prev =>
-      prev.includes(interest)
-        ? prev.filter(i => i !== interest)
-        : [...prev, interest]
-    );
+    setSelectedInterests(prev => (prev.includes(interest) ? prev.filter(i => i !== interest) : [...prev, interest]));
   };
 
   const handlePoliticsToggle = (politics: Politics) => {
-    setSelectedPolitics(prev =>
-      prev.includes(politics)
-        ? prev.filter(p => p !== politics)
-        : [...prev, politics]
-    );
+    setSelectedPolitics(prev => (prev.includes(politics) ? prev.filter(p => p !== politics) : [...prev, politics]));
   };
 
   const getEnumValues = (
@@ -204,13 +162,7 @@ export function ProfileEditForm({
           <div className="flex justify-center">
             <div className="text-center space-y-4">
               <div className="relative inline-block">
-                <Image
-                  src={formData.avatar || profile.avatar || '/placeholder.svg'}
-                  alt="Profile Avatar"
-                  className="w-24 h-24 rounded-full object-cover border-2 border-border"
-                  width={96}
-                  height={96}
-                />
+                <Image src={formData.avatar || profile.avatar || '/placeholder.svg'} alt="Profile Avatar" className="w-24 h-24 rounded-full object-cover border-2 border-border" width={96} height={96} />
                 <Button
                   size="sm"
                   variant="outline"
@@ -238,49 +190,25 @@ export function ProfileEditForm({
                   <Upload className="h-4 w-4" />
                 </Button>
               </div>
-              <p className="text-sm text-muted-foreground">
-                Click the button to change your photo
-              </p>
+              <p className="text-sm text-muted-foreground">Click the button to change your photo</p>
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="name">Full Name</Label>
-              <Input
-                id="name"
-                value={formData.name}
-                onChange={e => handleInputChange('name', e.target.value)}
-                required
-              />
+              <Input id="name" value={formData.name} onChange={e => handleInputChange('name', e.target.value)} required />
             </div>
             <div className="space-y-2">
               <Label htmlFor="dob">Date of Birth</Label>
-              <Input
-                id="dob"
-                type="date"
-                value={
-                  formData.dob
-                    ? new Date(formData.dob).toISOString().split('T')[0]
-                    : ''
-                }
-                onChange={e =>
-                  handleInputChange(
-                    'dob',
-                    e.target.value ? new Date(e.target.value) : null
-                  )
-                }
-              />
+              <Input id="dob" type="date" value={formData.dob ? new Date(formData.dob).toISOString().split('T')[0] : ''} onChange={e => handleInputChange('dob', e.target.value ? new Date(e.target.value) : null)} />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="gender">Gender</Label>
-              <Select
-                value={formData.gender}
-                onValueChange={value => handleInputChange('gender', value)}
-              >
+              <Select value={formData.gender} onValueChange={value => handleInputChange('gender', value)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -295,10 +223,7 @@ export function ProfileEditForm({
             </div>
             <div className="space-y-2">
               <Label htmlFor="religion">Religion</Label>
-              <Select
-                value={formData.religion}
-                onValueChange={value => handleInputChange('religion', value)}
-              >
+              <Select value={formData.religion} onValueChange={value => handleInputChange('religion', value)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -316,10 +241,7 @@ export function ProfileEditForm({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="profession">Profession</Label>
-              <Select
-                value={formData.profession}
-                onValueChange={value => handleInputChange('profession', value)}
-              >
+              <Select value={formData.profession} onValueChange={value => handleInputChange('profession', value)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -334,10 +256,7 @@ export function ProfileEditForm({
             </div>
             <div className="space-y-2">
               <Label htmlFor="education">Education</Label>
-              <Select
-                value={formData.education}
-                onValueChange={value => handleInputChange('education', value)}
-              >
+              <Select value={formData.education} onValueChange={value => handleInputChange('education', value)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -355,62 +274,21 @@ export function ProfileEditForm({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label htmlFor="income">Income (per month)</Label>
-              <Input
-                id="income"
-                type="number"
-                value={formData.income || ''}
-                onChange={e =>
-                  handleInputChange(
-                    'income',
-                    e.target.value ? parseInt(e.target.value) : null
-                  )
-                }
-                placeholder="Annual income"
-              />
+              <Input id="income" type="number" value={formData.income || ''} onChange={e => handleInputChange('income', e.target.value ? parseInt(e.target.value) : null)} placeholder="Annual income" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="height">Height (cm)</Label>
-              <Input
-                id="height"
-                type="number"
-                value={formData.height || ''}
-                onChange={e =>
-                  handleInputChange(
-                    'height',
-                    e.target.value ? parseFloat(e.target.value) : null
-                  )
-                }
-                placeholder="Height in cm"
-              />
+              <Input id="height" type="number" value={formData.height || ''} onChange={e => handleInputChange('height', e.target.value ? parseFloat(e.target.value) : null)} placeholder="Height in cm" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="weight">Weight (kg)</Label>
-              <Input
-                id="weight"
-                type="number"
-                value={formData.weight || ''}
-                onChange={e =>
-                  handleInputChange(
-                    'weight',
-                    e.target.value ? parseFloat(e.target.value) : null
-                  )
-                }
-                placeholder="Weight in kg"
-              />
+              <Input id="weight" type="number" value={formData.weight || ''} onChange={e => handleInputChange('weight', e.target.value ? parseFloat(e.target.value) : null)} placeholder="Weight in kg" />
             </div>
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="purposeNarrative">About Me</Label>
-            <Textarea
-              id="purposeNarrative"
-              value={formData.purposeNarrative || ''}
-              onChange={e =>
-                handleInputChange('purposeNarrative', e.target.value)
-              }
-              rows={4}
-              placeholder="Tell us about yourself, your goals, and what you're looking for..."
-            />
+            <Textarea id="purposeNarrative" value={formData.purposeNarrative || ''} onChange={e => handleInputChange('purposeNarrative', e.target.value)} rows={4} placeholder="Tell us about yourself, your goals, and what you're looking for..." />
           </div>
         </CardContent>
       </Card>
@@ -424,27 +302,15 @@ export function ProfileEditForm({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label htmlFor="city">City</Label>
-              <Input
-                id="city"
-                value={formData.city || ''}
-                onChange={e => handleInputChange('city', e.target.value)}
-              />
+              <Input id="city" value={formData.city || ''} onChange={e => handleInputChange('city', e.target.value)} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="state">State/Province</Label>
-              <Input
-                id="state"
-                value={formData.state || ''}
-                onChange={e => handleInputChange('state', e.target.value)}
-              />
+              <Input id="state" value={formData.state || ''} onChange={e => handleInputChange('state', e.target.value)} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="country">Country</Label>
-              <Input
-                id="country"
-                value={formData.country || ''}
-                onChange={e => handleInputChange('country', e.target.value)}
-              />
+              <Input id="country" value={formData.country || ''} onChange={e => handleInputChange('country', e.target.value)} />
             </div>
           </div>
         </CardContent>
@@ -459,12 +325,7 @@ export function ProfileEditForm({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label>Purpose Domain</Label>
-              <Select
-                value={formData.purposeDomain}
-                onValueChange={value =>
-                  handleInputChange('purposeDomain', value)
-                }
-              >
+              <Select value={formData.purposeDomain} onValueChange={value => handleInputChange('purposeDomain', value)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -479,12 +340,7 @@ export function ProfileEditForm({
             </div>
             <div className="space-y-2">
               <Label>Purpose Archetype</Label>
-              <Select
-                value={formData.purposeArchetype}
-                onValueChange={value =>
-                  handleInputChange('purposeArchetype', value)
-                }
-              >
+              <Select value={formData.purposeArchetype} onValueChange={value => handleInputChange('purposeArchetype', value)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -499,12 +355,7 @@ export function ProfileEditForm({
             </div>
             <div className="space-y-2">
               <Label>Purpose Modality</Label>
-              <Select
-                value={formData.purposeModality}
-                onValueChange={value =>
-                  handleInputChange('purposeModality', value)
-                }
-              >
+              <Select value={formData.purposeModality} onValueChange={value => handleInputChange('purposeModality', value)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -531,13 +382,7 @@ export function ProfileEditForm({
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
               {getEnumValues(Interest).map(interest => (
                 <div key={interest} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={interest}
-                    checked={selectedInterests.includes(interest as Interest)}
-                    onCheckedChange={() =>
-                      handleInterestToggle(interest as Interest)
-                    }
-                  />
+                  <Checkbox id={interest} checked={selectedInterests.includes(interest as Interest)} onCheckedChange={() => handleInterestToggle(interest as Interest)} />
                   <Label htmlFor={interest} className="text-sm">
                     {formatEnumLabel(interest)}
                   </Label>
@@ -549,12 +394,7 @@ export function ProfileEditForm({
               <Label className="text-sm font-medium">Selected Interests:</Label>
               <div className="flex flex-wrap gap-2 mt-2">
                 {selectedInterests.map(interest => (
-                  <Badge
-                    key={interest}
-                    variant="secondary"
-                    className="cursor-pointer"
-                    onClick={() => handleInterestToggle(interest)}
-                  >
+                  <Badge key={interest} variant="secondary" className="cursor-pointer" onClick={() => handleInterestToggle(interest)}>
                     {formatEnumLabel(interest)}
                     <X className="ml-1 h-3 w-3" />
                   </Badge>
@@ -574,10 +414,7 @@ export function ProfileEditForm({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label>Personality</Label>
-              <Select
-                value={formData.personality}
-                onValueChange={value => handleInputChange('personality', value)}
-              >
+              <Select value={formData.personality} onValueChange={value => handleInputChange('personality', value)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -592,12 +429,7 @@ export function ProfileEditForm({
             </div>
             <div className="space-y-2">
               <Label>Marital Status</Label>
-              <Select
-                value={formData.maritalStatus}
-                onValueChange={value =>
-                  handleInputChange('maritalStatus', value)
-                }
-              >
+              <Select value={formData.maritalStatus} onValueChange={value => handleInputChange('maritalStatus', value)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -612,10 +444,7 @@ export function ProfileEditForm({
             </div>
             <div className="space-y-2">
               <Label>Looking For</Label>
-              <Select
-                value={formData.lookingFor}
-                onValueChange={value => handleInputChange('lookingFor', value)}
-              >
+              <Select value={formData.lookingFor} onValueChange={value => handleInputChange('lookingFor', value)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -632,10 +461,7 @@ export function ProfileEditForm({
 
           <div className="space-y-2">
             <Label>Language</Label>
-            <Select
-              value={formData.language}
-              onValueChange={value => handleInputChange('language', value)}
-            >
+            <Select value={formData.language} onValueChange={value => handleInputChange('language', value)}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -660,10 +486,7 @@ export function ProfileEditForm({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
               <Label>Smoking</Label>
-              <Select
-                value={formData.smoke}
-                onValueChange={value => handleInputChange('smoke', value)}
-              >
+              <Select value={formData.smoke} onValueChange={value => handleInputChange('smoke', value)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -679,10 +502,7 @@ export function ProfileEditForm({
 
             <div className="space-y-2">
               <Label>Drinking</Label>
-              <Select
-                value={formData.alcohol}
-                onValueChange={value => handleInputChange('alcohol', value)}
-              >
+              <Select value={formData.alcohol} onValueChange={value => handleInputChange('alcohol', value)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -698,10 +518,7 @@ export function ProfileEditForm({
 
             <div className="space-y-2">
               <Label>Drugs</Label>
-              <Select
-                value={formData.drugs}
-                onValueChange={value => handleInputChange('drugs', value)}
-              >
+              <Select value={formData.drugs} onValueChange={value => handleInputChange('drugs', value)}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -728,13 +545,7 @@ export function ProfileEditForm({
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
               {getEnumValues(Politics).map(politics => (
                 <div key={politics} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={politics}
-                    checked={selectedPolitics.includes(politics as Politics)}
-                    onCheckedChange={() =>
-                      handlePoliticsToggle(politics as Politics)
-                    }
-                  />
+                  <Checkbox id={politics} checked={selectedPolitics.includes(politics as Politics)} onCheckedChange={() => handlePoliticsToggle(politics as Politics)} />
                   <Label htmlFor={politics} className="text-sm">
                     {formatEnumLabel(politics)}
                   </Label>
@@ -743,17 +554,10 @@ export function ProfileEditForm({
             </div>
 
             <div className="mt-4">
-              <Label className="text-sm font-medium">
-                Selected Political Views:
-              </Label>
+              <Label className="text-sm font-medium">Selected Political Views:</Label>
               <div className="flex flex-wrap gap-2 mt-2">
                 {selectedPolitics.map(politics => (
-                  <Badge
-                    key={politics}
-                    variant="secondary"
-                    className="cursor-pointer"
-                    onClick={() => handlePoliticsToggle(politics)}
-                  >
+                  <Badge key={politics} variant="secondary" className="cursor-pointer" onClick={() => handlePoliticsToggle(politics)}>
                     {formatEnumLabel(politics)}
                     <X className="ml-1 h-3 w-3" />
                   </Badge>
@@ -766,12 +570,7 @@ export function ProfileEditForm({
 
       {/* Form Actions */}
       <div className="flex items-center justify-end space-x-4">
-        <Button
-          type="button"
-          variant="outline"
-          disabled={isSubmitting}
-          onClick={onCancel}
-        >
+        <Button type="button" variant="outline" disabled={isSubmitting} onClick={onCancel}>
           Cancel
         </Button>
         <Button type="submit" disabled={isSubmitting}>

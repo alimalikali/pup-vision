@@ -31,14 +31,7 @@ export interface LoaderWaitProps {
   /**
    * The variant of the loader to display
    */
-  variant?:
-    | 'spinner'
-    | 'dots'
-    | 'pulse'
-    | 'heart'
-    | 'star'
-    | 'target'
-    | 'sparkles';
+  variant?: 'spinner' | 'dots' | 'pulse' | 'heart' | 'star' | 'target' | 'sparkles';
   /**
    * The size of the loader
    */
@@ -258,12 +251,7 @@ export interface RadioGroupField extends BaseField {
   options: { value: string; label: string }[];
 }
 
-export type SchemaField =
-  | TextField
-  | SelectField
-  | TextareaField
-  | CheckboxGroupField
-  | RadioGroupField;
+export type SchemaField = TextField | SelectField | TextareaField | CheckboxGroupField | RadioGroupField;
 
 /**
  * Dynamic form component props

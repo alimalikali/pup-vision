@@ -1,4 +1,4 @@
-  import { jwtUtils } from '@/lib/jwt';
+import { jwtUtils } from '@/lib/jwt';
 import { PrismaClient } from '@prisma/client';
 import { AuthUser, Role } from '@types';
 import { type NextRequest, NextResponse } from 'next/server';
@@ -10,44 +10,56 @@ export async function GET(request: NextRequest) {
     console.log('[Auth Check] Starting authentication check...');
 
     // Get access token from cookie or Authorization header
-    const accessToken =
-      request.cookies.get('access-token')?.value ||
-      request.headers.get('authorization')?.replace('Bearer ', '');
+    const accessToken = request.cookies.get('access-token')?.value || request.headers.get('authorization')?.replace('Bearer ', '');
 
     console.log('[Auth Check] Access token found:', accessToken ? 'Yes' : 'No');
 
-    if (!accessToken) {
-      console.log('[Auth Check] No access token found, returning 401');
-      return NextResponse.json(
-        {
-          success: false,
-          message: 'No access token found',
-        },
-        { status: 401 }
-      );
+    let decoded = null;
+    let shouldRefresh = false;
+
+    // If we have an access token, try to verify it
+    if (accessToken) {
+      decoded = jwtUtils.verifyAccessToken(accessToken);
+      console.log('[Auth Check] Access token verification result:', decoded ? 'Valid' : 'Invalid');
     }
 
-    // Verify access token
-    const decoded = jwtUtils.verifyAccessToken(accessToken);
-    console.log(
-      '[Auth Check] Access token verification result:',
-      decoded ? 'Valid' : 'Invalid'
-    );
-
+    // If no access token or invalid access token, try refresh token
     if (!decoded) {
-      console.log('[Auth Check] Invalid access token, returning 401');
-      return NextResponse.json(
-        {
-          success: false,
-          message: 'Invalid access token',
-        },
-        { status: 401 }
-      );
+      const refreshToken = request.cookies.get('refresh-token')?.value;
+      console.log('[Auth Check] Refresh token found:', refreshToken ? 'Yes' : 'No');
+
+      if (!refreshToken) {
+        console.log('[Auth Check] No valid tokens found, returning 401');
+        return NextResponse.json(
+          {
+            success: false,
+            message: 'No valid tokens found',
+          },
+          { status: 401 }
+        );
+      }
+
+      // Verify refresh token
+      const refreshDecoded = jwtUtils.verifyRefreshToken(refreshToken);
+      console.log('[Auth Check] Refresh token verification result:', refreshDecoded ? 'Valid' : 'Invalid');
+
+      if (!refreshDecoded) {
+        console.log('[Auth Check] Invalid refresh token, returning 401');
+        return NextResponse.json(
+          {
+            success: false,
+            message: 'Invalid refresh token',
+          },
+          { status: 401 }
+        );
+      }
+
+      // Use refresh token data for user lookup
+      decoded = refreshDecoded;
+      shouldRefresh = true;
     }
 
-    console.log(
-      '[Auth Check] Access token valid, fetching user from database...'
-    );
+    console.log('[Auth Check] Access token valid, fetching user from database...');
     // Get user from database
     const user = await prisma.user.findUnique({
       where: { id: decoded.userId },
@@ -127,6 +139,33 @@ export async function GET(request: NextRequest) {
     };
 
     console.log('[Auth Check] Authentication successful for user:', user.email);
+
+    // If we used refresh token, generate new access token
+    if (shouldRefresh) {
+      console.log('[Auth Check] Generating new access token from refresh token');
+      const newAccessToken = jwtUtils.generateAccessToken({
+        userId: user.id,
+        email: user.email,
+      });
+
+      await prisma.$disconnect();
+      const response = NextResponse.json({
+        success: true,
+        user: authUser,
+        message: 'Authenticated with refreshed token',
+      });
+
+      // Set new access token cookie
+      response.cookies.set('access-token', newAccessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 15 * 60, // 15 minutes
+      });
+
+      return response;
+    }
+
     await prisma.$disconnect();
     return NextResponse.json({
       success: true,

@@ -9,9 +9,7 @@ export async function POST(request: NextRequest) {
     console.log('[Admire API] Processing admire/pass action...');
 
     // Get access token from cookie or Authorization header
-    const accessToken =
-      request.cookies.get('access-token')?.value ||
-      request.headers.get('authorization')?.replace('Bearer ', '');
+    const accessToken = request.cookies.get('access-token')?.value || request.headers.get('authorization')?.replace('Bearer ', '');
 
     if (!accessToken) {
       return NextResponse.json(
@@ -158,9 +156,7 @@ export async function POST(request: NextRequest) {
       });
     } else if (action === 'pass') {
       // Remove from admired users if previously admired
-      const updatedAdmiredUsers = currentUser.profile.admiredUsers.filter(
-        id => id !== targetUserId
-      );
+      const updatedAdmiredUsers = currentUser.profile.admiredUsers.filter(id => id !== targetUserId);
 
       await prisma.profile.update({
         where: { userId: decoded.userId },
@@ -170,9 +166,7 @@ export async function POST(request: NextRequest) {
       });
 
       // Remove from target user's admiredBy list
-      const updatedAdmiredBy = targetUser.profile.admiredBy.filter(
-        id => id !== decoded.userId
-      );
+      const updatedAdmiredBy = targetUser.profile.admiredBy.filter(id => id !== decoded.userId);
 
       await prisma.profile.update({
         where: { userId: targetUserId },
@@ -205,9 +199,7 @@ export async function GET(request: NextRequest) {
     console.log('[Admire API] Fetching admire data...');
 
     // Get access token from cookie or Authorization header
-    const accessToken =
-      request.cookies.get('access-token')?.value ||
-      request.headers.get('authorization')?.replace('Bearer ', '');
+    const accessToken = request.cookies.get('access-token')?.value || request.headers.get('authorization')?.replace('Bearer ', '');
 
     if (!accessToken) {
       return NextResponse.json(
@@ -353,21 +345,11 @@ export async function GET(request: NextRequest) {
       data: {
         admired: admiredProfiles.map(profile => ({
           ...profile,
-          age: profile.dob
-            ? Math.floor(
-                (Date.now() - new Date(profile.dob).getTime()) /
-                  (365.25 * 24 * 60 * 60 * 1000)
-              )
-            : null,
+          age: profile.dob ? Math.floor((Date.now() - new Date(profile.dob).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : null,
         })),
         admirers: admirersProfiles.map(profile => ({
           ...profile,
-          age: profile.dob
-            ? Math.floor(
-                (Date.now() - new Date(profile.dob).getTime()) /
-                  (365.25 * 24 * 60 * 60 * 1000)
-              )
-            : null,
+          age: profile.dob ? Math.floor((Date.now() - new Date(profile.dob).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : null,
         })),
         matches: matches.map(match => ({
           id: match.id,
@@ -379,23 +361,11 @@ export async function GET(request: NextRequest) {
             match.userAId === decoded.userId
               ? {
                   ...match.userB.profile,
-                  age: match.userB.profile?.dob
-                    ? Math.floor(
-                        (Date.now() -
-                          new Date(match.userB.profile.dob).getTime()) /
-                          (365.25 * 24 * 60 * 60 * 1000)
-                      )
-                    : null,
+                  age: match.userB.profile?.dob ? Math.floor((Date.now() - new Date(match.userB.profile.dob).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : null,
                 }
               : {
                   ...match.userA.profile,
-                  age: match.userA.profile?.dob
-                    ? Math.floor(
-                        (Date.now() -
-                          new Date(match.userA.profile.dob).getTime()) /
-                          (365.25 * 24 * 60 * 60 * 1000)
-                      )
-                    : null,
+                  age: match.userA.profile?.dob ? Math.floor((Date.now() - new Date(match.userA.profile.dob).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : null,
                 },
         })),
       },

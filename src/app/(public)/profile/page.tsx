@@ -7,28 +7,13 @@ import { PurposeSection } from '@/components/feature/profile/purpose-section';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { formatEnumLabel } from '@/lib/utils';
 import { useProfileStore } from '@/store';
 import { useAuthStore } from '@/store';
 import { Profile } from '@types';
-import {
-  Briefcase,
-  Camera,
-  Edit,
-  GraduationCap,
-  MapPin,
-  Settings,
-  Target,
-  User,
-} from 'lucide-react';
+import { Briefcase, Camera, Edit, GraduationCap, MapPin, Settings, Target, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import LoaderWait from '@/components/common/layout/loader-wait';
@@ -38,8 +23,7 @@ export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState('overview');
   const router = useRouter();
 
-  const { profile, error, fetchProfile, updateProfile } =
-    useProfileStore();
+  const { profile, error, fetchProfile, updateProfile } = useProfileStore();
   const { user, status, checkAuth } = useAuthStore();
 
   useEffect(() => {
@@ -65,13 +49,7 @@ export default function ProfilePage() {
     return (
       <div className="min-h-screen bg-background">
         <Navbar />
-        <LoaderWait
-          className="pt-[20vh]"
-          variant="spinner"
-          size="lg"
-          color="primary"
-          text="Loading profile..."
-        />
+        <LoaderWait className="pt-[20vh]" variant="spinner" size="lg" color="primary" text="Loading profile..." />
       </div>
     );
   }
@@ -97,12 +75,7 @@ export default function ProfilePage() {
   };
 
   // Calculate age from date of birth
-  const age = profile.dob
-    ? Math.floor(
-        (Date.now() - new Date(profile.dob).getTime()) /
-          (365.25 * 24 * 60 * 60 * 1000)
-      )
-    : 0;
+  const age = profile.dob ? Math.floor((Date.now() - new Date(profile.dob).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : 0;
 
   return (
     <div className="min-h-screen bg-background">
@@ -113,12 +86,8 @@ export default function ProfilePage() {
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold tracking-tight text-foreground">
-                Your Profile
-              </h1>
-              <p className="mt-2 text-muted-foreground">
-                Manage your profile and preferences
-              </p>
+              <h1 className="text-3xl font-bold tracking-tight text-foreground">Your Profile</h1>
+              <p className="mt-2 text-muted-foreground">Manage your profile and preferences</p>
             </div>
             <Button onClick={() => setIsEditing(!isEditing)}>
               <Edit className="mr-2 h-4 w-4" />
@@ -134,20 +103,12 @@ export default function ProfilePage() {
         )}
 
         {isEditing ? (
-          <ProfileEditForm
-            profile={profile}
-            onSave={handleSaveProfile}
-            onCancel={handleCancelEdit}
-          />
+          <ProfileEditForm profile={profile} onSave={handleSaveProfile} onCancel={handleCancelEdit} />
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Main Profile Content */}
             <div className="lg:col-span-2">
-              <Tabs
-                value={activeTab}
-                onValueChange={setActiveTab}
-                className="space-y-6"
-              >
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
                 <TabsList className="grid w-full grid-cols-4">
                   <TabsTrigger value="overview">Overview</TabsTrigger>
                   <TabsTrigger value="purpose">Purpose</TabsTrigger>
@@ -168,71 +129,47 @@ export default function ProfilePage() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-4">
                           <div>
-                            <label className="text-sm font-medium text-muted-foreground">
-                              Name
-                            </label>
+                            <label className="text-sm font-medium text-muted-foreground">Name</label>
                             <p className="text-foreground">{profile.name}</p>
                           </div>
                           <div>
-                            <label className="text-sm font-medium text-muted-foreground">
-                              Age
-                            </label>
+                            <label className="text-sm font-medium text-muted-foreground">Age</label>
                             <p className="text-foreground">{age} years old</p>
                           </div>
                           <div>
-                            <label className="text-sm font-medium text-muted-foreground">
-                              Gender
-                            </label>
-                            <p className="text-foreground">
-                              {formatEnumLabel(profile.gender)}
-                            </p>
+                            <label className="text-sm font-medium text-muted-foreground">Gender</label>
+                            <p className="text-foreground">{formatEnumLabel(profile.gender)}</p>
                           </div>
                           <div>
-                            <label className="text-sm font-medium text-muted-foreground">
-                              Location
-                            </label>
+                            <label className="text-sm font-medium text-muted-foreground">Location</label>
                             <p className="text-foreground flex items-center">
                               <MapPin className="mr-1 h-4 w-4" />
-                              {profile.city && profile.state
-                                ? `${profile.city}, ${profile.state}`
-                                : 'Location not specified'}
+                              {profile.city && profile.state ? `${profile.city}, ${profile.state}` : 'Location not specified'}
                             </p>
                           </div>
                         </div>
                         <div className="space-y-4">
                           <div>
-                            <label className="text-sm font-medium text-muted-foreground">
-                              Profession
-                            </label>
+                            <label className="text-sm font-medium text-muted-foreground">Profession</label>
                             <p className="text-foreground flex items-center">
                               <Briefcase className="mr-1 h-4 w-4" />
                               {formatEnumLabel(profile.profession)}
                             </p>
                           </div>
                           <div>
-                            <label className="text-sm font-medium text-muted-foreground">
-                              Education
-                            </label>
+                            <label className="text-sm font-medium text-muted-foreground">Education</label>
                             <p className="text-foreground flex items-center">
                               <GraduationCap className="mr-1 h-4 w-4" />
                               {formatEnumLabel(profile.education)}
                             </p>
                           </div>
                           <div>
-                            <label className="text-sm font-medium text-muted-foreground">
-                              Religion
-                            </label>
-                            <p className="text-foreground">
-                              {formatEnumLabel(profile.religion)}
-                            </p>
+                            <label className="text-sm font-medium text-muted-foreground">Religion</label>
+                            <p className="text-foreground">{formatEnumLabel(profile.religion)}</p>
                           </div>
                           <div>
-                            <label className="text-sm font-medium text-muted-foreground">
-                              Personality
-                            </label>
-                            <p className="text-foreground">
-                              {formatEnumLabel(profile.personality)}
-                            </p>
+                            <label className="text-sm font-medium text-muted-foreground">Personality</label>
+                            <p className="text-foreground">{formatEnumLabel(profile.personality)}</p>
                           </div>
                         </div>
                       </div>
@@ -273,49 +210,27 @@ export default function ProfilePage() {
                     <CardContent className="space-y-6">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                          <label className="text-sm font-medium text-muted-foreground">
-                            Marital Status
-                          </label>
-                          <p className="text-foreground">
-                            {formatEnumLabel(profile.maritalStatus)}
-                          </p>
+                          <label className="text-sm font-medium text-muted-foreground">Marital Status</label>
+                          <p className="text-foreground">{formatEnumLabel(profile.maritalStatus)}</p>
                         </div>
                         <div>
-                          <label className="text-sm font-medium text-muted-foreground">
-                            Looking For
-                          </label>
-                          <p className="text-foreground">
-                            {formatEnumLabel(profile.lookingFor)}
-                          </p>
+                          <label className="text-sm font-medium text-muted-foreground">Looking For</label>
+                          <p className="text-foreground">{formatEnumLabel(profile.lookingFor)}</p>
                         </div>
                         <div>
-                          <label className="text-sm font-medium text-muted-foreground">
-                            Language
-                          </label>
-                          <p className="text-foreground">
-                            {formatEnumLabel(profile.language)}
-                          </p>
+                          <label className="text-sm font-medium text-muted-foreground">Language</label>
+                          <p className="text-foreground">{formatEnumLabel(profile.language)}</p>
                         </div>
                         <div>
-                          <label className="text-sm font-medium text-muted-foreground">
-                            Location
-                          </label>
-                          <p className="text-foreground">
-                            {profile.city && profile.state
-                              ? `${profile.city}, ${profile.state}`
-                              : 'Not specified'}
-                          </p>
+                          <label className="text-sm font-medium text-muted-foreground">Location</label>
+                          <p className="text-foreground">{profile.city && profile.state ? `${profile.city}, ${profile.state}` : 'Not specified'}</p>
                         </div>
                         <div>
-                          <label className="text-sm font-medium text-muted-foreground">
-                            Height
-                          </label>
+                          <label className="text-sm font-medium text-muted-foreground">Height</label>
                           <p className="text-foreground">{profile.height} cm</p>
                         </div>
                         <div>
-                          <label className="text-sm font-medium text-muted-foreground">
-                            Weight
-                          </label>
+                          <label className="text-sm font-medium text-muted-foreground">Weight</label>
                           <p className="text-foreground">{profile.weight} kg</p>
                         </div>
                       </div>
@@ -336,9 +251,7 @@ export default function ProfilePage() {
                             </Badge>
                           ))
                         ) : (
-                          <p className="text-muted-foreground">
-                            No interests specified
-                          </p>
+                          <p className="text-muted-foreground">No interests specified</p>
                         )}
                       </div>
                     </CardContent>
@@ -352,28 +265,16 @@ export default function ProfilePage() {
                     <CardContent>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                          <label className="text-sm font-medium text-muted-foreground">
-                            Smoking
-                          </label>
-                          <p className="text-foreground">
-                            {formatEnumLabel(profile.smoke)}
-                          </p>
+                          <label className="text-sm font-medium text-muted-foreground">Smoking</label>
+                          <p className="text-foreground">{formatEnumLabel(profile.smoke)}</p>
                         </div>
                         <div>
-                          <label className="text-sm font-medium text-muted-foreground">
-                            Drinking
-                          </label>
-                          <p className="text-foreground">
-                            {formatEnumLabel(profile.alcohol)}
-                          </p>
+                          <label className="text-sm font-medium text-muted-foreground">Drinking</label>
+                          <p className="text-foreground">{formatEnumLabel(profile.alcohol)}</p>
                         </div>
                         <div>
-                          <label className="text-sm font-medium text-muted-foreground">
-                            Drugs
-                          </label>
-                          <p className="text-foreground">
-                            {formatEnumLabel(profile.drugs)}
-                          </p>
+                          <label className="text-sm font-medium text-muted-foreground">Drugs</label>
+                          <p className="text-foreground">{formatEnumLabel(profile.drugs)}</p>
                         </div>
                       </div>
                     </CardContent>
@@ -408,19 +309,13 @@ export default function ProfilePage() {
                   <div className="text-center">
                     <Avatar className="h-24 w-24 mx-auto mb-4">
                       <AvatarImage src={profile.avatar || '/placeholder.svg'} />
-                      <AvatarFallback className="text-lg">
-                        {profile?.name?.charAt(0)}
-                      </AvatarFallback>
+                      <AvatarFallback className="text-lg">{profile?.name?.charAt(0)}</AvatarFallback>
                     </Avatar>
                     <h3 className="text-xl font-semibold">{profile.name}</h3>
-                    <p className="text-muted-foreground">
-                      {formatEnumLabel(profile.profession)}
-                    </p>
+                    <p className="text-muted-foreground">{formatEnumLabel(profile.profession)}</p>
                     <div className="flex items-center justify-center mt-2 text-sm text-muted-foreground">
                       <MapPin className="mr-1 h-4 w-4" />
-                      {profile.city && profile.state
-                        ? `${profile.city}, ${profile.state}`
-                        : 'Location not specified'}
+                      {profile.city && profile.state ? `${profile.city}, ${profile.state}` : 'Location not specified'}
                     </div>
                   </div>
                 </CardContent>
@@ -432,27 +327,15 @@ export default function ProfilePage() {
                   <CardTitle>Quick Actions</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2">
-                  <Button
-                    className="w-full bg-transparent"
-                    variant="outline"
-                    onClick={() => setActiveTab('photo')}
-                  >
+                  <Button className="w-full bg-transparent" variant="outline" onClick={() => setActiveTab('photo')}>
                     <Camera className="mr-2 h-4 w-4" />
                     View Photos
                   </Button>
-                  <Button
-                    className="w-full bg-transparent"
-                    variant="outline"
-                    onClick={() => setActiveTab('purpose')}
-                  >
+                  <Button className="w-full bg-transparent" variant="outline" onClick={() => setActiveTab('purpose')}>
                     <Target className="mr-2 h-4 w-4" />
                     View Purpose
                   </Button>
-                  <Button
-                    className="w-full bg-transparent"
-                    variant="outline"
-                    onClick={() => setActiveTab('details')}
-                  >
+                  <Button className="w-full bg-transparent" variant="outline" onClick={() => setActiveTab('details')}>
                     <Settings className="mr-2 h-4 w-4" />
                     View Details
                   </Button>

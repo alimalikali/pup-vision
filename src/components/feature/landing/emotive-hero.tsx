@@ -47,17 +47,10 @@ export function EmotiveHero() {
   };
 
   const headlineWords = 'Find someone who shares your purpose'.split(' ');
-  const subcopyWords =
-    'Pup connects you with partners who align with your life mission, values, and purpose.'.split(
-      ' '
-    );
+  const subcopyWords = 'Pup connects you with partners who align with your life mission, values, and purpose.'.split(' ');
 
   return (
-    <motion.section
-      ref={containerRef}
-      className="relative min-h-[100svh] flex items-center justify-center overflow-hidden"
-      style={{ opacity, scale }}
-    >
+    <motion.section ref={containerRef} className="relative min-h-[100svh] flex items-center justify-center overflow-hidden" style={{ opacity, scale }}>
       {/* Animated gradient background */}
       <div className="absolute inset-0 -z-10">
         <div
@@ -98,18 +91,8 @@ export function EmotiveHero() {
       />
 
       <div className="container mx-auto px-4 relative z-10">
-        <motion.div
-          className="max-w-4xl mx-auto text-center"
-          style={{ y: textY }}
-          initial="hidden"
-          animate="visible"
-        >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-            className="mb-8 flex justify-center"
-          >
+        <motion.div className="max-w-4xl mx-auto text-center" style={{ y: textY }} initial="hidden" animate="visible">
+          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }} className="mb-8 flex justify-center">
             <div className="p-4 bg-primary/10 backdrop-blur-sm rounded-full">
               <Heart className="h-10 w-10 text-primary" fill="currentColor" />
             </div>
@@ -117,12 +100,7 @@ export function EmotiveHero() {
 
           <h1 className="text-5xl md:text-7xl font-bold mb-8 leading-tight tracking-tight">
             {headlineWords.map((word, i) => (
-              <motion.span
-                key={i}
-                custom={i}
-                variants={wordVariants}
-                className="inline-block mr-[0.25em] bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary"
-              >
+              <motion.span key={i} custom={i} variants={wordVariants} className="inline-block mr-[0.25em] bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
                 {word}
               </motion.span>
             ))}
@@ -130,39 +108,20 @@ export function EmotiveHero() {
 
           <div className="mb-10 text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto">
             {subcopyWords.map((word, i) => (
-              <motion.span
-                key={i}
-                custom={i + headlineWords.length}
-                variants={wordVariants}
-                className="inline-block mr-[0.25em]"
-              >
+              <motion.span key={i} custom={i + headlineWords.length} variants={wordVariants} className="inline-block mr-[0.25em]">
                 {word}
               </motion.span>
             ))}
           </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.2, duration: 0.8 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center"
-          >
-            <Button
-              asChild
-              size="lg"
-              className="text-lg px-8 rounded-full h-14"
-            >
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.2, duration: 0.8 }} className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button asChild size="lg" className="text-lg px-8 rounded-full h-14">
               <Link href="/dashboard">
                 Start with Purpose
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
-            <Button
-              asChild
-              variant="outline"
-              size="lg"
-              className="text-lg px-8 rounded-full h-14"
-            >
+            <Button asChild variant="outline" size="lg" className="text-lg px-8 rounded-full h-14">
               <Link href="#manifesto">Our Manifesto</Link>
             </Button>
           </motion.div>
@@ -170,17 +129,8 @@ export function EmotiveHero() {
       </div>
 
       {/* Scroll indicator */}
-      <motion.div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 2, duration: 1 }}
-      >
-        <motion.div
-          className="w-6 h-10 border-2 border-muted-foreground/30 rounded-full flex justify-center"
-          animate={{ y: [0, 10, 0] }}
-          transition={{ repeat: Number.POSITIVE_INFINITY, duration: 1.5 }}
-        >
+      <motion.div className="absolute bottom-8 left-1/2 -translate-x-1/2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2, duration: 1 }}>
+        <motion.div className="w-6 h-10 border-2 border-muted-foreground/30 rounded-full flex justify-center" animate={{ y: [0, 10, 0] }} transition={{ repeat: Number.POSITIVE_INFINITY, duration: 1.5 }}>
           <motion.div className="w-1.5 h-1.5 bg-primary rounded-full mt-2" />
         </motion.div>
       </motion.div>

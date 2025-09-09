@@ -1,24 +1,4 @@
-import {
-  Role,
-  Gender,
-  Religion,
-  Education,
-  Profession,
-  PurposeDomain,
-  PurposeArchetype,
-  PurposeModality,
-  Interest,
-  Personality,
-  MaritalStatus,
-  LookingFor,
-  Language,
-  Smoke,
-  Alcohol,
-  Drugs,
-  Politics,
-  MatchStatus,
-  PrismaClient,
-} from '@prisma/client';
+import { Role, Gender, Religion, Education, Profession, PurposeDomain, PurposeArchetype, PurposeModality, Interest, Personality, MaritalStatus, LookingFor, Language, Smoke, Alcohol, Drugs, Politics, MatchStatus, PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import { config } from 'dotenv';
 
@@ -75,8 +55,7 @@ export const sampleUsers = [
       purposeDomain: PurposeDomain.EDUCATIONAL,
       purposeArchetype: PurposeArchetype.ADVOCATE,
       purposeModality: PurposeModality.COMMUNITY,
-      purposeNarrative:
-        'Improving literacy rates through inclusive classroom design',
+      purposeNarrative: 'Improving literacy rates through inclusive classroom design',
       personality: Personality.AMBIVERT,
       maritalStatus: MaritalStatus.SINGLE,
       lookingFor: LookingFor.SINGLE,
@@ -138,8 +117,7 @@ export const sampleUsers = [
       purposeDomain: PurposeDomain.TECHNOLOGICAL,
       purposeArchetype: PurposeArchetype.EXPLORER,
       purposeModality: PurposeModality.GLOBAL,
-      purposeNarrative:
-        'Building scalable systems that enable small businesses',
+      purposeNarrative: 'Building scalable systems that enable small businesses',
       personality: Personality.AMBIVERT,
       maritalStatus: MaritalStatus.SINGLE,
       lookingFor: LookingFor.SINGLE,
@@ -170,8 +148,7 @@ export const sampleUsers = [
       purposeDomain: PurposeDomain.TECHNOLOGICAL,
       purposeArchetype: PurposeArchetype.CREATOR,
       purposeModality: PurposeModality.GLOBAL,
-      purposeNarrative:
-        'Using data to optimize urban transport and reduce emissions',
+      purposeNarrative: 'Using data to optimize urban transport and reduce emissions',
       personality: Personality.INTROVERT,
       maritalStatus: MaritalStatus.SINGLE,
       lookingFor: LookingFor.SINGLE,
@@ -202,8 +179,7 @@ export const sampleUsers = [
       purposeDomain: PurposeDomain.SOCIAL,
       purposeArchetype: PurposeArchetype.HEALER,
       purposeModality: PurposeModality.COMMUNITY,
-      purposeNarrative:
-        'Expanding preventative healthcare in peri-urban clinics',
+      purposeNarrative: 'Expanding preventative healthcare in peri-urban clinics',
       personality: Personality.EXTROVERT,
       maritalStatus: MaritalStatus.SINGLE,
       lookingFor: LookingFor.SINGLE,
@@ -327,8 +303,7 @@ export const sampleUsers = [
       purposeDomain: PurposeDomain.PERSONAL,
       purposeArchetype: PurposeArchetype.CREATOR,
       purposeModality: PurposeModality.INDIVIDUAL,
-      purposeNarrative:
-        'Crafting culturally rooted visual identities for startups',
+      purposeNarrative: 'Crafting culturally rooted visual identities for startups',
       personality: Personality.AMBIVERT,
       maritalStatus: MaritalStatus.SINGLE,
       lookingFor: LookingFor.SINGLE,
@@ -391,8 +366,7 @@ export const sampleUsers = [
       purposeDomain: PurposeDomain.PERSONAL,
       purposeArchetype: PurposeArchetype.CREATOR,
       purposeModality: PurposeModality.INDIVIDUAL,
-      purposeNarrative:
-        'Creating beautiful and meaningful designs that inspire change',
+      purposeNarrative: 'Creating beautiful and meaningful designs that inspire change',
       personality: Personality.INTROVERT,
       maritalStatus: MaritalStatus.SINGLE,
       lookingFor: LookingFor.SINGLE,
@@ -506,9 +480,7 @@ async function seedDatabase() {
           },
         });
 
-        console.log(
-          `💕 Created mutual match: ${userA.profile.name} & ${userB.profile.name}`
-        );
+        console.log(`💕 Created mutual match: ${userA.profile.name} & ${userB.profile.name}`);
       } catch (err) {
         console.error('⚠️ Error creating mutual match:', err);
       }
@@ -549,9 +521,7 @@ async function seedDatabase() {
           },
         });
 
-        console.log(
-          `❤️  Created pending like: ${liker.profile.name} → ${liked.profile.name}`
-        );
+        console.log(`❤️  Created pending like: ${liker.profile.name} → ${liked.profile.name}`);
       } catch (err) {
         console.error('⚠️ Error creating pending like:', err);
       }

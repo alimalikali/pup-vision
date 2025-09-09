@@ -72,42 +72,24 @@ export function PhotoGallery({ avatar, onAvatarChange }: PhotoGalleryProps) {
             <div className="relative">
               {avatar ? (
                 <div className="relative group">
-                  <Image
-                    src={avatar}
-                    alt="Profile Photo"
-                    className="w-48 h-48 object-cover rounded-lg border-2 border-border"
-                    width={192}
-                    height={192}
-                  />
+                  <Image src={avatar} alt="Profile Photo" className="w-48 h-48 object-cover rounded-lg border-2 border-border" width={192} height={192} />
                   <Badge className="absolute top-2 left-2 bg-primary">
                     <Star className="mr-1 h-3 w-3" />
                     Main Photo
                   </Badge>
                   <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={handlePhotoRemove}
-                      className="flex items-center gap-2"
-                    >
+                    <Button size="sm" variant="destructive" onClick={handlePhotoRemove} className="flex items-center gap-2">
                       <X className="h-4 w-4" />
                       Remove
                     </Button>
                   </div>
                 </div>
               ) : (
-                <div
-                  className="w-48 h-48 border-2 border-dashed border-muted-foreground/25 rounded-lg flex items-center justify-center cursor-pointer hover:border-muted-foreground/50 transition-colors"
-                  onClick={handlePhotoUpload}
-                >
+                <div className="w-48 h-48 border-2 border-dashed border-muted-foreground/25 rounded-lg flex items-center justify-center cursor-pointer hover:border-muted-foreground/50 transition-colors" onClick={handlePhotoUpload}>
                   <div className="text-center">
                     <Camera className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
-                    <p className="text-sm text-muted-foreground">
-                      No photo uploaded
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Click to upload
-                    </p>
+                    <p className="text-sm text-muted-foreground">No photo uploaded</p>
+                    <p className="text-xs text-muted-foreground mt-1">Click to upload</p>
                   </div>
                 </div>
               )}
@@ -130,9 +112,7 @@ export function PhotoGallery({ avatar, onAvatarChange }: PhotoGalleryProps) {
           {isUploading && (
             <div className="text-center p-4 bg-muted rounded-lg">
               <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto mb-2"></div>
-              <p className="text-sm text-muted-foreground">
-                Processing your photo...
-              </p>
+              <p className="text-sm text-muted-foreground">Processing your photo...</p>
             </div>
           )}
         </div>

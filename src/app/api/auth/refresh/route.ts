@@ -12,10 +12,7 @@ export async function POST(request: NextRequest) {
     // Get refresh token from cookie
     const refreshToken = request.cookies.get('refresh-token')?.value;
 
-    console.log(
-      '[Refresh Token] Refresh token found:',
-      refreshToken ? 'Yes' : 'No'
-    );
+    console.log('[Refresh Token] Refresh token found:', refreshToken ? 'Yes' : 'No');
 
     if (!refreshToken) {
       console.log('[Refresh Token] No refresh token found, returning 401');
@@ -30,15 +27,10 @@ export async function POST(request: NextRequest) {
 
     // Verify refresh token
     const decoded = jwtUtils.verifyRefreshToken(refreshToken);
-    console.log(
-      '[Refresh Token] Refresh token verification result:',
-      decoded ? 'Valid' : 'Invalid'
-    );
+    console.log('[Refresh Token] Refresh token verification result:', decoded ? 'Valid' : 'Invalid');
 
     if (!decoded) {
-      console.log(
-        '[Refresh Token] Invalid refresh token, clearing cookies and returning 401'
-      );
+      console.log('[Refresh Token] Invalid refresh token, clearing cookies and returning 401');
       const response = NextResponse.json(
         {
           success: false,
@@ -54,9 +46,7 @@ export async function POST(request: NextRequest) {
       return response;
     }
 
-    console.log(
-      '[Refresh Token] Refresh token valid, fetching user from database...'
-    );
+    console.log('[Refresh Token] Refresh token valid, fetching user from database...');
     // Get user from database
     const user = await prisma.user.findUnique({
       where: { id: decoded.userId },
@@ -69,9 +59,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (!user || !user.isActive) {
-      console.log(
-        '[Refresh Token] User not found or inactive, clearing cookies and returning 401'
-      );
+      console.log('[Refresh Token] User not found or inactive, clearing cookies and returning 401');
       const response = NextResponse.json(
         {
           success: false,
@@ -93,10 +81,7 @@ export async function POST(request: NextRequest) {
       email: user.email,
     });
 
-    console.log(
-      '[Refresh Token] Generated new access token for user:',
-      user.email
-    );
+    console.log('[Refresh Token] Generated new access token for user:', user.email);
 
     // Remove password hash and sensitive fields from user object
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -108,7 +93,7 @@ export async function POST(request: NextRequest) {
       email: userWithoutSensitiveData.email,
       name: userWithoutSensitiveData.profile?.name,
       avatar: userWithoutSensitiveData.profile?.avatar,
-      role: userWithoutSensitiveData.role as Role ,
+      role: userWithoutSensitiveData.role as Role,
       isVerified: userWithoutSensitiveData.isVerified,
       isActive: userWithoutSensitiveData.isActive,
       isNew: userWithoutSensitiveData.profile?.isNew ?? true,
@@ -169,10 +154,7 @@ export async function POST(request: NextRequest) {
       maxAge: 15 * 60, // 15 minutes
     });
 
-    console.log(
-      '[Refresh Token] Token refresh successful for user:',
-      user.email
-    );
+    console.log('[Refresh Token] Token refresh successful for user:', user.email);
     await prisma.$disconnect();
     return response;
   } catch (error) {

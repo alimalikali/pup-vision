@@ -8,10 +8,7 @@ class AuthService {
   /**
    * Core request handler for all auth endpoints
    */
-  private async request(
-    path: string,
-    options: RequestInit
-  ): Promise<AuthResponse> {
+  private async request(path: string, options: RequestInit): Promise<AuthResponse> {
     const doFetch = async (): Promise<Response> => {
       return fetch(`${this.baseUrl}${path}`, {
         ...options,
@@ -57,8 +54,7 @@ class AuthService {
 
       return {
         success: false,
-        message:
-          data.message || `Request failed with status ${response.status}`,
+        message: data.message || `Request failed with status ${response.status}`,
       };
     } catch (err) {
       console.error(`AuthService request error [${path}]:`, err);

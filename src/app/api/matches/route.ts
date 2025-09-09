@@ -6,10 +6,7 @@ import { Profile } from '@types';
 const prisma = new PrismaClient();
 
 // Helper function to calculate compatibility score
-function calculateCompatibilityScore(
-  userProfile: Profile,
-  targetProfile: Profile
-): number {
+function calculateCompatibilityScore(userProfile: Profile, targetProfile: Profile): number {
   let score = 0;
   let factors = 0;
 
@@ -37,11 +34,8 @@ function calculateCompatibilityScore(
     SELF_TAUGHT: 3,
     OTHER: 2,
   };
-  const userEduLevel =
-    educationLevels[userProfile.education as keyof typeof educationLevels] || 0;
-  const targetEduLevel =
-    educationLevels[targetProfile.education as keyof typeof educationLevels] ||
-    0;
+  const userEduLevel = educationLevels[userProfile.education as keyof typeof educationLevels] || 0;
+  const targetEduLevel = educationLevels[targetProfile.education as keyof typeof educationLevels] || 0;
   const eduDiff = Math.abs(userEduLevel - targetEduLevel);
   const eduScore = Math.max(0, 15 - eduDiff * 3);
   score += eduScore;
@@ -50,13 +44,8 @@ function calculateCompatibilityScore(
   // Interest overlap (20% weight)
   const userInterests = new Set(userProfile.interests || []);
   const targetInterests = new Set(targetProfile.interests || []);
-  const commonInterests = new Set(
-    [...userInterests].filter(x => targetInterests.has(x))
-  );
-  const interestScore =
-    (commonInterests.size /
-      Math.max(userInterests.size, targetInterests.size, 1)) *
-    20;
+  const commonInterests = new Set([...userInterests].filter(x => targetInterests.has(x)));
+  const interestScore = (commonInterests.size / Math.max(userInterests.size, targetInterests.size, 1)) * 20;
   score += interestScore;
   factors += 20;
 
@@ -67,18 +56,8 @@ function calculateCompatibilityScore(
   factors += 15;
 
   // Age compatibility (10% weight) - assuming age is calculated from DOB
-  const userAge = userProfile.dob
-    ? Math.floor(
-        (Date.now() - new Date(userProfile.dob).getTime()) /
-          (365.25 * 24 * 60 * 60 * 1000)
-      )
-    : 25;
-  const targetAge = targetProfile.dob
-    ? Math.floor(
-        (Date.now() - new Date(targetProfile.dob).getTime()) /
-          (365.25 * 24 * 60 * 60 * 1000)
-      )
-    : 25;
+  const userAge = userProfile.dob ? Math.floor((Date.now() - new Date(userProfile.dob).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : 25;
+  const targetAge = targetProfile.dob ? Math.floor((Date.now() - new Date(targetProfile.dob).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : 25;
   const ageDiff = Math.abs(userAge - targetAge);
   const ageScore = Math.max(0, 10 - ageDiff / 2);
   score += ageScore;
@@ -97,9 +76,7 @@ export async function GET(request: NextRequest) {
     console.log('[Matches API] Starting matches fetch...');
 
     // Get access token from cookie or Authorization header
-    const accessToken =
-      request.cookies.get('access-token')?.value ||
-      request.headers.get('authorization')?.replace('Bearer ', '');
+    const accessToken = request.cookies.get('access-token')?.value || request.headers.get('authorization')?.replace('Bearer ', '');
 
     if (!accessToken) {
       return NextResponse.json(
@@ -127,8 +104,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const cursor = searchParams.get('cursor');
     const limit = parseInt(searchParams.get('limit') || '20');
-    const includeCompatibility =
-      searchParams.get('includeCompatibility') === 'true';
+    const includeCompatibility = searchParams.get('includeCompatibility') === 'true';
 
     // Filter parameters
     const ageMin = parseInt(searchParams.get('ageMin') || '18');
@@ -139,12 +115,9 @@ export async function GET(request: NextRequest) {
     const education = searchParams.get('education');
     const profession = searchParams.get('profession');
     const purposeDomain = searchParams.get('purposeDomain');
-    const interests =
-      searchParams.get('interests')?.split(',').filter(Boolean) || [];
+    const interests = searchParams.get('interests')?.split(',').filter(Boolean) || [];
 
-    console.log(
-      '[Matches API] Fetching user profile for compatibility calculation...'
-    );
+    console.log('[Matches API] Fetching user profile for compatibility calculation...');
 
     // Get current user's profile for compatibility calculation
     const currentUser = await prisma.user.findUnique({
@@ -212,9 +185,7 @@ export async function GET(request: NextRequest) {
     // Check if there are more profiles
     const hasMore = profiles.length > limit;
     const profilesToReturn = hasMore ? profiles.slice(0, limit) : profiles;
-    const nextCursor = hasMore
-      ? profilesToReturn[profilesToReturn.length - 1].id
-      : null;
+    const nextCursor = hasMore ? profilesToReturn[profilesToReturn.length - 1].id : null;
 
     console.log(`[Matches API] Found ${profilesToReturn.length} profiles`);
 
@@ -259,30 +230,17 @@ export async function GET(request: NextRequest) {
       };
 
       if (includeCompatibility) {
-        const compatibilityScore = calculateCompatibilityScore(
-          currentUser.profile,
-          profile
-        );
+        const compatibilityScore = calculateCompatibilityScore(currentUser.profile, profile);
         return {
           ...baseProfile,
           compatibilityScore,
-          age: profile.dob
-            ? Math.floor(
-                (Date.now() - new Date(profile.dob).getTime()) /
-                  (365.25 * 24 * 60 * 60 * 1000)
-              )
-            : null,
+          age: profile.dob ? Math.floor((Date.now() - new Date(profile.dob).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : null,
         };
       }
 
       return {
         ...baseProfile,
-        age: profile.dob
-          ? Math.floor(
-              (Date.now() - new Date(profile.dob).getTime()) /
-                (365.25 * 24 * 60 * 60 * 1000)
-            )
-          : null,
+        age: profile.dob ? Math.floor((Date.now() - new Date(profile.dob).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : null,
       };
     });
 

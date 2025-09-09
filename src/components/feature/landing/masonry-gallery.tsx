@@ -5,6 +5,7 @@ import { motion, useInView, useScroll, useTransform } from 'framer-motion';
 import { ImageIcon, Sparkles, X, Heart, Users } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
+import { SectionHeading } from '@/components/common/section-heading';
 
 // Define the image data with real Unsplash images and enhanced metadata
 const galleryImages = [
@@ -103,13 +104,9 @@ const galleryImages = [
 export function MasonryGallery() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: false, amount: 0.2 });
-  const [selectedImage, setSelectedImage] = useState<
-    null | (typeof galleryImages)[0]
-  >(null);
+  const [selectedImage, setSelectedImage] = useState<null | (typeof galleryImages)[0]>(null);
   const [columns, setColumns] = useState(3);
-  const [masonryImages, setMasonryImages] = useState<(typeof galleryImages)[]>(
-    []
-  );
+  const [masonryImages, setMasonryImages] = useState<(typeof galleryImages)[]>([]);
 
   // Responsive columns
   useEffect(() => {
@@ -130,10 +127,7 @@ export function MasonryGallery() {
 
   // Distribute images into columns for masonry layout
   useEffect(() => {
-    const columnArrays: (typeof galleryImages)[] = Array.from(
-      { length: columns },
-      () => []
-    );
+    const columnArrays: (typeof galleryImages)[] = Array.from({ length: columns }, () => []);
 
     // Sort images by height (optional, creates a more balanced layout)
     const sortedImages = [...galleryImages].sort((a, b) => a.height - b.height);
@@ -141,13 +135,7 @@ export function MasonryGallery() {
     // Distribute images across columns
     sortedImages.forEach(image => {
       // Find the column with the least height
-      const shortestColumnIndex = columnArrays
-        .map(column => column.reduce((acc, img) => acc + img.height, 0))
-        .reduce(
-          (minIndex, height, index, heights) =>
-            height < heights[minIndex] ? index : minIndex,
-          0
-        );
+      const shortestColumnIndex = columnArrays.map(column => column.reduce((acc, img) => acc + img.height, 0)).reduce((minIndex, height, index, heights) => (height < heights[minIndex] ? index : minIndex), 0);
 
       columnArrays[shortestColumnIndex].push(image);
     });
@@ -189,85 +177,37 @@ export function MasonryGallery() {
   };
 
   return (
-    <section
-      className="py-24 bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900"
-      ref={ref}
-    >
+    <section className="" ref={ref}>
       <motion.div className="container mx-auto px-4" style={{ opacity, y }}>
-        <motion.div
-          className="text-center mb-16"
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.5 }}
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-pink-500/10 to-purple-500/10 border border-pink-200/20 dark:border-pink-500/20 mb-6">
-            <Sparkles className="h-4 w-4 text-pink-500" />
-            <span className="text-sm font-medium text-pink-600 dark:text-pink-400">
-              Success Stories
-            </span>
-          </div>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 dark:from-white dark:via-slate-100 dark:to-white bg-clip-text text-transparent">
-            Real People. Real Stories.
-          </h2>
-          <p className="text-xl md:text-2xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed">
-            Discover how purpose-aligned couples are building meaningful
-            relationships and changing the world together.
-          </p>
-        </motion.div>
+        <div className="text-center mb-16">
+          <SectionHeading
+            title="Real People. Real Stories."
+            description="Discover how purpose-aligned couples are building meaningful relationships and changing the world together."
+            titleClassName="text-4xl md:text-5xl lg:text-6xl bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 dark:from-white dark:via-slate-100 dark:to-white bg-clip-text text-transparent"
+            descriptionClassName="text-xl md:text-2xl text-slate-600 dark:text-slate-300 leading-relaxed"
+          />
+        </div>
 
         <div className="flex flex-wrap -mx-3">
           {masonryImages.map((column, columnIndex) => (
-            <div
-              key={columnIndex}
-              className={`px-3 w-full ${columns === 1 ? 'w-full' : columns === 2 ? 'sm:w-1/2' : 'sm:w-1/2 lg:w-1/3'}`}
-            >
-              <motion.div
-                variants={containerVariants}
-                initial="hidden"
-                animate={isInView ? 'visible' : 'hidden'}
-                className="space-y-6"
-              >
+            <div key={columnIndex} className={`px-3 w-full ${columns === 1 ? 'w-full' : columns === 2 ? 'sm:w-1/2' : 'sm:w-1/2 lg:w-1/3'}`}>
+              <motion.div variants={containerVariants} initial="hidden" animate={isInView ? 'visible' : 'hidden'} className="space-y-6">
                 {column.map((image, imageIndex) => (
-                  <motion.div
-                    key={imageIndex}
-                    className="break-inside-avoid"
-                    variants={itemVariants}
-                    whileHover={{ y: -8, scale: 1.02 }}
-                    transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                  >
-                    <div
-                      className="relative overflow-hidden rounded-2xl cursor-pointer group shadow-lg hover:shadow-2xl transition-all duration-500 bg-white dark:bg-slate-800 border border-slate-200/50 dark:border-slate-700/50"
-                      onClick={() => openLightbox(image)}
-                    >
-                      <div
-                        className="relative"
-                        style={{ height: `${image.height / 2}px` }}
-                      >
-                        <Image
-                          id={`gallery-${columnIndex}-${imageIndex}`}
-                          src={image.src}
-                          alt={image.alt}
-                          fill
-                          sizes={`(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw`}
-                          className="object-cover transition-transform duration-700 group-hover:scale-110"
-                        />
-                        <div
-                          className={`absolute inset-0 bg-gradient-to-t ${image.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
-                        />
+                  <motion.div key={imageIndex} className="break-inside-avoid" variants={itemVariants} whileHover={{ y: -8, scale: 1.02 }} transition={{ type: 'spring', stiffness: 300, damping: 20 }}>
+                    <div className="relative overflow-hidden rounded-2xl cursor-pointer group shadow-lg hover:shadow-2xl transition-all duration-500 bg-white dark:bg-slate-800 border border-slate-200/50 dark:border-slate-700/50" onClick={() => openLightbox(image)}>
+                      <div className="relative" style={{ height: `${image.height / 2}px` }}>
+                        <Image id={`gallery-${columnIndex}-${imageIndex}`} src={image.src} alt={image.alt} fill sizes={`(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw`} className="object-cover transition-transform duration-700 group-hover:scale-110" />
+                        <div className={`absolute inset-0 bg-gradient-to-t ${image.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
                       </div>
 
                       {/* Category Badge */}
                       <div className="absolute top-4 left-4 z-10">
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 backdrop-blur-sm">
-                          {image.category}
-                        </span>
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 backdrop-blur-sm">{image.category}</span>
                       </div>
 
                       {/* Year Badge */}
                       <div className="absolute top-4 right-4 z-10">
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 backdrop-blur-sm">
-                          {image.year}
-                        </span>
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 backdrop-blur-sm">{image.year}</span>
                       </div>
 
                       {/* Hover Overlay */}
@@ -277,9 +217,7 @@ export function MasonryGallery() {
                             <Heart className="h-4 w-4 text-pink-400" />
                             <Users className="h-4 w-4 text-blue-400" />
                           </div>
-                          <p className="text-sm font-medium leading-relaxed">
-                            {image.caption}
-                          </p>
+                          <p className="text-sm font-medium leading-relaxed">{image.caption}</p>
                         </div>
                       </div>
 
@@ -294,7 +232,7 @@ export function MasonryGallery() {
         </div>
 
         {/* Stats Section */}
-        <motion.div
+        {/* <motion.div
           className="mt-20 text-center"
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
@@ -326,29 +264,14 @@ export function MasonryGallery() {
               </div>
             </div>
           </div>
-        </motion.div>
+        </motion.div> */}
       </motion.div>
 
       {/* Enhanced Lightbox */}
       {selectedImage && (
-        <motion.div
-          className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={closeLightbox}
-        >
-          <motion.div
-            className="relative max-w-6xl max-h-[90vh] w-full"
-            initial={{ scale: 0.9, opacity: 0, y: 20 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            onClick={(e: unknown) => (e as React.MouseEvent).stopPropagation()}
-          >
-            <button
-              className="absolute top-6 right-6 z-20 bg-white/10 hover:bg-white/20 text-white p-3 rounded-full backdrop-blur-sm transition-all duration-300 hover:scale-110"
-              onClick={closeLightbox}
-            >
+        <motion.div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={closeLightbox}>
+          <motion.div className="relative max-w-6xl max-h-[90vh] w-full" initial={{ scale: 0.9, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} transition={{ type: 'spring', damping: 25, stiffness: 300 }} onClick={(e: unknown) => (e as React.MouseEvent).stopPropagation()}>
+            <button className="absolute top-6 right-6 z-20 bg-white/10 hover:bg-white/20 text-white p-3 rounded-full backdrop-blur-sm transition-all duration-300 hover:scale-110" onClick={closeLightbox}>
               <X className="h-6 w-6" />
             </button>
 
@@ -370,12 +293,8 @@ export function MasonryGallery() {
 
                 {/* Image overlay with category and year */}
                 <div className="absolute top-6 left-6 flex gap-3">
-                  <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-white/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 backdrop-blur-sm">
-                    {selectedImage.category}
-                  </span>
-                  <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-white/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 backdrop-blur-sm">
-                    {selectedImage.year}
-                  </span>
+                  <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-white/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 backdrop-blur-sm">{selectedImage.category}</span>
+                  <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-white/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 backdrop-blur-sm">{selectedImage.year}</span>
                 </div>
               </div>
 
@@ -386,15 +305,8 @@ export function MasonryGallery() {
                   <Users className="h-5 w-5 text-blue-500" />
                   <Sparkles className="h-5 w-5 text-purple-500" />
                 </div>
-                <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
-                  {selectedImage.caption}
-                </h3>
-                <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
-                  This couple found each other through our platform and have
-                  been making a positive impact in their community together.
-                  Their story represents the power of purpose-driven
-                  relationships.
-                </p>
+                <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">{selectedImage.caption}</h3>
+                <p className="text-slate-600 dark:text-slate-300 leading-relaxed">This couple found each other through our platform and have been making a positive impact in their community together. Their story represents the power of purpose-driven relationships.</p>
               </div>
             </div>
           </motion.div>
